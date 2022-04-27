@@ -57,6 +57,14 @@ define( NS . 'PLUGIN_TEXT_DOMAIN', 'cb-pdpflightlog' );
 require_once( PLUGIN_NAME_DIR . 'inc/libraries/autoloader.php' );
 
 /**
+*  connections information for the external (to wordpress) data base for the PDP is stored 
+*  in a file external (and several directories above) this plugin. The handels for this
+* 	external is created in that file, which must be loaded independly of the plugin. 
+*/
+
+require_once( dirname(__DIR__, 4) . '/Connections/PGC.php' );
+
+/**
  * Register Activation and Deactivation Hooks
  * This action is documented in inc/core/class-activator.php
  */

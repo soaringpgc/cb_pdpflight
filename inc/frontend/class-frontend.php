@@ -115,24 +115,10 @@ class Frontend {
 	public function flight_log( $atts = array() ) {
 
 		ob_start();
+	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
 
-// 		$defaults['loop-template'] 	= $this->plugin_name . '-loop';
-// 		$defaults['order'] 			= 'date';
-// 		$defaults['quantity'] 		= 100;
-// 		$args						= shortcode_atts( $defaults, $atts, 'nowhiring' );
-// 		$shared 					= new Now_Hiring_Shared( $this->plugin_name, $this->version );
-// 		$items 						= $shared->get_openings( $args );
-// 
-// 		if ( is_array( $items ) || is_object( $items ) ) {
-
-//			include now_hiring_get_template( $args['loop-template'] );
 			include ('views/html_cb_pdpflightlog_list_edit.php');
-
-// 		} else {
-// 
-// 			echo $items;
-// 
-// 		}
 
 		$output = ob_get_contents();
 
@@ -144,22 +130,24 @@ class Frontend {
 	public function flight_metrics( $atts = array() ) {
 
 		ob_start();
-
-// 		$defaults['loop-template'] 	= $this->plugin_name . '-loop';
-// 		$defaults['order'] 			= 'date';
-// 		$defaults['quantity'] 		= 100;
-// 		$args						= shortcode_atts( $defaults, $atts, 'nowhiring' );
-// 		$shared 					= new Now_Hiring_Shared( $this->plugin_name, $this->version );
-// 		$items 						= $shared->get_openings( $args );
+//      Experment in passing parameters in shortcodes. parameters are passed in the 
+//      $atts array, below code sets up defaults and overrides defaults with passed 
+//      values. "shortcode_atts()" thinking of using this as a switch to control
+//      how Shortcode functions. 
 // 
+	    $atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	    $metrcis_atts = shortcode_atts(array( 'title'=>"dummy title"), $atts, $tag );
+// the $metrics_atts array is not avaliable in the file below. Could be used to 
+//  control an optional action. 
+	    
 // 		if ( is_array( $items ) || is_object( $items ) ) {
 
 //			include now_hiring_get_template( $args['loop-template'] );
-			include ('views/html_cb_pdpflightlog_metrics.php');
+//			include ('views/html_cb_pdpflightlog_metrics.php');
 
 // 		} else {
 // 
-// 			echo $items;
+			include ('views/html_cb_pdpflightlog_metrics.php');
 // 
 // 		}
 
@@ -182,7 +170,11 @@ class Frontend {
 		 * class.
 		 */
      public function pdp_flight_log_add(){
-        require dirname(__DIR__, 6) . '/Connections/PGC.php';
+        //require dirname(__DIR__, 6) . '/Connections/PGC.php';
+        
+        global $PGCwp; // database handle for accessing wordpress db
+		global $PGCi;  // database handle for PDP external db
+
          
         $LastPilot ="";
         $query_Recordset1 = "SELECT LastPilot, TowPlane FROM pgc_flightlog_lastpilot";
@@ -212,7 +204,9 @@ class Frontend {
 		 *
 		 */
      public function pdp_update_time(){
-        require dirname(__DIR__, 6) . '/Connections/PGC.php';
+     //   require dirname(__DIR__, 6) . '/Connections/PGC.php';
+		global $PGCwp; // database handle for accessing wordpress db
+		global $PGCi;  // database handle for PDP external db
     
      	if (isset($_POST['key'])) {
      		$key = $_POST['key'];

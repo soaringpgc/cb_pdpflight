@@ -1,6 +1,7 @@
 <?php
-namespace pdp\flight\log;
-require dirname(__DIR__, 7) . '/Connections/PGC.php';
+//require dirname(__DIR__, 7) . '/Connections/PGC.php';
+global $PGCwp; // database handle for accessing wordpress db
+global $PGCi;  // database handle for PDP external db
 ?>
 <?php
 error_reporting(E_ALL);

@@ -1,8 +1,8 @@
 <?php
-require dirname(__DIR__, 7) . '/Connections/PGC.php';
+//require dirname(__DIR__, 7) . '/Connections/PGC.php';
 //require_once($filesafe . '/PGC.php');
-global $PGCwp; 
-global $wp;
+global $PGCwp; // database handle for accessing wordpress db
+global $PGCi;  // database handle for PDP external db
 ?>
 <?php 
 

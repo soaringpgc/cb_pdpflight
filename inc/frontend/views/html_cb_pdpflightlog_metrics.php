@@ -1,5 +1,9 @@
 <?php
-require dirname(__DIR__, 7) . '/Connections/PGC.php';
+//require dirname(__DIR__, 7) . '/Connections/PGC.php';
+global $PGCwp; // database handle for accessing wordpress db
+global $PGCi;  // database handle for PDP external db
+
+//	    echo  $metrcis_atts['title'];
 ?>
 <?php
 
