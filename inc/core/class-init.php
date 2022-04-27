@@ -139,7 +139,7 @@ class Init {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );		
-
+// flight logging actions 
 		$this->loader->add_action( 'admin_post_pdp-flight-log', $plugin_public, 'pdp_flight_log' );
 		$this->loader->add_action( 'admin_post_nopriv_pdp-flight-log', $plugin_public, 'pdp_no_login' );
 
@@ -151,6 +151,16 @@ class Init {
 
 		$this->loader->add_action( 'wp_ajax_pdp_update_time', $plugin_public, 'pdp_update_time' );
 		$this->loader->add_action( 'wp_ajax_nopriv_pdp_update_time', $plugin_public, 'pdp_no_login' );
+// flight metrics actions 
+
+		$this->loader->add_action( 'admin_post_pdp-flight-metrics', $plugin_public, 'pdp_flight_metrics' );
+		$this->loader->add_action( 'admin_post_nopriv_pdp-flight-metrics', $plugin_public, 'pdp_no_login' );
+
+		$this->loader->add_action( 'admin_post_pdp_flight_export', $plugin_public, 'pdp_export_data' );
+		$this->loader->add_action( 'admin_post_nopriv_pdp-flight_export', $plugin_public, 'pdp_no_login' );
+
+		$this->loader->add_action( 'admin_post_pdp-metrics-details', $plugin_public, 'pdp_metrics_details' );
+		$this->loader->add_action( 'admin_post_nopriv_pdp-metrics-details', $plugin_public, 'pdp_no_login' );
 
 	}
 

@@ -161,21 +161,14 @@ class Frontend {
 		/**
 		 * This function adds a new fligh to the flight log.
 		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
 		 * The Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
      public function pdp_flight_log_add(){
-        //require dirname(__DIR__, 6) . '/Connections/PGC.php';
-        
         global $PGCwp; // database handle for accessing wordpress db
 		global $PGCi;  // database handle for PDP external db
-
-         
+         // tow pilot and tug are stored in database as it changes less often than pilot. 
         $LastPilot ="";
         $query_Recordset1 = "SELECT LastPilot, TowPlane FROM pgc_flightlog_lastpilot";
         $Recordset1 = mysqli_query($PGCi, $query_Recordset1 )  or die(mysqli_error($PGCi));         
@@ -187,24 +180,25 @@ class Frontend {
       	wp_redirect($_GET['source_page']);
      	exit();
      }	// pdp_flight_log_add()
-		/**
-		 * This function brings up the flight details page.
-		 *
-		 */
+	/**
+	 * This function brings up the flight details page. This is where glider, pilot
+	 * instructor, tow pilot and tug are selected. Also corrections can be make to 
+	 * take off/landing time and tow alitude. 
+	 */
      public function pdp_flight_log_details(){ 
      	if (isset($_GET['key'])) {
      		include_once( 'views/html_cb_pdpflightlog_update.php');
      	}else {
      		wp_redirect($_GET['source_page']);
      	}
-     }
-
-		/**
-		 * This function brings up the flight details page.
-		 *
-		 */
+     } //pdp_flight_log_details()
+ /**
+ * This function updates the takeoff and landing time. 
+ *  if varable $_POST['start'] is "1" (true), it updates the take off time if 
+ *  anything else it update landing time. It is called via admin-ajax and javascript. 
+ *
+ */
      public function pdp_update_time(){
-     //   require dirname(__DIR__, 6) . '/Connections/PGC.php';
 		global $PGCwp; // database handle for accessing wordpress db
 		global $PGCi;  // database handle for PDP external db
     
@@ -221,7 +215,63 @@ class Frontend {
      			$PGCwp->update('pgc_flightsheet', array('Landing'=> $_POST['thetime'], 'Time'=>$dec_delta), array('Key'=> $key)); 
      		}
       	}		
-     } //pdp_update_time()          	
+     } //pdp_update_time()    
+/**
+ * 
+ *  The function brings up the flight metrics summery page. 
+ * 
+ */
+	public function pdp_flight_metrics(){ 
+    	if (isset($_GET['pgc_year'])) {
+    		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
+    		exit();
+    	}else {
+    		wp_redirect($_GET['source_page']);
+    		exit();
+    	}
+    } // pdp_flight_metrics()
+/**
+ * 
+ *  This function brings up meterics details. Main page displays summary data.
+ *  This function displays details of Pilot, istructor, tow pilot, Glider or Tow Plane.
+ */
+	Public function pdp_metrics_details(){ 
+    	if (isset($_GET['pdp_type']) && isset($_GET['pdp_id'])) {
+    	include_once( 'views/html_cb_pdpflightlog_lookup.php');
+    //		$redirect = plugin_dir_url(__FILE__) ."partials/pgc_flightlog_lookup.php?pgc_type=".$_GET['pdp_type']."&pgc_id=". $_GET['pdp_id']."&req_year=". $_GET['req_year'];
+    //		wp_redirect($redirect);
+    	}else {
+    		wp_redirect($_GET['source_page']);
+    		exit();
+    	}
+    } // pdp_metrics_details()
+/**
+ *  This function exports the year to date flights in .xls format.
+ *  primaraly used by the Treasurer to download the flights for billing
+ *  Very important! 
+ */     
+    public function pdp_export_data(){
+    	global $PGCi;
+         $filename = "pgc_flight_activity_" . date('Ymd') . ".xls";
+       
+         header("Content-Disposition: attachment; filename=\"$filename\"");
+         header("Content-Type: application/vnd.ms-excel");
+       
+         $flag = false;
+         $result = mysqli_query($PGCi, "Select * From  pgc_flightsheet") or die('Query failed!');
+         
+         while(false !== ($row =mysqli_fetch_assoc($result))) {
+           if(!$flag) {
+             // display field/column names as first row
+             echo implode("\t", array_keys($row)) . "\r\n";https://wordpress.stackexchange.com/tags
+             $flag = true;
+           }
+           array_walk($row, 'cleanData');
+           echo implode("\t", array_values($row)) . "\r\n";
+         }
+         exit;
+    } //pdp_export_data()
+               	
 	/**
 	 * Registers all shortcodes at once
 	 *
@@ -233,10 +283,10 @@ class Frontend {
 		add_shortcode( 'flight_metrics', array( $this, 'flight_metrics' ) );
 
 	} // register_shortcodes()
-		/**
-		 * This function redirects to the longin page if the user is not logged in.
-		 *
-		 */
+	/**
+	 * This function redirects to the longin page if the user is not logged in.
+	 *
+	 */
      public function pdp_no_login(){
      	wp_redirect(home_url());
      } //
