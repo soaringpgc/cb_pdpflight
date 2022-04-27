@@ -63,7 +63,7 @@ class Init {
 
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->define_admin_hooks();
+//		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
 
@@ -151,18 +151,6 @@ class Init {
 
 		$this->loader->add_action( 'wp_ajax_pdp_update_time', $plugin_public, 'pdp_update_time' );
 		$this->loader->add_action( 'wp_ajax_nopriv_pdp_update_time', $plugin_public, 'pdp_no_login' );
-
-//		add_action('admin_post_pdp-flight-log', 'pdp_flight_log');
-//		add_action('admin_post_nopriv_pdp-flight-log',  'pdp_no_login');
-		
-//        add_action('admin_post_pdp_flight_log_add', 'pdp_flight_log_add');
-//        add_action('admin_post_nopriv_pdp-flight_export',  'dp_no_login');
-        
-//         add_action('admin_post_pdp-flight-log-details',  'pdp_flight_log_details');
-//         add_action('admin_post_nopriv_pdp-flight-details',  'pdp_no_login');
-        
-//        add_action('wp_ajax_pdp_update_time',  'pdp_update_time');
-//        add_action('wp_ajax_nopriv_pdp_update_time', 'pdp_no_login');
 
 	}
 

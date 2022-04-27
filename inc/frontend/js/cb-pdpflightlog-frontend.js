@@ -57,3 +57,21 @@
     	 });
 	});
 })( jQuery );
+
+function pdpJumpTo(year){
+ 	oFormObj = document.forms['selectFlightYear'];
+ 	oFormObj.elements["pgc_year"].value= year;
+ // alert (year);
+  	 oFormObj.submit();
+}	
+function pdpDetails(pdp_type, pdp_id,year){
+	const detail_types = [ "Glider", "Pilot2", "Pilot1", "Tow Pilot", "Tow Plane",  "Flight_Type", "Date", "Tow Altitude", "Flight_Type" ]; 
+ 	oFormObj = document.forms['selectMetricsDetails'];
+ 	oFormObj.elements["pdp_type"].value= detail_types[pdp_type];
+ 	oFormObj.elements["pdp_id"].value= pdp_id;	
+ 	oFormObj.elements["req_year"].value= year;	
+// 	 alert (detail_types[pdp_type]);
+//  	 alert (pdp_id);	
+//  	 alert (year);	 
+  	 oFormObj.submit();
+}	

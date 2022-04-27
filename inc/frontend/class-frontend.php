@@ -155,7 +155,7 @@ class Frontend {
 // 		if ( is_array( $items ) || is_object( $items ) ) {
 
 //			include now_hiring_get_template( $args['loop-template'] );
-			include views/html_cb_pdpflightlog_metrics.php;
+			include ('views/html_cb_pdpflightlog_metrics.php');
 
 // 		} else {
 // 

@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name:       Cloud Base -PGC PDP Flight Log
  * Plugin URI:        http://pgcsoaring.com/cb-pdpflightlog-uri/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       The is an extension to plugin Cloud Base. This adds the PGC PDP flightlog. 
  * Version:           1.0.0
  * Author:            Philadelphia Glider Council -- Dave Johnson
  * Author URI:        http://pgcsoaring.com/

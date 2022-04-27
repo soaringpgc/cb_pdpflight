@@ -1,23 +1,31 @@
-=== WP Plugin Name ===
+=== CB PDPflightlog ===
 Contributors: (this should be a list of wordpress.org userid's)
 Donate link: http://pgcsoaring.com/
-Tags: comments, spam
+Tags: Glider, flight, logging
 Requires at least: 3.0.1
 Tested up to: 3.4
 Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+The is an extension to plugin Cloud Base. This adds the PGC PDP flightlog. 
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+    After attempting to do it the "easy way" I ran into trouble with conflicts with
+    my "flight Metrics" plugin shared function names, scripts and css. So I want back to
+    do it the "right" way by using classes and namespaces. I started with a Wordpress
+    plugin in boilerplate. Needed to add features to link Shortcodes. (I don't understand
+    why that is not part of the normal boilerplate  and localize scripts.)
+    
+    At this point I have the flight log working. Or at least as well as it was working with
+    out the boilerplate template.
+    
+    The core function of this is from PGC PDP flight log system that was written in 2010
+    using DreamWeaver. It was converted from PHP 5.4 to 7.6. The code you see in the /Views
+    foler was generated from DreamWeaver. (don't blame me.)
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
 
-A few notes about the sections above:
 
 *   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
 *   "Tags" is a comma separated list of tags that apply to the plugin
