@@ -256,14 +256,16 @@ class Frontend {
        
          header("Content-Disposition: attachment; filename=\"$filename\"");
          header("Content-Type: application/vnd.ms-excel");
+         header("Pragma: no-cache");
+         header("Expires: 0");
        
          $flag = false;
          $result = mysqli_query($PGCi, "Select * From  pgc_flightsheet") or die('Query failed!');
          
-         while(false !== ($row =mysqli_fetch_assoc($result))) {
+        while($row = mysqli_fetch_assoc($result)) {
            if(!$flag) {
              // display field/column names as first row
-             echo implode("\t", array_keys($row)) . "\r\n";https://wordpress.stackexchange.com/tags
+             echo implode("\t", array_keys($row)) . "\r\n";  //https:wordpress.stackexchange.com/tags
              $flag = true;
            }
            array_walk($row, 'cleanData');
@@ -290,6 +292,11 @@ class Frontend {
      public function pdp_no_login(){
      	wp_redirect(home_url());
      } //
+     public function cleanData(&$str)
+     {
+       $str = preg_replace("/\t/", "\\t", $str);
+       $str = preg_replace("/\r?\n/", "\\n", $str);
+       if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
+     }
      
-
 }

@@ -1,28 +1,20 @@
 <?php
-//require dirname(__DIR__, 7) . '/Connections/PGC.php';
-//require_once($filesafe . '/PGC.php');
 global $PGCwp; // database handle for accessing wordpress db
 global $PGCi;  // database handle for PDP external db
 
-//echo $flight_atts['view_only'];
 $view_only = $flight_atts['view_only']==='true' ? true : false ;
 //$view_only= true ;
 ?>
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+//ini_set('display_errors', 'On');
 
-?>
-<?php 
 date_default_timezone_set('America/New_York');
 $pgc_flight_date = date("Y-m-d");
-// $_SESSION['$Logdate'] = date("Y-m-d");
-// $_SESSION['last_query'] = "http://" .  $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"] . "?" . $_SERVER['QUERY_STRING']; ?>
-<?php
+
 if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-//  
+{  
 
   $theValue = mysqli_real_escape_string($PGCi, $theValue) ;
 
