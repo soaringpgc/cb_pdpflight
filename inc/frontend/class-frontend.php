@@ -281,8 +281,8 @@ class Frontend {
 	 */
 	public function register_shortcodes() {
 
-		add_shortcode( 'flight_log', array( $this, 'flight_log' ) );
-		add_shortcode( 'flight_metrics', array( $this, 'flight_metrics' ) );
+		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
+		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
 
 	} // register_shortcodes()
 	/**
