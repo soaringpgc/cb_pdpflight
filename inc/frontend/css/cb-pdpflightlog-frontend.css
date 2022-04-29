@@ -133,3 +133,40 @@ tr{
 	color: #6666FF;
 	font-size: 14px;
 }
+.popup-overlay {
+  visibility:hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(0%, -50%);  background: #ffffff;
+  border: 3px solid #666666;
+  width: 50%;
+  height: 50%;
+  left: 25%;
+  height:"350px"; 
+  overflow-y:auto;
+  overflow-x:auto
+}
+
+.popup-content {
+	visibility:hidden;
+	padding: "3px";
+	position: absolute;
+	float: left;
+  	left: 2px;
+  	width :95%
+} 
+.popup-content li {
+    white-space: normal;
+    float: left;
+    width: 95%;
+    height: auto;
+	word-wrap: break-word;
+}
+.popup-overlay.active{
+visibility:visible;
+}
+
+.popup-content.active {
+visibility:visible;
+}

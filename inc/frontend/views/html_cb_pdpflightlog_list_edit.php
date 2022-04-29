@@ -119,10 +119,56 @@ $queryString_Flightlog = sprintf("&totalRows_Flightlog=%d%s", $totalRows_Flightl
              		<?php if ( $view_only )  {     
              			echo ('<td></td>');
              		} else {
-             			echo ('<td width="8%" bgcolor="#006633"><div align="center"><a href="pgc_flightsheet_help.php" class="fl_style25">HELP</a></div></td> ' );
+             		//	echo ('<td width="8%" bgcolor="#006633"><div align="center"><a href="pgc_flightsheet_help.php" class="fl_style25">HELP</a></div></td> ' );
+             			echo ('<td width="8%" bgcolor="#006633"><div align="center"><button class="open">Help</button></div></td> ' );
              		}
              		?>
+             	
                     <td width="5%"> </td>    
+                    
+                    
+                                 		<!--Creates the popup body-->
+<div class="popup-overlay">
+<!--Creates the popup content-->
+    <h4>PGC PDP Help<button class="close">Close</button>  </h4> 
+ <div class="popup-content">
+
+    <li>The<u>ADD Flight</u> button is hit on the main screen to create a new  blank row on the main flightlog screen.</li>
+    <li>The new record is edited in the Detail Screen:  Glider, Member Charged and Instructor are added  to the record using the appropriate  dropdowns. The record is typically saved (updated) at this time.</li>
+    <li >A PGC Flight Sheet record is considered 'official' by  the system when a Charged Member and/or Instructor is entered - and Takeoff and  Landing times are recorded.&nbsp; A record on  the main page that does not have a Member Charged or Instructor entry is not  considered a valid record for any billing or reporting process.</li>
+
+ <ul >
+     <li >If the PGC AOF Pilot is not a CFIG, put their name in the Member column. (Example - Bob Lacovara) </li>
+     <li >If the PGC AOF Pilot is a CFIG, put their name in the Instructor Column - and put AOF in the member column. (Example - Jack Goritski)</li>
+     <li >A note is not required as the type indicates it is an AOF. </li>
+ </ul>
+<li>Put blanks in the Member  Charged and Instructor fields to logically delete a record. </li>
+     <li >
+      A NEW MEMBER  - Some very new members may not be in the PDP. Select 'A New Member' as the member name. We will update to the proper member name later in the week.
+   </li>
+   <li >
+       A DEMO FLIGHT - Use this as the member name for any other flight that should not be charged to a member. We will research and update later in the week. Enter a note with details. 
+   </li>
+   <li >
+      Tow Pilot and Tow Plane can be added at any time  using the appropriate drop-downs. The last Tow Pilot and Plane selected are  also saved by the system and are used as the default for future entries.
+   </li>
+   <li >
+       The <span class="style31">GREEN</span> Takeoff button on the main page is selected to auto-enter the takeoff time for  that flight as it occurs.
+   </li>
+   <li >
+      The <span class="style32">RED</span> Landing button on the main page is selected to auto-enter the  landing time as it occurs. This will auto-generate a flight receipt  email to the member. 
+   </li>
+   <li >
+       The  tow altitude is typically updated at some  later time when the pilot reports to the flight desk. (Although they may not - which is why the flight receipt  email is sent when the landing time is entered by the flight desk.)
+   </li>
+   <li ">
+       T<em>ow altitude entry, and any other updates  made in the detail screen after the landing time is entered,  <span class="style36">will auto-generate</span> a follow up email of  flight details for the Member, Webmaster, and Treasurer.</em>
+   </li>
+  
+</div>
+</div>
+                                  
+                    
                 </tr>
             </table>
             </div></td>
