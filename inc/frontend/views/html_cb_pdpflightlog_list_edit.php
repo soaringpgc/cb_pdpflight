@@ -60,12 +60,12 @@ $row_Flightlog =mysqli_fetch_assoc($Flightlog);
 // 	'Landing'=>null, 'Time'=>null, 'Tow Altitude'=>'0', 'Tow Plane'=>null, 'Tow Pilot'=>'tow pilot', 'Tow Charge'=>'0', 'Notes'=>'');
 // }
 
-if (isset($_GET['totalRows_Flightlog'])) {
-  $totalRows_Flightlog = $_GET['totalRows_Flightlog'];
-} else {
+// if (isset($_GET['totalRows_Flightlog'])) {
+//   $totalRows_Flightlog = $_GET['totalRows_Flightlog'];
+// } else {
   $all_Flightlog = mysqli_query($PGCi, $query_Flightlog ) ;
   $totalRows_Flightlog = mysqli_num_rows($all_Flightlog);
-}
+//}
 $totalPages_Flightlog = ceil($totalRows_Flightlog/$maxRows_Flightlog)-1;
 
 $queryString_Flightlog = "";
@@ -73,8 +73,11 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   $params = explode("&", $_SERVER['QUERY_STRING']);
   $newParams = array();
   foreach ($params as $param) {
-    if (stristr($param, "pageNum_Flightlog") == false && 
-        stristr($param, "totalRows_Flightlog") == false) {
+//     if (stristr($param, "pageNum_Flightlog") == false && 
+//         stristr($param, "totalRows_Flightlog") == false) {
+
+
+    if (stristr($param, "pageNum_Flightlog") == false) {
       array_push($newParams, $param);
     }
   }
@@ -82,7 +85,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
     $queryString_Flightlog = "&" . htmlentities(implode("&", $newParams));
   }
 }
-$queryString_Flightlog = sprintf("&totalRows_Flightlog=%d%s", $totalRows_Flightlog, $queryString_Flightlog);
+//$queryString_Flightlog = sprintf("&totalRows_Flightlog=%d", $totalRows_Flightlog);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -249,20 +252,19 @@ $queryString_Flightlog = sprintf("&totalRows_Flightlog=%d%s", $totalRows_Flightl
                          <?php } while ($row_Flightlog = mysqli_fetch_assoc($Flightlog));} ?>
                      </table>
                     <p>
-
                     <table border="0" width="50%" align="center">
                         <tr>
                             <td width="23%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog > 0) { // Show if not first page ?>
-                                        <span class="fl_style1"><strong><a href="<?php printf("%s?pageNum_Flightlog=%d%s", $currentPage, 0, $queryString_Flightlog); ?>">Top</a>
+                                        <span class="fl_style1"><strong><a href="<?php printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), 0); ?>">Top</a>
                                         <?php } // Show if not first page ?></td>
                             <td width="31%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog > 0) { // Show if not first page ?>
-                                        <a href="<?php printf("%s?pageNum_Flightlog=%d%s", $currentPage, max(0, $pageNum_Flightlog - 1), $queryString_Flightlog); ?>" class="fl_style1">Previous</a>
+                                        <a href="<?php printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), max(0, $pageNum_Flightlog - 1)); ?>" class="fl_style1">Previous</a>
                                         <?php } // Show if not first page ?>                            </td>
                             <td width="23%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog < $totalPages_Flightlog) { // Show if not last page ?>
-                                        <a href="<?php printf("%s?pageNum_Flightlog=%d%s", $currentPage, min($totalPages_Flightlog, $pageNum_Flightlog + 1), $queryString_Flightlog); ?>">Next</a>
+                                        <a href="<?php  printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), min($totalPages_Flightlog, $pageNum_Flightlog + 1)); ?>">Next</a>
                                         <?php } // Show if not last page ?>                            </td>
                             <td width="23%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog < $totalPages_Flightlog) { // Show if not last page ?>
-                                        <a href="<?php printf("%s?pageNum_Flightlog=%d%s", $currentPage, $totalPages_Flightlog, $queryString_Flightlog); ?>">Bottom</a>
+                                        <a href="<?php  printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), $totalPages_Flightlog); ?>">Bottom</a>
                                         <?php } // Show if not last page ?>                            </td>
                         </tr>
                     </table>
@@ -273,7 +275,6 @@ $queryString_Flightlog = sprintf("&totalRows_Flightlog=%d%s", $totalRows_Flightl
             </tr>
         </table></td>
     </tr> 
-  
 </table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
