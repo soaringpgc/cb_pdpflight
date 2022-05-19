@@ -6,8 +6,12 @@ global $PGCi;  // database handle for PDP external db
 <?php
 error_reporting(E_ALL);
 //ini_set('display_errors', 'On');
-if (!$view_only && !current_user_can('flight_edit')){
-	wp_redirect( wp_login_url() );
+$view_only = true; 
+if (isset( $flight_atts['view_only'] )) {
+	$view_only = $flight_atts['view_only']==='true' ? true : false ;
+	if (!$view_only && !current_user_can('flight_edit')){
+		wp_redirect( wp_login_url() );
+	}
 }
 ?>
 <?php function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 

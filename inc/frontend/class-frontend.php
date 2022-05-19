@@ -137,19 +137,8 @@ class Frontend {
 // 
 	    $atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    $metrcis_atts = shortcode_atts(array( 'title'=>"dummy title"), $atts, $tag );
-// the $metrics_atts array is not avaliable in the file below. Could be used to 
-//  control an optional action. 
-	    
-// 		if ( is_array( $items ) || is_object( $items ) ) {
-
-//			include now_hiring_get_template( $args['loop-template'] );
-//			include ('views/html_cb_pdpflightlog_metrics.php');
-
-// 		} else {
-// 
+ 
 			include ('views/html_cb_pdpflightlog_metrics.php');
-// 
-// 		}
 
 		$output = ob_get_contents();
 
@@ -168,7 +157,7 @@ class Frontend {
      public function pdp_flight_log_add(){
         global $PGCwp; // database handle for accessing wordpress db
 		global $PGCi;  // database handle for PDP external db
-		if (!$view_only && !current_user_can('flight_edit')){
+		if ( !current_user_can('flight_edit')){
 			wp_redirect( wp_login_url() );
 		}
          // tow pilot and tug are stored in database as it changes less often than pilot. 

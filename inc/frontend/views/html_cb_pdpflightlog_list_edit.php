@@ -2,11 +2,15 @@
 global $PGCwp; // database handle for accessing wordpress db
 global $PGCi;  // database handle for PDP external db
 
-$view_only = $flight_atts['view_only']==='true' ? true : false ;
-//$view_only= true ;
-if (!$view_only && !current_user_can('flight_edit')){
-	wp_redirect( wp_login_url() );
+$view_only = true; 
+if (isset( $flight_atts['view_only'] )) {
+	$view_only = $flight_atts['view_only']==='true' ? true : false ;
+	if (!$view_only && !current_user_can('flight_edit')){
+		wp_redirect( wp_login_url() );
+	}
 }
+//$view_only= true ;
+
 ?>
 <?php
 error_reporting(E_ALL);
