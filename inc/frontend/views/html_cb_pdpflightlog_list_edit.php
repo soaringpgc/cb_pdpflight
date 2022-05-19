@@ -4,6 +4,9 @@ global $PGCi;  // database handle for PDP external db
 
 $view_only = $flight_atts['view_only']==='true' ? true : false ;
 //$view_only= true ;
+if (!$view_only && !current_user_can('flight_edit')){
+	wp_redirect( wp_login_url() );
+}
 ?>
 <?php
 error_reporting(E_ALL);
@@ -110,6 +113,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 							<?php if ( !$view_only ){ 					
 								echo ('<form action="'. admin_url("admin-post.php").'" method="get">');
                     			echo ('<input type="hidden" name="action" value="pdp_flight_log_add">');
+                    	//		echo ('<input type="hidden" name="page_id" value=' . get_the_id(). '>');
                     			echo ('<input type="hidden" name="source_page" value="' );
                     			echo  the_permalink() ;	
                     			echo ('"><input type="submit" value="Add Flight">
@@ -228,7 +232,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                                  echo (' align="center" class="pdp_update_time" value="'); 
                                  echo ($row_Flightlog['Key'].'" data-start=1> <img src='); 
                                  echo (plugin_dir_url('FILE' ));
-                                echo ('pdp_flightlog/flightlog_images/Takeoff.jpg alt="Takeoff" width="25" height="24" border="0" /></button></td>');
+                                echo ('/cb-pdpflightlog/assets/images/Next-icon.png alt="Takeoff" width="25" height="24" border="0" /></button></td>');
                               }; ?> 
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Takeoff']; ?></div></td>
 
@@ -238,7 +242,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                                  echo (' align="center" class="pdp_update_time" value="'); 
                                  echo ($row_Flightlog['Key'].'" data-start="0"> <img src='); 
                                  echo (plugin_dir_url('FILE' ));
-                                echo ('pdp_flightlog/flightlog_images/Landing.jpg alt="Landing" width="25" height="24" border="0" /></button></td>');
+                                 echo ('/cb-pdpflightlog/assets/images/stop-icon.png alt="Landing" width="25" height="24" border="0" /></button></td>');
 								}; ?> 
                          
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Landing']; ?></div></td>

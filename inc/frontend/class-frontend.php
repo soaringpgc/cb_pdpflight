@@ -168,6 +168,9 @@ class Frontend {
      public function pdp_flight_log_add(){
         global $PGCwp; // database handle for accessing wordpress db
 		global $PGCi;  // database handle for PDP external db
+		if (!$view_only && !current_user_can('flight_edit')){
+			wp_redirect( wp_login_url() );
+		}
          // tow pilot and tug are stored in database as it changes less often than pilot. 
         $LastPilot ="";
         $query_Recordset1 = "SELECT LastPilot, TowPlane FROM pgc_flightlog_lastpilot";
