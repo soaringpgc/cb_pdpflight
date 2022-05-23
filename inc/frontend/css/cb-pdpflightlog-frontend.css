@@ -53,6 +53,20 @@ tr.border_bottom td {
 tr{
  white-space: nowrap
 }
+.button-flightlog{
+	color:white !important;
+	font-size: 20px;
+	width:25px;
+	height:25px;
+}
+.button-start{
+	background-color:green !important; 
+	border-radius: 50%;
+}
+.button-stop{
+	background-color:red !important;
+	border-radius: 25%;
+}
 
 .fl_style1 
 {

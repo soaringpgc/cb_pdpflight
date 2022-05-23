@@ -231,22 +231,26 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                              <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $row_Flightlog['Pilot1']; ?></td>
                              <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $row_Flightlog['Pilot2']; ?></td>
                              <?php if ( !$view_only )  {  
-                                 echo ('<td bgcolor="#FFFFFF" class="fl_style25"><button ') ;
+                                 echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
                                  echo ($row_Flightlog['Key']); 
-                                 echo (' align="center" class="pdp_update_time" value="'); 
-                                 echo ($row_Flightlog['Key'].'" data-start=1> <img src='); 
-                                 echo (plugin_dir_url('FILE' ));
-                                echo ('/cb-pdpflightlog/assets/images/Next-icon.png alt="Takeoff" width="25" height="24" border="0" /></button></td>');
-                              }; ?> 
+                                 echo (' align="center" class="pdp_update_time button-flightlog button-start" value="'); 
+                                 echo ($row_Flightlog['Key'].'" data-start=1 ></button></td>');
+                                 
+ //                                 echo ($row_Flightlog['Key'].'" data-start=1> <img src='); 
+//                                  echo (plugin_dir_url('FILE' ));
+//                                 echo ('cb-pdpflightlog/assets/images/Next-icon.png alt="Takeoff" width="25" height="24" border="0" /></button></td>');
+                               }; ?> 
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Takeoff']; ?></div></td>
 
                              <?php if ( !$view_only )  {  
-                                 echo ('<td bgcolor="#FFFFFF" class="fl_style25"><button ') ;
+                                 echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
                                  echo ($row_Flightlog['Key']); 
-                                 echo (' align="center" class="pdp_update_time" value="'); 
-                                 echo ($row_Flightlog['Key'].'" data-start="0"> <img src='); 
-                                 echo (plugin_dir_url('FILE' ));
-                                 echo ('/cb-pdpflightlog/assets/images/stop-icon.png alt="Landing" width="25" height="24" border="0" /></button></td>');
+                                 echo (' align="center" class="pdp_update_time button-flightlog button-stop" value="'); 
+                                 echo ($row_Flightlog['Key'].'" data-start="0"></button></td>');
+                                     
+//                                  echo ($row_Flightlog['Key'].'" data-start="0"> <img src='); 
+//                                  echo (plugin_dir_url('FILE' ));
+//                                  echo ('cb-pdpflightlog/assets/images/stop-icon.png alt="Landing" width="25" height="24" border="0" /></button></td>');
 								}; ?> 
                          
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Landing']; ?></div></td>
