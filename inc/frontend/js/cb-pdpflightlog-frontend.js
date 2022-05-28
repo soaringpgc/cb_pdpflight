@@ -35,6 +35,7 @@
     		e.preventDefault();
     		var thistime = new Date();
     		var	localtime = thistime.toLocaleTimeString([], { hour12: false });
+    		$(this).addClass('clicked'); 	
     		$.ajax({
     			url: PDP_FLIGHT_SUBMITTER.ajax_url,
     			method: 'POST',

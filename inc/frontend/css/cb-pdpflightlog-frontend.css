@@ -67,6 +67,14 @@ tr{
 	background-color:red !important;
 	border-radius: 25%;
 }
+.button-start.clicked{
+	background-color:red !important; 
+	border-radius: 50%;
+}
+.button-stop.clicked{
+	background-color:green !important; 
+	border-radius: 50%;
+}
 
 .fl_style1 
 {
