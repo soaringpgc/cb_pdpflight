@@ -221,16 +221,38 @@ $row_rsGliders =mysqli_fetch_assoc($rsGliders);
 $totalRows_rsGliders = mysqli_num_rows($rsGliders);
 
 //mysql_select_db($database_PGC, $PGC);
-$query_rsTowpilots = "SELECT pilot_name FROM pgc_pilot_ratings WHERE pgc_rating = 'Tow Pilot'";
-$rsTowpilots = mysqli_query($PGCi, $query_rsTowpilots )  or die(mysqli_error($PGCi));
-$row_rsTowpilots =mysqli_fetch_assoc($rsTowpilots);
-$totalRows_rsTowpilots = mysqli_num_rows($rsTowpilots);
+// $query_rsTowpilots = "SELECT pilot_name FROM pgc_pilot_ratings WHERE pgc_rating = 'Tow Pilot'";
+// $rsTowpilots = mysqli_query($PGCi, $query_rsTowpilots )  or die(mysqli_error($PGCi));
+// $row_rsTowpilots =mysqli_fetch_assoc($rsTowpilots);
+// $totalRows_rsTowpilots = mysqli_num_rows($rsTowpilots);
+
+// select tow pilots from Wordpress user database where role = 'tow_pilot'
+$row_Towpilots = array();
+$args = array('role'=> 'tow_pilot', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$tow_pilots = get_users($args );
+
+foreach($tow_pilots as $pilot ){
+	$pilot_user = get_userdata( $pilot->id );
+	array_push ($row_Towpilots, ($pilot_user->last_name .', '. $pilot_user->first_name ));	
+}
+sort($row_Towpilots ); 
 
 //mysql_select_db($database_PGC, $PGC);
 $query_rs_instructors = "SELECT * FROM pgc_instructors WHERE rec_active = 'Y' AND cfig = 'Y' ORDER BY Name ASC";
 $rs_instructors = mysqli_query($PGCi, $query_rs_instructors )  or die(mysqli_error($PGCi));
 $row_rs_instructors =mysqli_fetch_assoc($rs_instructors);
 $totalRows_rs_instructors = mysqli_num_rows($rs_instructors);
+
+// select instructors from Wordpress user database where role = 'cfi_g'
+$row_Cfigpilots = array();
+$args = array('role'=> 'cfi_g', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$cfi_pilots = get_users($args );
+
+foreach($cfi_pilots as $pilot ){
+	$pilot_user = get_userdata( $pilot->id );
+	array_push ($row_Cfigpilots, ($pilot_user->last_name .', '. $pilot_user->first_name ));	
+}
+sort($row_Cfigpilots ); 
 
 //mysql_select_db($database_PGC, $PGC);
 $query_rs_altitudes = "SELECT altitude FROM pgc_flightlog_charges ORDER BY seq ASC";
@@ -345,18 +367,12 @@ do {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Instructor:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
                     <select name="Pilot2" class="style25" id="Pilot2">
-                        <?php
-do {  
-?>
                         <option value="<?php echo $row_rs_instructors['Name']?>"<?php if (!(strcmp($row_rs_instructors['Name'], $row_Flightlog['Pilot2']))) {echo "selected=\"selected\"";} ?>><?php echo $row_rs_instructors['Name']?></option>
-                        <?php
-} while ($row_rs_instructors =mysqli_fetch_assoc($rs_instructors));
-  $rows = mysqli_num_rows($rs_instructors);
-  if($rows > 0) {
-      mysqli_data_seek($rs_instructors, 0);
-	  $row_rs_instructors =mysqli_fetch_assoc($rs_instructors);
-  }
-?>
+                        <?php                        
+                  			foreach($row_Cfigpilots as $pilot ){
+                  				echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');                       
+                  			}                         
+						?>
                     </select>
                 </span></td>
               </tr>
@@ -403,17 +419,14 @@ do {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Tow Pilot:</div></td>
                 <td bgcolor="#CCCCCC"><select name="Tow_Pilot" class="style25">
                     <?php
-do {  
-?>
-                    <option value="<?php echo $row_rsTowpilots['pilot_name']?>"<?php if (!(strcmp($row_rsTowpilots['pilot_name'], $row_Flightlog['Tow Pilot']))) {echo "selected=\"selected\"";} ?>><?php echo $row_rsTowpilots['pilot_name']?></option>
-                    <?php
-} while ($row_rsTowpilots =mysqli_fetch_assoc($rsTowpilots));
-  $rows = mysqli_num_rows($rsTowpilots);
-  if($rows > 0) {
-      mysqli_data_seek($rsTowpilots, 0);
-	  $row_rsTowpilots =mysqli_fetch_assoc($rsTowpilots);
-  }
-?>
+                    foreach($row_Towpilots as $pilot ){
+                    	if (strcmp($pilot, $row_Flightlog['Tow Pilot']) == 0){
+                    		echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');                  	
+                    	} else {
+                    		echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
+                    	}
+                    } 
+					?>
                 </select></td>
               </tr>
               <tr valign="baseline">
@@ -452,7 +465,7 @@ do {
 mysqli_free_result($Flightlog);
 mysqli_free_result($rsMembers);
 mysqli_free_result($rsGliders);
-mysqli_free_result($rsTowpilots);
+//mysqli_free_result($rsTowpilots);
 mysqli_free_result($rs_instructors);
 mysqli_free_result($rs_altitudes);
 ?>
