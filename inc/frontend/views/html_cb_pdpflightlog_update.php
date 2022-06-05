@@ -20,7 +20,8 @@ if (isset( $flight_atts['view_only'] )) {
 
   switch ($theType) {
     case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+//      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      $theValue = ($theValue != "") ? "'" . filter_var($theValue, FILTER_SANITIZE_STRING) . "'" : "NULL";
       break;    
     case "long":
     case "int":
@@ -367,10 +368,14 @@ do {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Instructor:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
                     <select name="Pilot2" class="style25" id="Pilot2">
-                        <option value="<?php echo $row_rs_instructors['Name']?>"<?php if (!(strcmp($row_rs_instructors['Name'], $row_Flightlog['Pilot2']))) {echo "selected=\"selected\"";} ?>><?php echo $row_rs_instructors['Name']?></option>
+                     <option value="" >  </option>
                         <?php                        
                   			foreach($row_Cfigpilots as $pilot ){
-                  				echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');                       
+                  			    if ( !strcmp($pilot,  $row_Flightlog['Pilot2'] )  ) { 
+                  			    	echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');  
+                  			    } else {
+                  					echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
+                  				}                   
                   			}                         
 						?>
                     </select>

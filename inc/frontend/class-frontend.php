@@ -260,8 +260,8 @@ class Frontend {
              echo implode("\t", array_keys($row)) . "\r\n";  //https:wordpress.stackexchange.com/tags
              $flag = true;
            }
-           array_walk($row, 'cleanData');
-           echo implode("\t", array_values($row)) . "\r\n";
+           array_walk($row,  array( $this ,'cleanData'));
+           echo implode("\t", array_values($row)) . "\r\n";   
          }
          exit;
     } //pdp_export_data()
@@ -286,9 +286,20 @@ class Frontend {
      } //
      public function cleanData(&$str)
      {
-       $str = preg_replace("/\t/", "\\t", $str);
-       $str = preg_replace("/\r?\n/", "\\n", $str);
-       if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
-     }
-     
+        // escape tab characters
+        $str = preg_replace("/\t/", "\\t", $str);
+        // escape new lines
+        $str = preg_replace("/\r?\n/", "\\n", $str);
+        // convert 't' and 'f' to boolean values
+        if($str == 't') $str = 'TRUE';
+        if($str == 'f') $str = 'FALSE';
+    
+        // force certain number/date formats to be imported as strings
+        if(preg_match("/^0/", $str) || preg_match("/^\+?\d{8,}$/", $str) || preg_match("/^\d{4}.\d{1,2}.\d{1,2}/", $str)) {
+          $str = "'$str";
+        }
+    
+        // escape fields that include double quotes
+        if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
+     }     
 }
