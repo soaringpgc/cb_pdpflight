@@ -36,6 +36,8 @@
     		var thistime = new Date();
     		var	localtime = thistime.toLocaleTimeString([], { hour12: false });
     		$(this).addClass('clicked'); 	
+//    		$(this).siblings('.startTime').text("start");
+			$(this).closest('td').next('td').text(localtime);
     		$.ajax({
     			url: PDP_FLIGHT_SUBMITTER.ajax_url,
     			method: 'POST',
@@ -55,8 +57,7 @@
                     alert( PDP_FLIGHT_SUBMITTER.failure );
                 }		
     		});		
-    	 });
-    	 
+    	 });   	 
 		    	 //appends an "active" class to .popup and .popup-content when the "Open" button is clicked
 		$(".open").on("click", function() {
 		  $(".popup-overlay, .popup-content").addClass("active");

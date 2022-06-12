@@ -181,8 +181,8 @@ $insertSQL = sprintf("INSERT INTO pgc_flightsheet_audit (`Date`, Glider, Flight_
 	$headers = "From: PGC-DataPortal@noreply.com";
 	If ($row_Flightlog['Tow Altitude'] <> ' 5000') {
 		$sent = mail($to, $subject, $emaillog, $headers);
-		}
-	$sent = mail($to, $subject, $emaillog, $headers);
+	}
+//	$sent = mail($to, $subject, $emaillog, $headers);
 	}
 
 /*=======*/
@@ -215,6 +215,16 @@ $rsMembers = mysqli_query($PGCi, $query_rsMembers )  or die(mysqli_error($PGCi))
 $row_rsMembers =mysqli_fetch_assoc($rsMembers);
 $totalRows_rsMembers = mysqli_num_rows($rsMembers);
 
+$row_Memberpilots = array();
+$args = array('role'=> 'subscriber', 'role__not_in'=>'inactive', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$member_pilots = get_users( $args );
+
+foreach($member_pilots as $pilot ){
+	$pilot_user = get_userdata( $pilot->id );
+	array_push ($row_Memberpilots, ($pilot_user->last_name .', '. $pilot_user->first_name ));	
+}
+sort($row_Memberpilots ); 
+
 //mysql_select_db($database_PGC, $PGC);
 $query_rsGliders = "SELECT glider, nnumber FROM pgc_gliders ORDER BY glider ASC";
 $rsGliders = mysqli_query($PGCi, $query_rsGliders )  or die(mysqli_error($PGCi));
@@ -229,8 +239,8 @@ $totalRows_rsGliders = mysqli_num_rows($rsGliders);
 
 // select tow pilots from Wordpress user database where role = 'tow_pilot'
 $row_Towpilots = array();
-$args = array('role'=> 'tow_pilot', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
-$tow_pilots = get_users($args );
+$args = array('role'=> 'tow_pilot', 'role__not_in'=>'inactive', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$tow_pilots = get_users( $args );
 
 foreach($tow_pilots as $pilot ){
 	$pilot_user = get_userdata( $pilot->id );
@@ -239,14 +249,14 @@ foreach($tow_pilots as $pilot ){
 sort($row_Towpilots ); 
 
 //mysql_select_db($database_PGC, $PGC);
-$query_rs_instructors = "SELECT * FROM pgc_instructors WHERE rec_active = 'Y' AND cfig = 'Y' ORDER BY Name ASC";
-$rs_instructors = mysqli_query($PGCi, $query_rs_instructors )  or die(mysqli_error($PGCi));
-$row_rs_instructors =mysqli_fetch_assoc($rs_instructors);
-$totalRows_rs_instructors = mysqli_num_rows($rs_instructors);
+// $query_rs_instructors = "SELECT * FROM pgc_instructors WHERE rec_active = 'Y' AND cfig = 'Y' ORDER BY Name ASC";
+// $rs_instructors = mysqli_query($PGCi, $query_rs_instructors )  or die(mysqli_error($PGCi));
+// $row_rs_instructors =mysqli_fetch_assoc($rs_instructors);
+// $totalRows_rs_instructors = mysqli_num_rows($rs_instructors);
 
 // select instructors from Wordpress user database where role = 'cfi_g'
 $row_Cfigpilots = array();
-$args = array('role'=> 'cfi_g', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$args = array('role'=> 'cfi_g', 'role__not_in'=>'inactive', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
 $cfi_pilots = get_users($args );
 
 foreach($cfi_pilots as $pilot ){
@@ -347,20 +357,19 @@ do {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Member:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
                   <select name="Pilot1" class="style25" id="Pilot1">
+                  		<option value="" >  </option>
                         <option value="** New Member **" <?php if (!(strcmp("** New Member **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** New Member **</option>
                         <option value="** Freedoms Wings **" <?php if (!(strcmp("** Freedoms Wings **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** Freedoms Wings **</option>
-                        <?php
-do {  
-?>
-<option value="<?php echo $row_rsMembers['NAME']?>"<?php if (!(strcmp($row_rsMembers['NAME'], $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>><?php echo $row_rsMembers['NAME']?></option>
-                        <?php
-} while ($row_rsMembers =mysqli_fetch_assoc($rsMembers));
-  $rows = mysqli_num_rows($rsMembers);
-  if($rows > 0) {
-      mysqli_data_seek($rsMembers, 0);
-	  $row_rsMembers =mysqli_fetch_assoc($rsMembers);
-  }
-?>
+                        <?php                        
+                  			foreach($row_Memberpilots as $pilot ){
+                  			    if ( $pilot == $row_Flightlog['Pilot1'] ) { 
+                  			    	echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');  
+                  			    } else {
+                  					echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
+                  				}                   
+                  			}                         
+						?>
+
                   </select>
                 </span></td>
               </tr>
@@ -371,7 +380,7 @@ do {
                      <option value="" >  </option>
                         <?php                        
                   			foreach($row_Cfigpilots as $pilot ){
-                  			    if ( !strcmp($pilot,  $row_Flightlog['Pilot2'] )  ) { 
+                  			    if ( $pilot == $row_Flightlog['Pilot2'] ) { 
                   			    	echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');  
                   			    } else {
                   					echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
@@ -425,7 +434,7 @@ do {
                 <td bgcolor="#CCCCCC"><select name="Tow_Pilot" class="style25">
                     <?php
                     foreach($row_Towpilots as $pilot ){
-                    	if (strcmp($pilot, $row_Flightlog['Tow Pilot']) == 0){
+                    	if ( $pilot == $row_Flightlog['Tow Pilot']){
                     		echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');                  	
                     	} else {
                     		echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
@@ -439,7 +448,7 @@ do {
                 <td bgcolor="#CCCCCC"><input name="Tow_Charge" type="text" class="style25" value="<?php echo $row_Flightlog['Tow Charge']; ?>" size="6" maxlength="6" readonly></td>
               </tr>
               <tr valign="baseline">
-                <td height="47" align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Notes:</div></td>
+                <td height="47" align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Notes(For Treasurer.):</div></td>
                 <td bgcolor="#CCCCCC"><textarea name="Notes" cols="50" rows="5" class="style25"><?php echo $row_Flightlog['Notes']; ?></textarea></td>
               </tr>
               <tr valign="baseline">
@@ -471,7 +480,7 @@ mysqli_free_result($Flightlog);
 mysqli_free_result($rsMembers);
 mysqli_free_result($rsGliders);
 //mysqli_free_result($rsTowpilots);
-mysqli_free_result($rs_instructors);
+//mysqli_free_result($rs_instructors);
 mysqli_free_result($rs_altitudes);
 ?>
 

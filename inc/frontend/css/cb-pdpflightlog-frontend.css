@@ -80,14 +80,14 @@ tr{
 {
 	font-size: 18px;
 	font-weight: bold;
-	color: #FBFBFB;
+	color: #FFFFFF;
 }
 
 .fl_style3 {font-size: 16px; font-weight: bold; }
 .fl_style16 {color: #CCCCCC; }
 .fl_style24 {color: #000000}
 .fl_style25 {font-size: 18px; font-weight: bold; color: #000000; }
-.fl_style27 {font-size: 18px; font-weight: bold; color: #555555; }
+.fl_style27 {font-size: 18px; font-weight: bold; color: #000000; }
 
 .fl_style29 {
 	color: #7DFF7D;
