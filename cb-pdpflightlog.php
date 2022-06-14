@@ -130,5 +130,6 @@ $min_php = '5.6.0';
 
 // Check the minimum required PHP version and run the plugin.
 if ( version_compare( PHP_VERSION, $min_php, '>=' ) ) {
-		wp_plugin_name_init();
+	add_action( 'plugins_loaded', 'CB_PdpFlightlog\wp_plugin_name_init' );
+//		wp_plugin_name_init();
 }

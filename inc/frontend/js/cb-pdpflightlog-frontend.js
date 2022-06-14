@@ -36,7 +36,6 @@
     		var thistime = new Date();
     		var	localtime = thistime.toLocaleTimeString([], { hour12: false });
     		$(this).addClass('clicked'); 	
-//    		$(this).siblings('.startTime').text("start");
 			$(this).closest('td').next('td').text(localtime);
     		$.ajax({
     			url: PDP_FLIGHT_SUBMITTER.ajax_url,
@@ -67,7 +66,13 @@
 		$(".close, .popup-overlay").on("click", function() {
 		  $(".popup-overlay, .popup-content").removeClass("active");
 		});
+		 $(".pdp_popup_detail").on('click', function(e){
+		 	e.preventDefault();
+		 	alert ("popup" +  $(this).val());
+//		 	window.location.replace('./html_cb_pdpflightlog_update.php');		 
+		 });
 	});
+	
 })( jQuery );
 
 function pdpJumpTo(year){

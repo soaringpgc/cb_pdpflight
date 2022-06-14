@@ -70,40 +70,51 @@ $PGCwp->update( 'pgc_flightlog_lastpilot', array('LastPilot'=>$_POST['Tow_Pilot'
 $sql = $PGCwp->prepare("SELECT Date FROM pgc_flightsheet WHERE `Key` =  %s" ,$_GET['key']);
 $flightdate=$PGCwp->get_var($sql);
  
- $updateSQL = sprintf("UPDATE pgc_flightsheet SET Glider=%s, Flight_Type=%s, Pilot1=%s, Pilot2=%s, Takeoff=%s, Landing=%s, `Tow Altitude`=%s, `Tow Plane`=%s, `Tow Pilot`=%s, `Tow Charge`=%s, Notes=%s ,`ip`=%s WHERE `Key`=%s",
-                       GetSQLValueString($_POST['Glider'], "text"),
-					   GetSQLValueString($_POST['Flight_Type'], "text"),					   
-                       GetSQLValueString($_POST['Pilot1'], "text"),
-                       GetSQLValueString($_POST['Pilot2'], "text"),
-                       GetSQLValueString($_POST['Takeoff'], "date"),
-                       GetSQLValueString($_POST['Landing'], "date"),
-                       GetSQLValueString($_POST['Tow_Altitude'], "text"),
-                       GetSQLValueString($_POST['Tow_Plane'], "text"),
-                       GetSQLValueString($_POST['Tow_Pilot'], "text"),
-                       GetSQLValueString($_POST['Tow_Charge'], "double"),
-                       GetSQLValueString($_POST['Notes'], "text"),
-					   GetSQLValueString($_POST['entry_ip'], "text"),
-                       GetSQLValueString($_POST['recordID'], "int"));
-  $Result1 = mysqli_query($PGCi, $updateSQL )  or die(mysqli_error($PGCi));
+//  $updateSQL = sprintf("UPDATE pgc_flightsheet SET Glider=%s, Flight_Type=%s, Pilot1=%s, Pilot2=%s, Takeoff=%s, Landing=%s, `Tow Altitude`=%s, `Tow Plane`=%s, `Tow Pilot`=%s, `Tow Charge`=%s, Notes=%s ,`ip`=%s WHERE `Key`=%s",
+//                        GetSQLValueString($_POST['Glider'], "text"),
+// 					   GetSQLValueString($_POST['Flight_Type'], "text"),					   
+//                        GetSQLValueString($_POST['Pilot1'], "text"),
+//                        GetSQLValueString($_POST['Pilot2'], "text"),
+//                        GetSQLValueString($_POST['Takeoff'], "date"),
+//                        GetSQLValueString($_POST['Landing'], "date"),
+//                        GetSQLValueString($_POST['Tow_Altitude'], "text"),
+//                        GetSQLValueString($_POST['Tow_Plane'], "text"),
+//                        GetSQLValueString($_POST['Tow_Pilot'], "text"),
+//                        GetSQLValueString($_POST['Tow_Charge'], "double"),
+//                        GetSQLValueString($_POST['Notes'], "text"),
+// 					   GetSQLValueString($_POST['entry_ip'], "text"),
+//                        GetSQLValueString($_POST['recordID'], "int"));
+//   $Result1 = mysqli_query($PGCi, $updateSQL )  or die(mysqli_error($PGCi));
 
+$Result1 = $PGCwp->update('pgc_flightsheet', array('Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$_POST['Pilot1'], 
+				'Pilot2'=>$_POST['Pilot2'], 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
+				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$_POST['Tow_Pilot'], 'Tow Charge'=>$_POST['Tow_Charge'], 'Notes'=>$_POST['Notes'], 
+				'ip'=>$_POST['entry_ip']), array('Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'), array('%s'));  
+//exit ($Result1); 
 /*== INSERT AUDIT RECORD ==*/ 
-$insertSQL = sprintf("INSERT INTO pgc_flightsheet_audit (`Date`, Glider, Flight_Type, Pilot1, Pilot2, Takeoff, Landing, `Tow Altitude`, `Tow Plane`, `Tow Pilot`, `Tow Charge`, Notes,`ip`,`Key`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s )",
-                       GetSQLValueString($flightdate, "text"),
-                       GetSQLValueString($_POST['Glider'], "text"),
-					   GetSQLValueString($_POST['Flight_Type'], "text"),					   
-                       GetSQLValueString($_POST['Pilot1'], "text"),
-                       GetSQLValueString($_POST['Pilot2'], "text"),
-                       GetSQLValueString($_POST['Takeoff'], "date"),
-                       GetSQLValueString($_POST['Landing'], "date"),
-                       GetSQLValueString($_POST['Tow_Altitude'], "text"),
-                       GetSQLValueString($_POST['Tow_Plane'], "text"),
-                       GetSQLValueString($_POST['Tow_Pilot'], "text"),
-                       GetSQLValueString($_POST['Tow_Charge'], "double"),
-                       GetSQLValueString($_POST['Notes'], "text"),
-					   GetSQLValueString($_POST['entry_ip'], "text"),
-                       GetSQLValueString($_POST['recordID'], "int"));
-
- $Result1 = mysqli_query($PGCi, $insertSQL )  or die(mysqli_error($PGCi)); 
+// $insertSQL = sprintf("INSERT INTO pgc_flightsheet_audit (`Date`, Glider, Flight_Type, Pilot1, Pilot2, Takeoff, Landing, `Tow Altitude`, `Tow Plane`, `Tow Pilot`, `Tow Charge`, Notes,`ip`,`Key`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s )",
+//                        GetSQLValueString($flightdate, "text"),
+//                        GetSQLValueString($_POST['Glider'], "text"),
+// 					   GetSQLValueString($_POST['Flight_Type'], "text"),					   
+//                        GetSQLValueString($_POST['Pilot1'], "text"),
+//                        GetSQLValueString($_POST['Pilot2'], "text"),
+//                        GetSQLValueString($_POST['Takeoff'], "date"),
+//                        GetSQLValueString($_POST['Landing'], "date"),
+//                        GetSQLValueString($_POST['Tow_Altitude'], "text"),
+//                        GetSQLValueString($_POST['Tow_Plane'], "text"),
+//                        GetSQLValueString($_POST['Tow_Pilot'], "text"),
+//                        GetSQLValueString($_POST['Tow_Charge'], "double"),
+//                        GetSQLValueString($_POST['Notes'], "text"),
+// 					   GetSQLValueString($_POST['entry_ip'], "text"),
+//                        GetSQLValueString($_POST['recordID'], "int"));
+// 
+//  $Result1 = mysqli_query($PGCi, $insertSQL )  or die(mysqli_error($PGCi)); 
+ 
+$Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , 'Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$_POST['Pilot1'], 
+				'Pilot2'=>$_POST['Pilot2'], 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
+				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$_POST['Tow_Pilot'], 'Tow Charge'=>$_POST['Tow_Charge'], 'Notes'=>$_POST['Notes'], 
+				'ip'=>$_POST['entry_ip'], 'Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'));  
+//exit ($Result2); 
  /*==END INSERT AUDIT====*/ 
  
  /*  Calculate Time   */

@@ -214,7 +214,15 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                         <?php if ($row_Flightlog != null ){ do { ?>
                         <tr >
                              <td bgcolor="#999999" class="fl_style25"><div align="center">  
-                             <?php if ( !$view_only )  {  ?>                                
+                             <?php if ( !$view_only )  {         
+
+//                                 echo ('<button type="button"') ;
+//                                 echo ($row_Flightlog['Key']); 
+//                                 echo (' align="center" class="pdp_popup_detail" value="'); 
+//                                 echo ($row_Flightlog['Key'].'">' . $row_Flightlog['Key'] . '</button></td>');
+                                                                                 
+                             ?>                               
+                                                           
                        		    <form action="<?php echo admin_url('admin-post.php'); ?>" method="get">
                          	    	<input type="hidden" name="action" value="pdp-flight-log-details">
                          	    	<input type='hidden' name='key' value='<?php echo $row_Flightlog['Key']; ?>' >	

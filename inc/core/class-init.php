@@ -4,6 +4,7 @@ namespace CB_PdpFlightlog\Inc\Core;
 use CB_PdpFlightlog as NS;
 use CB_PdpFlightlog\Inc\Admin as Admin;
 use CB_PdpFlightlog\Inc\Frontend as Frontend;
+use CB_PdpFlightlog\Inc\Rest as Rest;
 
 /**
  * The core plugin class.
@@ -58,13 +59,14 @@ class Init {
 
 		$this->plugin_name = NS\PLUGIN_NAME;
 		$this->version = NS\PLUGIN_VERSION;
-				$this->plugin_basename = NS\PLUGIN_BASENAME;
-				$this->plugin_text_domain = NS\PLUGIN_TEXT_DOMAIN;
+		$this->plugin_basename = NS\PLUGIN_BASENAME;
+		$this->plugin_text_domain = NS\PLUGIN_TEXT_DOMAIN;
 
 		$this->load_dependencies();
 		$this->set_locale();
 //		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_rest_hooks();
 	}
 
 	/**
@@ -95,6 +97,13 @@ class Init {
 		$plugin_i18n = new Internationalization_I18n( $this->plugin_text_domain );
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+
+	}
+	public function define_rest_hooks() {
+
+		$plugin_rest = new Rest\Rest( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
+		
+		$this->loader->add_action( 'rest_api_init', $plugin_rest, 'register_routes');
 
 	}
 
