@@ -213,22 +213,12 @@ class Init {
 	 * @since     1.0.0
 	 * @return    string    The text domain of the plugin.
 	 */
-     public function pdp_flight_log(){ 
-     	if (isset($_GET['pgc_year'])) {
-     		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
-     	}else {
-     		wp_redirect($_GET['source_page']);
-     	}
-     }
      
      public function include_flightlog_list_edit(){
      	include_once( 'partials/html_cb_pdpflightlog_list_edit.php');
      }
-
-      
      
       public function get_plugin_text_domain() {
      		return $this->plugin_text_domain;
       }
-
 }

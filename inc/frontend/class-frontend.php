@@ -113,7 +113,6 @@ class Frontend {
 
 	}
 	public function flight_log( $atts = array() ) {
-
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
@@ -127,6 +126,17 @@ class Frontend {
 		return $output;
 
 	} // flight_log()	
+	
+	public function pdp_flight_log(){ 
+     	if (isset($_GET['pgc_year'])) {
+     		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
+     	}elseif (isset($_GET['flight_date']) ) {
+     		wp_redirect($_GET['source_page'].'?flight_date='.$_GET['flight_date']);
+     	} else {
+     		wp_redirect($_GET['source_page']);
+     	}
+     }
+			
 	public function flight_metrics( $atts = array() ) {
 
 		ob_start();

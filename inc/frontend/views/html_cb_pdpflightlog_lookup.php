@@ -223,11 +223,11 @@ a:visited {
                         	<?php
                          	$max_page = ceil($FlightLogTotal/$maxRows_Flightlog);
                          	for ($i =0; $i<$max_page ; $i++ ){
-                         		echo '<td width="15px" align="center"> <a href='.admin_url('admin-post.php').
+                         		echo '<td width="15px" align="center"  class="fl_style1"> <a   href='.admin_url('admin-post.php').
                          		sprintf("?request_page=%s&action=pdp-metrics-details&req_year=%s&pdp_type=%s&pdp_id=%s&pdp_metrics_page=%s", 
-                    				$i,  $req_year, $pdp_type, rawurlencode($pdp_id), $pdp_metrics_page ) .">". $i . '</a></td>';
+                    				$i,  $req_year, rawurlencode($pdp_type), rawurlencode($pdp_id), $pdp_metrics_page ) .">". $i . '</a></td>';                  				
                          	}
-                        	
+                         	
                         	?>
                         </tr> 
 

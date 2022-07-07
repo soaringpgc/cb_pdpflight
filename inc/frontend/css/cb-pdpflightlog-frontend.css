@@ -192,3 +192,7 @@ visibility:visible;
 .popup-content.active {
 visibility:visible;
 }
+optgroup.nofly{
+	background-color: #000000;
+	color: #ffffff;
+}
