@@ -1,7 +1,8 @@
 <?php
 
 namespace CB_PdpFlightlog\Inc\Frontend;
-
+date_default_timezone_set('America/New_York');
+//exit(date_default_timezone_get());
 /**
  * The public-facing functionality of the plugin.
  *
@@ -78,6 +79,7 @@ class Frontend {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdpflightlog-frontend.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . 'flightlog', plugin_dir_url( __FILE__ ) . 'css/cb-public-flightlog.css', array(), $this->version, 'all' );
 
 	}
 
@@ -99,8 +101,11 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+        wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
+    	wp_register_script( 'Flight_log_app',  plugins_url('/cb-pdpflightlog/inc/frontend/js/flight_log_app.js'));
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery' ), $this->version, false );		
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery', 'backbone',
+			'underscore', 'Flight_log_app', 'Flight_log_templates'), $this->version, false );		
     	wp_localize_script( $this->plugin_name, 'PDP_FLIGHT_SUBMITTER', array(
     		'ajax_url' =>  admin_url('admin-ajax.php'),
     		'root' => esc_url_raw( rest_url() ),
@@ -115,10 +120,19 @@ class Frontend {
 	public function flight_log( $atts = array() ) {
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
-
-			include ('views/html_cb_pdpflightlog_list_edit.php');
-
+	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
+			$new_log = false;
+			
+ 			if (isset( $flight_atts['new'] )) {
+ 				$new_log = $flight_atts['new']==='true' ? true : false ;
+ 			}
+ 			if ($new_log){
+ 				include ('views/html_cb_pdpflightlog.php');		
+ 					
+ 			} else {				
+				include ('views/html_cb_pdpflightlog_list_edit.php');	
+			}
+			
 		$output = ob_get_contents();
 
 		ob_end_clean();
@@ -126,6 +140,7 @@ class Frontend {
 		return $output;
 
 	} // flight_log()	
+	
 	
 	public function pdp_flight_log(){ 
      	if (isset($_GET['pgc_year'])) {

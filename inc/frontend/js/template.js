@@ -1,5 +1,6 @@
-<-- Template -->
+
 // Aircraft Types 
+/* 
   var flightTemplate = _.template(`
    <div class="hiding" > <%= id %></div>
       <div >
@@ -17,5 +18,30 @@
      <div class="Cell"><button class="Enter" ">Enter</button></div>
    </div >
 `);
+ */
+var pdp = pdp || {};
 
-<-- End template ->
+pdp.flightTemplate = _.template(`
+
+
+`);		    
+
+var archiveTemplate = _.template(` 
+   <div id="id" class="tableCell pdp-narrow"><%=id%></div>
+   <div id="glider_id" class="hidden"><%=glider_id%></div>
+   <div id="glider" class="pdp-tableCell pdp-narrow"><%=glider%></div>
+   <div id="pilot_id" class="hidden"><%=pilot_id%></div>
+   <div id="pilot" class="pdp-tableCell pdp-name"><%=pilot%></div>
+   <div id="cfig_id" class="hidden"><%=cfig_id%></div>
+   <div id="cfig" class="pdp-tableCell pdp-name"><%=cfig%></div>
+   <div id="altitude_id" class="hidden"><%=altitude_id%></div>
+   <div id="altitude" class="pdp-tableCell"><%=altitude%></div>
+   <div id="towpilot_id" class="hidden"><%=towpilot%></div>
+   <div id="towpilot" class="pdp-tableCell pdp-name"><%=towpilot%></div>
+   <div id="towplane_id" class="hidden"><%=towplane%></div>
+   <div id="towplane" class="pdp-tableCell pdp-narrow"><%=towplane%></div>
+   <div id="duration" class="pdp-tableCell pdp-time"><%=start%></div>
+   <div id="notes" class="hidden"><%=towplane%></div>    
+`);	  
+
+//<-- End template ->

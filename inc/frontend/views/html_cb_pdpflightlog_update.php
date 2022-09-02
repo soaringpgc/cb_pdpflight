@@ -58,9 +58,9 @@ $Result1 = $PGCwp->update('pgc_flightsheet', array('Glider'=>$_POST['Glider'], '
 				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
 				'ip'=>$_POST['entry_ip']), array('Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'), array('%s'));  
 
-$Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , 'Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$_POST['Pilot1'], 
-				'Pilot2'=>$_POST['Pilot2'], 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
-				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$_POST['Tow_Pilot'], 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
+$Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , 'Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
+				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
+				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
 				'ip'=>$_POST['entry_ip'], 'Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'));  
 //exit ($Result2); 
  /*==END INSERT AUDIT====*/ 
@@ -258,7 +258,9 @@ body,td,th {
 -->
 </style>
 </head>
+<!-- 
 <script language="javascript" src="../calendar/calendar.js"></script>
+ -->
 
 <body>
 <p>&nbsp;</p>

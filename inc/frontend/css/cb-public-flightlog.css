@@ -1,0 +1,145 @@
+/*
+	Style sheet for flight log. 
+
+*/ 
+
+#flight-log ul {
+  list-style-type: none; /* Hides bullet points from todo list */
+}
+#flight-log input.edit {
+  display: none; /* Hides input box*/
+}
+#flight-log .editing label {
+  display: none; /* Hides label text when .editing*/
+}    
+#flight-log .editing input.edit {
+  display: inline; /* Shows input text box when .editing*/
+}  
+div .pdp-table {
+    display: table;
+     padding: 5px;
+} 
+div .pdp-tableRow {
+    display: table-row;
+}
+div .pdp-tableCell {
+    display: table-cell;
+//    border: #737373 solid 1px;
+	border-right: #737373 solid 1px;
+    padding: 5px;
+}
+
+#flightedit {
+  display: grid;                            /* 1 */
+  grid-template-columns:  repeat(2, 80px) repeat(2, 170px) 80px repeat(2, 90px);   /* 2 */
+  grid-auto-rows: 30px;                     /* 3 */
+  grid-gap: 5px;                           /* 4 */
+  width: 516px;
+}
+.pdp-tall {
+  grid-row: 2 / 5;                          /* 5 */
+  grid-column: 6 / 8;                       /* 5 */
+}
+
+.pdp-wide {
+  grid-row: 1 / 2;                          /* 6 */
+  grid-column: 6 / 8;                       /* 6 */
+}	
+ .pdp-block {
+  background-color: gray;
+}
+.pdp-time {
+	width: 80px;
+	text-align:center;
+}
+.pdp-narrow {
+	width: 25px;
+	text-align:center;
+	padding: 5px;
+}
+.pdp-name {
+	width: 150px;
+	text-align:center;
+	padding: 5px;
+}
+
+.pdp-right {
+	text-align:right;
+	padding: 5px;
+}      
+.pdp-center {
+	text-align:center;
+	padding: 5px;
+}
+.pdp-note {
+	text-align:center;
+	padding: 5px;
+	overflow: hidden;
+}  
+.hidden {
+	display: none;
+} 
+body {
+	background-color: #eee;
+}
+
+.flightContainer {
+  display: grid;                            /* 1 */
+  grid-template-columns:  repeat(2, 70px) repeat(2, 170px)  60px 120px 60px repeat(2, 90px) 200px;   /* 2 */
+  grid-auto-rows: 30px;                     /* 3 */
+  grid-gap: 5px;                           /* 4 */
+  border: #737373 solid 1px;
+}
+
+.flightContainer img {
+	float: left;
+	margin: 10px;
+}
+
+.flightContainer ul {
+    list-style-type: none;
+    margin-bottom: 0;
+}
+
+.flightContainer button {
+    float: right;
+    margin: 10px;
+}
+
+#flightedit label {
+	width: 100px;
+	margin-right: 10px;
+	text-align: right;
+	line-height: 25px;
+}
+
+#flightedit label, #flightedit input {
+	display: block;
+	margin-bottom: 10px;
+	float: left;
+}
+
+#flightedit label[for="title"], #flightedit label[for="releaseDate"] {
+	clear: both;
+}
+
+#flightedit button {
+	display: block;
+	margin: 5px 20px 10px 10px;
+	float: right;
+	clear: both;
+}
+
+#flightedit div {
+	width: 550px;
+}
+
+#flightedit div:after {
+	content: "";
+	display: block;
+	height: 0;
+	visibility: hidden;
+	clear: both;
+	font-size: 0;
+	line-height: 0;
+}      

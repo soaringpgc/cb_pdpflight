@@ -100,19 +100,16 @@ class Rest extends \Cloud_Base_Rest {
       
 	public function pdp_get_flights( \WP_REST_Request $request) {
 		global $PGCwp; 
+		global $wpdb;
 		$table_name =  'pgc_flightsheet';
+		$wp_table_name = 'wp_cloud_base_flight_sheet'; 
 		
 		$maxRows = isset($request['maxrows']) ? $request['maxrows'] : 10;
 		$pageNum = isset($request['pageNum']) ? $request['pageNum'] : 0 ;
 		$startRow = $pageNum * $maxRows; 
-		$fields_valid = array( 'Date'=>'date', 'Glider'=>'glider', 'Flight_Type'=>'flight_type', 'Pilot1'=>'pilot1', 
-			'Pilot2'=>'pilot2', 'Takeoff'=>'takeoff', 'Landing'=>'landing', 'Time'=>'time', '`Tow Altitude`'=>'tow_altitude', 
-			'`Tow Plane`'=>'tow_plane', '`Tow Pilot`'=>'tow_pilot', '`Tow Charge`'=>'tow_charge', 'Notes'=>'notes', 
-			'Ip'=>'ip', 'email'=>'email', 'mail_count'=>'mail_count', 'cfig_train'=>'cfig_train');	
-		// NTFS I copied the array but I need it in reverse key value order, so I'm lazy, sue me. 	
-		//  --dsj 
-		$valid_fields= array_flip($fields_valid);			
-		$select_string = $this->select_fields($request, $valid_fields);	
+		
+		$select_string ='s.`Key`, s.Date, s.Glider, s.Flight_Type, s.Pilot1, s.Pilot2, s.Takeoff, s.Landing, s.Time, s.`Tow Altitude` as tow_alitude, s.`Tow Plane` as tow_plane, s.`Tow Pilot` as tow_pilot, s.`Tow Charge` as tow_charge, s.Notes, s.Ip, s.email, s.mail_count, s.cfig_train';
+	    $select_string2 = 'w.id, w.flightyear, w.flight_number, w.aircraft_id, w.pilot_id, w.flight_fee_id, w.total_charge, w.start_time, w.end_time, w.instructor_id, w.tow_plane_id, w.tow_pilot_id w.notes';
 
 // process filters.  	  
  	    $filters_valid = array( 'Date'=>'date', 'Glider'=>'glider', 'Flight_Type'=>'flight_type', 'Pilot1'=>'pilot1', 
@@ -125,10 +122,12 @@ class Rest extends \Cloud_Base_Rest {
 
  	//		$sql = $PGCwp->prepare("SELECT * FROM  $table_name WHERE `Key` = '%d'", $request['id']);
  		}else {
- 		  	$sql = "SELECT {$select_string} FROM {$table_name} s WHERE {$filter_string} ORDER BY key DESC ";	
+ 		  	$sql = "SELECT {$select_string} FROM {$table_name} s WHERE {$filter_string} ORDER BY `Key` DESC ";	
  		
 //			$sql = $PGCwp->prepare("SELECT * FROM $table_name WHERE `Date` = '%s' ORDER BY `Key` DESC LIMIT %d, %d", date("Y-m-d"), $maxRows,  $startRow);
 		}
+//	  	return new \WP_REST_Response ($sql);
+
 		$items = $PGCwp->get_results($sql);
 	  	return new \WP_REST_Response ($items);
 	}
@@ -203,7 +202,8 @@ class Rest extends \Cloud_Base_Rest {
 		return new \WP_Error( 'rest_api_sad', esc_html__( 'Something went horribly wrong.', 'my-text-domain' ), array( 'status' => 500 ) );
 	}	
 	public function pdp_select_filters($request, $valid_filters){
-	  $filter_string = "1";
+	  global $wpdb;
+	  $filter_string = "1 ";
 	  $valid_keys = array_keys($valid_filters );		  
 	  foreach($valid_keys as $key ){
 	  	if(!empty($request[$key]) ){
