@@ -270,7 +270,7 @@ class Frontend {
     public function pdp_export_data(){
     	global $PGCi;
     	
-     	if (isset($_POST['flight_year']) && $_POST['flight_year'] != date("Y")) {
+     	if (isset($_POST['flight_year']) && $_POST['flight_year'] != date("Y") && $_POST['flight_year'] != "") {
    			$flight_year = $_POST['flight_year'];
    			$sql_query = "Select * From  pgc_flightsheet". "_". $flight_year;
  		} else {
