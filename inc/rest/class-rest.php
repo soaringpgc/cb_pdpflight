@@ -17,8 +17,12 @@ namespace CB_PdpFlightlog\Inc\Rest;
  * methods. Don't forget to validate and sanatize incoming data!
  *
  * @package    Cloud_Base
- * @subpackage Cloud_Base/public
- * @author     Your Name <email@example.com>
+ * @subpackage Cloud_Base/cb-pdpflightlog
+ * @author     dave
+ * This module is a bridge between the PGC PDP flight long and the Cloudbase flight log
+ * PGC has 12 year history of flights recorced in the PDP and report generating modules
+ * This plugin acts as a bridge so the old reporting generating will work with new 
+ * Cloudbase flight until new report programs can be written. 
  */
 class Rest extends \Cloud_Base_Rest {
 	/**
@@ -99,6 +103,24 @@ class Rest extends \Cloud_Base_Rest {
     }
       
 	public function pdp_get_flights( \WP_REST_Request $request) {
+	
+
+ 	$requestA = new \WP_REST_Request('GET', '/cloud_base/v1/flights');	
+// 	return new \WP_REST_Response (( $request['flight_number']));	
+	$fn = $request['flight_number'] ;
+
+// $requestA->set_param('flight_number', $fn);
+$requestA->set_query_params($request);
+//$requestA->set_param('flight_number', $fn);
+$response = rest_do_request($requestA);
+
+//return new \WP_REST_Response($response);
+$server = rest_get_server();
+$flights = $server->response_to_data( $response, false );
+
+return new \WP_REST_Response ($flights);		
+	
+	
 		global $PGCwp; 
 		global $wpdb;
 		$table_name =  'pgc_flightsheet';

@@ -169,6 +169,7 @@ tr:nth-child(odd) {background-color: #ffffff;}
                 <td width="23%" align="center">
                   <form action="<?php echo admin_url('admin-post.php'); ?>" method="post">
                     <input type="hidden" name="action" value="pdp_flight_export">
+                    <input type="hidden" name="flight_year" value=<?php echo $flight_year. " " ?>>
                     <input type="submit" value="YTD Activity.xls">
                  </form>
                 </td>

@@ -22,7 +22,16 @@
 var pdp = pdp || {};
 
 pdp.flightTemplate = _.template(`
-
+   <div id="key" class="pdp-tableCell"><%=Key%></div>
+   <div id="glider" class="pdp-tableCell "><%=Glider%></div> 
+   <div id="pilot" class="pdp-tableCell "><%=Pilot1%></div>
+   <div id="cfig" class="pdp-tableCell "><%=Pilot2%></div>
+   <div id="altitude" class="pdp-tableCell"><%=tow_alitude%></div> 
+   <div id="towpilot" class="pdp-tableCell "><%=tow_pilot%></div>		   
+   <div id="towplane" class="pdp-tableCell "><%=tow_plane%></div>
+   <div id="start" class="pdp-tableCell pdp-time"><%=start%></div>
+   <div id="stop" class="pdp-tableCell pdp-time"><%=stop%></div>
+   <div id="notes" class="pdp-note"><%=Notes%></div>    
 
 `);		    
 

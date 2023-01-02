@@ -1,7 +1,7 @@
 <?php
 
 namespace CB_PdpFlightlog\Inc\Frontend;
-date_default_timezone_set('America/New_York');
+// date_default_timezone_set('America/New_York');
 //exit(date_default_timezone_get());
 /**
  * The public-facing functionality of the plugin.
@@ -269,15 +269,24 @@ class Frontend {
  */     
     public function pdp_export_data(){
     	global $PGCi;
-         $filename = "pgc_flight_activity_" . date('Ymd') . ".xls";
+    	
+     	if (isset($_POST['flight_year']) && $_POST['flight_year'] != date("Y")) {
+   			$flight_year = $_POST['flight_year'];
+   			$sql_query = "Select * From  pgc_flightsheet". "_". $flight_year;
+ 		} else {
+  			$flight_year =  date('Y');
+  			$sql_query = "Select * From  pgc_flightsheet"; 
+ 		}   
+ 		$result = mysqli_query($PGCi, $sql_query) or die('Query failed!');	    	
+        $filename = "pgc_flight_activity_" . $flight_year . ".xls";
+    
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Content-Type: application/vnd.ms-excel");
+        header("Pragma: no-cache");
+     	header("Expires: 0");
        
-         header("Content-Disposition: attachment; filename=\"$filename\"");
-         header("Content-Type: application/vnd.ms-excel");
-         header("Pragma: no-cache");
-         header("Expires: 0");
-       
-         $flag = false;
-         $result = mysqli_query($PGCi, "Select * From  pgc_flightsheet") or die('Query failed!');
+        $flag = false;
+ //        $result = mysqli_query($PGCi, "Select * From  pgc_flightsheet") or die('Query failed!');
          
         while($row = mysqli_fetch_assoc($result)) {
            if(!$flag) {
