@@ -19,7 +19,7 @@ if (isset( $flight_atts['view_only'] )) {
 error_reporting(E_ALL);
 //ini_set('display_errors', 'On');
 
-date_default_timezone_set('America/New_York');
+// date_default_timezone_set('America/New_York');
 
 if(isset($_GET['flight_date'])){
 	$pgc_flight_date = preg_replace("([^0-9-])", "", $_GET['flight_date']);

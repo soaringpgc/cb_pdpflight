@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name:       Cloud Base -PGC PDP Flight Log
  * Plugin URI:        http://pgcsoaring.com/cb-pdpflightlog-uri/
- * Description:       The is an extension to plugin Cloud Base. This adds the PGC PDP flightlog. 
+ * Description:       The is an extension to plugin Cloud Base. This adds the PGC PDP flightlog. IF cloudbase is deactivated, this module will be deactivated. 
  * Version:           1.0.0
  * Author:            Philadelphia Glider Council -- Dave Johnson
  * Author URI:        http://pgcsoaring.com/
@@ -30,7 +30,16 @@ namespace CB_PdpFlightlog;
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-
+// if dependent plugin is not active - stop here and return. 
+// odd way of checking however because this is loaded before cloudbase, we can not 
+// check for a cloudbase class as it is not loaded yet. However, it is in the active plugins 
+// list attempts to self disable falied. 
+// 
+if(!in_array('cloudbase/cloud-base.php', apply_filters('active_plugins', get_option('active_plugins')))){ 
+	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	deactivate_plugins( plugin_basename( __FILE__ ) );
+		return; 
+}
 /**
  * Define Constants
  */
