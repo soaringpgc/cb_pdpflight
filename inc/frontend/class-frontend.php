@@ -101,26 +101,57 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+
+//NOTE :NTFS!!!!  enqueue_scripts and add_inline script moved to the shortcode callback so 
+// it is not call when NOT needed.!
+
+
+
 //        wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
 //    	wp_register_script( 'Flight_log_app',  plugins_url('/cb-pdpflightlog/inc/frontend/js/flight_log_app.js'));
 // 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery', 'backbone',
 // 			'underscore', 'Flight_log_app', 'Flight_log_templates'), $this->version, false );		
 
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+//  				), $this->version, false );		
+//     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
+//     		'ajax_url' =>  admin_url('admin-ajax.php'),
+//     		'root' => esc_url_raw( rest_url() ),
+//      		'nonce' => wp_create_nonce( 'wp_rest' ),
+//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+//      		'current_user_id' => get_current_user_id()
+//     		)	
+//     	);	
+
+	}
+	public function flight_log( $atts = array() ) {
+	
+	
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
  				), $this->version, false );		
-    	wp_localize_script( $this->plugin_name, 'PDP_FLIGHT_SUBMITTER', array(
-    		'ajax_url' =>  admin_url('admin-ajax.php'),
+//     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
+//     		'ajax_url' =>  admin_url('admin-ajax.php'),
+//     		'root' => esc_url_raw( rest_url() ),
+//      		'nonce' => wp_create_nonce( 'wp_rest' ),
+//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+//      		'current_user_id' => get_current_user_id()
+//     		)	
+//     	);	
+  	$dateToBePassed = array(
+     		'ajax_url' =>  admin_url('admin-ajax.php'),
     		'root' => esc_url_raw( rest_url() ),
      		'nonce' => wp_create_nonce( 'wp_rest' ),
      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
      		'current_user_id' => get_current_user_id()
-    		)	
-    	);	
-
-	}
-	public function flight_log( $atts = array() ) {
+ 
+    		);   	
+    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    	); 		
+	
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
@@ -156,7 +187,8 @@ class Frontend {
      }
 			
 	public function flight_metrics( $atts = array() ) {
-
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+ 				), $this->version, false );		
 		ob_start();
 //      Experment in passing parameters in shortcodes. parameters are passed in the 
 //      $atts array, below code sets up defaults and overrides defaults with passed 
@@ -164,7 +196,7 @@ class Frontend {
 //      how Shortcode functions. 
 // 
 	    $atts = array_change_key_case( (array) $atts, CASE_LOWER );
-	    $metrcis_atts = shortcode_atts(array( 'title'=>"dummy title"), $atts, $tag );
+	    $metrcis_atts = shortcode_atts(array( 'title'=>"dummy title"), $atts );
  
 			include ('views/html_cb_pdpflightlog_metrics.php');
 
