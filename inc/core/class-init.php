@@ -61,12 +61,9 @@ class Init {
 		$this->version = NS\PLUGIN_VERSION;
 		$this->plugin_basename = NS\PLUGIN_BASENAME;
 		$this->plugin_text_domain = NS\PLUGIN_TEXT_DOMAIN;
-
 		$this->load_dependencies();
 		$this->set_locale();
-//		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->define_rest_hooks();
 	}
 
 	/**

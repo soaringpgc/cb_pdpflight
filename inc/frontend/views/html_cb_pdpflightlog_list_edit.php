@@ -84,9 +84,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   $params = explode("&", $_SERVER['QUERY_STRING']);
   $newParams = array();
   foreach ($params as $param) {
-//     if (stristr($param, "pageNum_Flightlog") == false && 
-//         stristr($param, "totalRows_Flightlog") == false) {
-
 
     if (stristr($param, "pageNum_Flightlog") == false) {
       array_push($newParams, $param);
@@ -96,7 +93,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
     $queryString_Flightlog = "&" . htmlentities(implode("&", $newParams));
   }
 }
-//$queryString_Flightlog = sprintf("&totalRows_Flightlog=%d", $totalRows_Flightlog);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

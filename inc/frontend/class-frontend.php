@@ -101,11 +101,14 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-        wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
-    	wp_register_script( 'Flight_log_app',  plugins_url('/cb-pdpflightlog/inc/frontend/js/flight_log_app.js'));
+//        wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
+//    	wp_register_script( 'Flight_log_app',  plugins_url('/cb-pdpflightlog/inc/frontend/js/flight_log_app.js'));
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery', 'backbone',
+// 			'underscore', 'Flight_log_app', 'Flight_log_templates'), $this->version, false );		
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery', 'backbone',
-			'underscore', 'Flight_log_app', 'Flight_log_templates'), $this->version, false );		
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+ 				), $this->version, false );		
     	wp_localize_script( $this->plugin_name, 'PDP_FLIGHT_SUBMITTER', array(
     		'ajax_url' =>  admin_url('admin-ajax.php'),
     		'root' => esc_url_raw( rest_url() ),
