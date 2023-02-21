@@ -38,7 +38,7 @@
     		$(this).addClass('clicked'); 	
 			$(this).closest('td').next('td').text(localtime);
     		$.ajax({
-    			url: PDP_FLIGHT_SUBMITTER.ajax_url,
+    			url: passed_vars.ajax_url,
     			method: 'POST',
     			data: {
     				action: 'pdp_update_time',
@@ -48,12 +48,12 @@
     			 },
     			success : function( response ) {
     //                console.log( response );
-    //                alert( PDP_FLIGHT_SUBMITTER.success );
+    //                alert( passed_vars.success );
                     window.location.reload();
                 },
                 fail : function( response ) {
                     console.log( response );
-                    alert( PDP_FLIGHT_SUBMITTER.failure );
+                    alert( passed_vars.failure );
                 }		
     		});		
     	 });   	 
