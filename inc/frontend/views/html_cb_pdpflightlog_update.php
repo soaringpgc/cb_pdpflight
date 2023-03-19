@@ -45,7 +45,7 @@ $sql = $PGCwp->prepare("SELECT Date FROM pgc_flightsheet WHERE `Key` =  %s" ,$_G
 $flightdate=$PGCwp->get_var($sql);
  
 $charge= $wpdb->get_var($wpdb->prepare("SELECT charge from wp_cloud_base_tow_fees WHERE altitude = %s AND valid_until IS NULL", $_POST['Tow_Altitude'])) ;
-exit(var_dump($charge));
+// exit(var_dump($charge));
 
 // take care of O'  in names! an "'" is escaped with "\" to be sent over html need to 
 // remove it before saving in the database 
