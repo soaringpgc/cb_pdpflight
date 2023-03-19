@@ -44,8 +44,8 @@ $PGCwp->update( 'pgc_flightlog_lastpilot', array('LastPilot'=>$_POST['Tow_Pilot'
 $sql = $PGCwp->prepare("SELECT Date FROM pgc_flightsheet WHERE `Key` =  %s" ,$_GET['key']);
 $flightdate=$PGCwp->get_var($sql);
  
-$charge= $wpdb->get_var($wpdb->prepare("SELECT charge from wp_cloud_base_tow_fees WHERE altitude = %s", $_POST['Tow_Altitude'] )) ;
-//exit(var_dump($charge));
+$charge= $wpdb->get_var($wpdb->prepare("SELECT charge from wp_cloud_base_tow_fees WHERE altitude = %s AND valid_until IS NULL", $_POST['Tow_Altitude'])) ;
+exit(var_dump($charge));
 
 // take care of O'  in names! an "'" is escaped with "\" to be sent over html need to 
 // remove it before saving in the database 
@@ -226,7 +226,6 @@ $fee_table = array();
 foreach ($data as $key=>$value){
 	$fee_table[$value->altitude]=$value->charge;	
 }
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
