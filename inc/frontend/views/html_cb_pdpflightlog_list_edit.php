@@ -1,6 +1,5 @@
 <?php
 global $PGCwp; // database handle for accessing wordpress db
-global $PGCi;  // database handle for PDP external db
 
 $view_only = true; 
 if (isset( $flight_atts['view_only'] )) {
@@ -10,45 +9,13 @@ if (isset( $flight_atts['view_only'] )) {
 	}
 }
 
-//exit(date_default_timezone_get());
 ?>
 <?php
 error_reporting(E_ALL);
 //ini_set('display_errors', 'On');
 
 date_default_timezone_set('America/New_York');
-//exit(date_default_timezone_get());
 $pgc_flight_date = date("Y-m-d");
-
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{  
-
-  $theValue = mysqli_real_escape_string($PGCi, $theValue) ;
-
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? "'" . doubleval($theValue) . "'" : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
-}
-}
-
-$currentPage = $_SERVER["PHP_SELF"];
 
 $maxRows_Flightlog = 10;
 $pageNum_Flightlog = 0;
@@ -56,28 +23,12 @@ if (isset($_GET['pageNum_Flightlog'])) {
   $pageNum_Flightlog = $_GET['pageNum_Flightlog'];
 }
 $startRow_Flightlog = $pageNum_Flightlog * $maxRows_Flightlog;
+$query = $PGCwp->prepare("SELECT * FROM pgc_flightsheet WHERE `Date` = '%s' ORDER BY `Key` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
 
-$query_Flightlog = sprintf("SELECT * FROM pgc_flightsheet WHERE `Date` = '%s' ORDER BY `Key` DESC", $pgc_flight_date);
-$query_limit_Flightlog = sprintf("%s LIMIT %d, %d", $query_Flightlog, $startRow_Flightlog, $maxRows_Flightlog);
+$flight_log =  $PGCwp->get_results($query ); 
+$todaycount= $PGCwp->num_rows;
 
-$Flightlog = mysqli_query($PGCi, $query_limit_Flightlog )  or die(mysqli_error($PGCi));
-$row_Flightlog =mysqli_fetch_assoc($Flightlog);
-
-$todaycount = $PGCwp->get_var($PGCwp->prepare("SELECT COUNT(*) FROM pgc_flightsheet WHERE `Date` = %s", $pgc_flight_date )) ;
-
-
-// if ($row_Flightlog === null ){
-// 	$row_Flightlog = array('Key'=>null, 'Glider'=>'N/A', 'Flight_Type'=>'N/A', 'Pilot1'=>'Pilot', 'Pilot2'=>'instructor', 'Takeoff'=>null,
-// 	'Landing'=>null, 'Time'=>null, 'Tow Altitude'=>'0', 'Tow Plane'=>null, 'Tow Pilot'=>'tow pilot', 'Tow Charge'=>'0', 'Notes'=>'');
-// }
-
-// if (isset($_GET['totalRows_Flightlog'])) {
-//   $totalRows_Flightlog = $_GET['totalRows_Flightlog'];
-// } else {
-  $all_Flightlog = mysqli_query($PGCi, $query_Flightlog ) ;
-  $totalRows_Flightlog = mysqli_num_rows($all_Flightlog);
-//}
-$totalPages_Flightlog = ceil($totalRows_Flightlog/$maxRows_Flightlog)-1;
+$totalPages_Flightlog = ceil($todaycount/$maxRows_Flightlog)-1;
 
 $queryString_Flightlog = "";
 if (!empty($_SERVER['QUERY_STRING'])) {
@@ -211,57 +162,55 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                             <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Charge</div></td>
                             <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Notes</div></td>
                         </tr>
-                        <?php if ($row_Flightlog != null ){ do { ?>
-                        <tr >
+<?php
+	foreach( $flight_log as $flight ){	?>
+	                        <tr >
                              <td bgcolor="#999999" class="fl_style25"><div align="center">  
                              <?php if ( !$view_only )  {  ?>                                
                        		    <form action="<?php echo admin_url('admin-post.php'); ?>" method="get">
                          	    	<input type="hidden" name="action" value="pdp-flight-log-details">
-                         	    	<input type='hidden' name='key' value='<?php echo $row_Flightlog['Key']; ?>' >	
+                         	    	<input type='hidden' name="key" value="<?php echo $flight->Key; ?>" >	
                          	    	<input type='hidden' name='source_page' value='<?php  the_permalink() ?>' >	 	 
-                         	    	<input type="submit" value="<?php echo $row_Flightlog['Key']; ?>">
+                         	    	<input type="submit" value="<?php echo $flight->Key; ?>">
                       		    </form>
                       		 <?php  } else{ 
-                      		 	echo $row_Flightlog['Key'];
+                      		 	echo $flight['Key'];
                       		 	}
                       		 ?>  
                              </div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25" align="center"><?php echo $row_Flightlog['Glider']; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Flight_Type']; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $row_Flightlog['Pilot1']; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $row_Flightlog['Pilot2']; ?></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25" align="center"><?php echo $flight->Glider; ?></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Flight_Type; ?></div></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->Pilot1; ?></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->Pilot2; ?></td>
                               <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
-                                 echo ($row_Flightlog['Key']); 
+                                 echo ($flight->Key); 
                                  echo (' align="center" class="pdp_update_time button-flightlog button-start" value="'); 
-                                 echo ($row_Flightlog['Key'].'" data-start=1 ></button></td>');
-                                 
- //                                 echo ($row_Flightlog['Key'].'" data-start=1> <img src='); 
-//                                  echo (plugin_dir_url('FILE' ));
-//                                 echo ('cb-pdpflightlog/assets/images/Next-icon.png alt="Takeoff" width="25" height="24" border="0" /></button></td>');
-                               }; ?> 
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Takeoff']; ?></div></td>
+                                 echo ($flight->Key.'" data-start=1 ></button></td>');
+                                                                }; ?> 
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Takeoff; ?></div></td>
 
                              <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
-                                 echo ($row_Flightlog['Key']); 
+                                 echo ($flight->Key); 
                                  echo (' align="center" class="pdp_update_time button-flightlog button-stop" value="'); 
-                                 echo ($row_Flightlog['Key'].'" data-start="0"></button></td>');
-                                     
-//                                  echo ($row_Flightlog['Key'].'" data-start="0"> <img src='); 
-//                                  echo (plugin_dir_url('FILE' ));
-//                                  echo ('cb-pdpflightlog/assets/images/stop-icon.png alt="Landing" width="25" height="24" border="0" /></button></td>');
+                                 echo ($flight->Key.'" data-start="0"></button></td>');
 								}; ?> 
                           
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Landing']; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Time']; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Tow Altitude']; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $row_Flightlog['Tow Plane']; ?></div>                                    </td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $row_Flightlog['Tow Pilot']; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $row_Flightlog['Tow Charge']; ?></td>
-                             <td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"><?php echo substr($row_Flightlog['Notes'],0,25); ?></td>
-                         </tr>
-                         <?php } while ($row_Flightlog = mysqli_fetch_assoc($Flightlog));} ?>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Landing; ?></div></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Time; ?></div></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow Altitude'}; ?></div></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow Plane'}; ?></div>                                    </td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow Pilot'}; ?></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow Charge'}; ?></td>
+
+                             <td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"><?php echo substr($flight->Notes,0,25); ?></td>
+                         </tr>	
+<?php	
+	}
+?>
+
+
                      </table>
                     <p>
                     <table border="0" width="50%" align="center">
@@ -293,7 +242,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 </body>
 </html>
 <?php
-mysqli_free_result($Flightlog);
 
 /*mysqli_free_result($Recordset1);*/
 ?>

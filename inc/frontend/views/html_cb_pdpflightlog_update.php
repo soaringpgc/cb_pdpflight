@@ -341,7 +341,7 @@ body,td,th {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Instructor:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
                     <select name="Pilot2" class="style25" id="Pilot2">
-                     <option value="" >  </option>
+                     <option value="" >Select</option>
                         <?php                        
                   			foreach($row_Cfigpilots as $pilot ){
                   			    if ( $pilot == $row_Flightlog['Pilot2'] ) { 
