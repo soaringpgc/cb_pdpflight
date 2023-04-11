@@ -175,7 +175,49 @@ class Frontend {
 
 	} // flight_log()	
 	
+	public function flight_log_new( $atts = array() ) {
 	
+	
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+ 				), $this->version, false );		
+//     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
+//     		'ajax_url' =>  admin_url('admin-ajax.php'),
+//     		'root' => esc_url_raw( rest_url() ),
+//      		'nonce' => wp_create_nonce( 'wp_rest' ),
+//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+//      		'current_user_id' => get_current_user_id()
+//     		)	
+//     	);	
+  	$dateToBePassed = array(
+     		'ajax_url' =>  admin_url('admin-ajax.php'),
+    		'root' => esc_url_raw( rest_url() ),
+     		'nonce' => wp_create_nonce( 'wp_rest' ),
+     		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+     		'current_user_id' => get_current_user_id()
+ 
+    		);   	
+    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    	); 		
+	
+		ob_start();
+	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
+			$new_log = false;
+			
+ 			
+				include ('views/html_cb_flight_log_new.php');	
+		display_flight_log_new();
+			
+		$output = ob_get_contents();
+
+		ob_end_clean();
+
+		return $output;
+
+	} // flight_log_new()	
+		
 	public function pdp_flight_log(){ 
      	if (isset($_GET['pgc_year'])) {
      		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
@@ -215,20 +257,18 @@ class Frontend {
 		 * class.
 		 */
      public function pdp_flight_log_add(){
-        global $PGCwp; // database handle for accessing wordpress db
-		global $PGCi;  // database handle for PDP external db
+     	global $wpdb;
+     	$flight_table =  $wpdb->prefix . "cloud_base_pdp_flight_sheet";	 
 		if ( !current_user_can('flight_edit')){
 			wp_redirect( wp_login_url() );
 		}
-         // tow pilot and tug are stored in database as it changes less often than pilot. 
-        $LastPilot ="";
-        $query_Recordset1 = "SELECT LastPilot, TowPlane FROM pgc_flightlog_lastpilot";
-        $Recordset1 = mysqli_query($PGCi, $query_Recordset1 )  or die(mysqli_error($PGCi));         
-        $row_Recordset1 =mysqli_fetch_assoc($Recordset1);
-        $totalRows_Recordset1 = mysqli_num_rows($Recordset1);
-        $LastPilot = $row_Recordset1['LastPilot'];
-        $Tow_Plane = $row_Recordset1['TowPlane'];
-     	$PGCwp->insert('pgc_flightsheet', array( 'Date'=>date("Y-m-d"), 'Tow Plane'=>$Tow_Plane, 'Tow Pilot'=>$LastPilot, 'Time'=>"0.0" ));
+
+		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
+		$result = $wpdb->get_results($sql);
+
+        $wpdb->insert($flight_table, array( 'Date'=>date("Y-m-d"), 'Tow_Plane'=>$result[0]->Tow_Plane, 
+        	'Tow_Pilot'=>$result[0]->Tow_Pilot, 'Time'=>"0.0",'yearkey'=>$result[0]->yearkey+1,
+        	'flightyear'=>date('Y') ));
       	wp_redirect($_GET['source_page']);
      	exit();
      }	// pdp_flight_log_add()
@@ -238,7 +278,7 @@ class Frontend {
 	 * take off/landing time and tow alitude. 
 	 */
      public function pdp_flight_log_details(){ 
-     	if (isset($_GET['key'])) {
+     	if (isset($_GET['id'])) {
      		include_once( 'views/html_cb_pdpflightlog_update.php');
      	}else {
      		wp_redirect($_GET['source_page']);
@@ -251,20 +291,29 @@ class Frontend {
  *
  */
      public function pdp_update_time(){
-		global $PGCwp; // database handle for accessing wordpress db
-		global $PGCi;  // database handle for PDP external db
+// 		global $PGCwp; // database handle for accessing wordpress db
+// 		global $PGCi;  // database handle for PDP external db
+		global $wpdb; 
+		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
     
      	if (isset($_POST['key'])) {
      		$key = $_POST['key'];
      		if($_POST['start'] == '1'){
-     			$PGCwp->update('pgc_flightsheet', array('Takeoff'=> $_POST['thetime']), array('Key'=> $key)); 
+ 				$wpdb->update($flight_table, array('Takeoff'=> $_POST['thetime']), array('id'=> $key)); 
      		} else {
-     			$sql = $PGCwp->prepare( "SELECT `Takeoff` FROM  pgc_flightsheet WHERE `Key` = %d", $key);
-     			$start_time = \DateTime::createFromFormat('H:i:s', $PGCwp->get_var($sql));			
+//      			$sql = $PGCwp->prepare( "SELECT `Takeoff` FROM  pgc_flightsheet WHERE `Key` = %d", $key);
+//      			$start_time = \DateTime::createFromFormat('H:i:s', $PGCwp->get_var($sql));			
+//      			$landing_time =\DateTime::createFromFormat('H:i:s', $_POST['thetime']);
+//      			$delta = $landing_time->diff($start_time);
+//      			$dec_delta = round($delta->h + $delta->i/60, 2, PHP_ROUND_HALF_UP); 		
+//      			$PGCwp->update('pgc_flightsheet', array('Landing'=> $_POST['thetime'], 'Time'=>$dec_delta), array('Key'=> $key)); 
+
+     			$sql = $wpdb->prepare( "SELECT `Takeoff` FROM  {$flight_table} WHERE `id` = %d", $key);
+     			$start_time = \DateTime::createFromFormat('H:i:s', $wpdb->get_var($sql));			
      			$landing_time =\DateTime::createFromFormat('H:i:s', $_POST['thetime']);
      			$delta = $landing_time->diff($start_time);
      			$dec_delta = round($delta->h + $delta->i/60, 2, PHP_ROUND_HALF_UP); 		
-     			$PGCwp->update('pgc_flightsheet', array('Landing'=> $_POST['thetime'], 'Time'=>$dec_delta), array('Key'=> $key)); 
+     			$wpdb->update($flight_table, array('Landing'=> $_POST['thetime'], 'Time'=>$dec_delta), array('id'=> $key)); 
      		}
       	}		
      } //pdp_update_time()    
@@ -303,36 +352,51 @@ class Frontend {
  *  Very important! 
  */     
     public function pdp_export_data(){
-    	global $PGCi;
-    	
+		global $wpdb; 
+		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
+
+//     	global $PGCi;
+//     	
      	if (isset($_POST['flight_year']) && $_POST['flight_year'] != date("Y") && $_POST['flight_year'] != "") {
-   			$flight_year = $_POST['flight_year'];
-   			$sql_query = "Select * From  pgc_flightsheet". "_". $flight_year;
- 		} else {
-  			$flight_year =  date('Y');
-  			$sql_query = "Select * From  pgc_flightsheet"; 
- 		}   
- 		$result = mysqli_query($PGCi, $sql_query) or die('Query failed!');	    	
+    			$flight_year = $_POST['flight_year'];
+//    			$sql_query = "Select * From  pgc_flightsheet". "_". $flight_year;
+  		} else {
+   			$flight_year =  date('Y');
+//   			$sql_query = "Select * From  pgc_flightsheet"; 
+  		}   
+ 		$sql = $wpdb->prepare( "SELECT * FROM {$flight_table} WHERE flightyear = %d", $flight_year);
+//  		$result = mysqli_query($PGCi, $sql_query) or die('Query failed!');	    	
+		$result = $wpdb->get_results($sql, ARRAY_A);
         $filename = "pgc_flight_activity_" . $flight_year . ".xls";
     
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header("Content-Type: application/vnd.ms-excel");
         header("Pragma: no-cache");
      	header("Expires: 0");
-       
-        $flag = false;
+
+		$output = fopen('php://output', 'w');
+             // display field/column names as first row 
+		$existing_columns = $wpdb->get_col("DESC {$flight_table}", 0);
+        fputcsv( $output, $existing_columns);
+
+        foreach($result as $values){
+        	fputcsv( $output, $values);
+
+         }        
+        
+        
  //        $result = mysqli_query($PGCi, "Select * From  pgc_flightsheet") or die('Query failed!');
          
-        while($row = mysqli_fetch_assoc($result)) {
-           if(!$flag) {
-             // display field/column names as first row
-             echo implode("\t", array_keys($row)) . "\r\n";  //https:wordpress.stackexchange.com/tags
-             $flag = true;
-           }
-           array_walk($row,  array( $this ,'cleanData'));
-           echo implode("\t", array_values($row)) . "\r\n";   
-         }
-         exit;
+//         while($row = mysqli_fetch_assoc($result)) {
+//            if(!$flag) {
+//              // display field/column names as first row
+//              echo implode("\t", array_keys($row)) . "\r\n";  //https:wordpress.stackexchange.com/tags
+//              $flag = true;
+//            }
+//            array_walk($row,  array( $this ,'cleanData'));
+//            echo implode("\t", array_values($row)) . "\r\n";   
+//           }
+//          exit;
     } //pdp_export_data()
                	
 	/**
@@ -344,6 +408,7 @@ class Frontend {
 
 		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
 		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
+		add_shortcode( 'cb_pgc_flight_log_new', array( $this, 'flight_log_new' ) );
 
 	} // register_shortcodes()
 	/**

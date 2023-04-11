@@ -1,5 +1,7 @@
 <?php
-global $PGCwp; // database handle for accessing wordpress db
+// global $PGCwp; // database handle for accessing wordpress db
+global $wpdb;
+$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
 
 $view_only = true; 
 if (isset( $flight_atts['view_only'] )) {
@@ -23,10 +25,17 @@ if (isset($_GET['pageNum_Flightlog'])) {
   $pageNum_Flightlog = $_GET['pageNum_Flightlog'];
 }
 $startRow_Flightlog = $pageNum_Flightlog * $maxRows_Flightlog;
-$query = $PGCwp->prepare("SELECT * FROM pgc_flightsheet WHERE `Date` = '%s' ORDER BY `Key` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
+// $query = $PGCwp->prepare("SELECT * FROM pgc_flightsheet WHERE `Date` = '%s' ORDER BY `Key` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
 
-$flight_log =  $PGCwp->get_results($query ); 
-$todaycount= $PGCwp->num_rows;
+// $flight_log =  $PGCwp->get_results($query ); 
+// $todaycount= $PGCwp->num_rows;
+
+$query = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = '%s' ORDER BY `yearkey` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
+
+$flight_log =  $wpdb->get_results($query ); 
+$todaycount= $wpdb->num_rows;
+
+
 
 $totalPages_Flightlog = ceil($todaycount/$maxRows_Flightlog)-1;
 
@@ -93,7 +102,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 <div class="popup-overlay">
 <!--Creates the popup content-->
     <h4>PGC PDP Help<button class="close">Close</button>  </h4> 
- <div class="popup-content">
+ <div >
 
     <li>The<u>ADD Flight</u> button is hit on the main screen to create a new  blank row on the main flightlog screen.</li>
     <li>The new record is edited in the Detail Screen:  Glider, Member Charged and Instructor are added  to the record using the appropriate  dropdowns. The record is typically saved (updated) at this time.</li>
@@ -163,18 +172,19 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                             <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Notes</div></td>
                         </tr>
 <?php
-	foreach( $flight_log as $flight ){	?>
+	foreach( $flight_log as $flight ){	
+	?>
 	                        <tr >
                              <td bgcolor="#999999" class="fl_style25"><div align="center">  
                              <?php if ( !$view_only )  {  ?>                                
                        		    <form action="<?php echo admin_url('admin-post.php'); ?>" method="get">
                          	    	<input type="hidden" name="action" value="pdp-flight-log-details">
-                         	    	<input type='hidden' name="key" value="<?php echo $flight->Key; ?>" >	
+                         	    	<input type='hidden' name="id" value="<?php echo $flight->id; ?>" >	
                          	    	<input type='hidden' name='source_page' value='<?php  the_permalink() ?>' >	 	 
-                         	    	<input type="submit" value="<?php echo $flight->Key; ?>">
+                         	    	<input type="submit" value="<?php echo $flight->yearkey; ?>">
                       		    </form>
                       		 <?php  } else{ 
-                      		 	echo $flight['Key'];
+                      		 	echo $flight->yearkey;
                       		 	}
                       		 ?>  
                              </div></td>
@@ -184,25 +194,25 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                              <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->Pilot2; ?></td>
                               <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
-                                 echo ($flight->Key); 
+                                 echo ($flight->yearkey); 
                                  echo (' align="center" class="pdp_update_time button-flightlog button-start" value="'); 
-                                 echo ($flight->Key.'" data-start=1 ></button></td>');
+                                 echo ($flight->id.'" data-start=1 ></button></td>');
                                                                 }; ?> 
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Takeoff; ?></div></td>
 
                              <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
-                                 echo ($flight->Key); 
+                                 echo ($flight->yearkey); 
                                  echo (' align="center" class="pdp_update_time button-flightlog button-stop" value="'); 
-                                 echo ($flight->Key.'" data-start="0"></button></td>');
+                                 echo ($flight->id.'" data-start="0"></button></td>');
 								}; ?> 
                           
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Landing; ?></div></td>
                              <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Time; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow Altitude'}; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow Plane'}; ?></div>                                    </td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow Pilot'}; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow Charge'}; ?></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow_Altitude'}; ?></div></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow_Plane'}; ?></div>                                    </td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow_Pilot'}; ?></td>
+                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow_Charge'}; ?></td>
 
                              <td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"><?php echo substr($flight->Notes,0,25); ?></td>
                          </tr>	

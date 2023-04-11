@@ -1,8 +1,10 @@
 <?php
 //require dirname(__DIR__, 7) . '/Connections/PGC.php';
-global $PGCwp; // database handle for accessing wordpress db
-global $PGCi;  // database handle for PDP external db
+// global $PGCwp; // database handle for accessing wordpress db
+// global $PGCi;  // database handle for PDP external db
 global $wpdb;
+$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
+
 ?>
 <?php
 error_reporting(E_ALL);
@@ -40,81 +42,69 @@ if (isset($_SERVER['QUERY_STRING'])) {
 
 if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form2")) {
 
-$PGCwp->update( 'pgc_flightlog_lastpilot', array('LastPilot'=>$_POST['Tow_Pilot'], 'TowPlane'=>$_POST['Tow_Plane']), array('seq'=>'1'));
-$sql = $PGCwp->prepare("SELECT Date FROM pgc_flightsheet WHERE `Key` =  %s" ,$_GET['key']);
-$flightdate=$PGCwp->get_var($sql);
- 
+// $PGCwp->update( 'pgc_flightlog_lastpilot', array('LastPilot'=>$_POST['Tow_Pilot'], 'TowPlane'=>$_POST['Tow_Plane']), array('seq'=>'1'));
+// $sql = $PGCwp->prepare("SELECT Date FROM pgc_flightsheet WHERE `Key` =  %s" ,$_GET['key']);
+// $flightdate=$PGCwp->get_var($sql);
+
+$sql = $wpdb->prepare("SELECT Date FROM {$flight_table} WHERE `id` =  %s" ,$_GET['id']);
+$flightdate=$wpdb->get_var($sql);
+
 $charge= $wpdb->get_var($wpdb->prepare("SELECT charge from wp_cloud_base_tow_fees WHERE altitude = %s AND valid_until IS NULL", $_POST['Tow_Altitude'])) ;
 // exit(var_dump($charge));
 
 // take care of O'  in names! an "'" is escaped with "\" to be sent over html need to 
 // remove it before saving in the database 
-$pilot1 = str_replace(array("\'"), array("'"), $_POST['Pilot1']);
+// $pilot1 = str_replace(array("\'"), array("'"), $_POST['Pilot1']);
+
+$member = get_user_by('ID',$_POST['Pilot1']);
+$pilot1 = $member->first_name .' '.  $member->last_name;
+
 $pilot2 = str_replace(array("\'"), array("'"), $_POST['Pilot2']);
 $tow_pilot = str_replace(array("\'"), array("'"), $_POST['Tow_Pilot']);
 
-$Result1 = $PGCwp->update('pgc_flightsheet', array('Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
-				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
-				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
-				'ip'=>$_POST['entry_ip']), array('Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'), array('%s'));  
+// $Result1 = $PGCwp->update('pgc_flightsheet', array('Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
+// 				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
+// 				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
+// 				'ip'=>$_POST['entry_ip']), array('Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'), array('%s'));  
 
-$Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , 'Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
-				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
-				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
-				'ip'=>$_POST['entry_ip'], 'Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'));  
-//exit ($Result2); 
- /*==END INSERT AUDIT====*/ 
- 
- /*  Calculate Time   */
-  
- // $Result2 = mysqli_query($PGCi, $updateTime ) or die(mysqli_error($PGCi));
 
-// $updateTime = sprintf("UPDATE pgc_flightsheet SET Time = TIME_TO_SEC(TIMEDIFF(Landing,Takeoff))/3600 WHERE Landing > Takeoff AND `Key`=%s",
-//                         GetSQLValueString($_POST['recordID'], "int"));
+$Result1 = $wpdb->update($flight_table, array('Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
+				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow_Altitude'=>$_POST['Tow_Altitude'], 
+				'Tow_Plane'=>$_POST['Tow_Plane'], 'Tow_Pilot'=>$tow_pilot, 'Tow_Charge'=>$charge, 'Notes'=>$_POST['Notes'], 'email'=>$member->user_email, 
+				'ip'=>$_POST['entry_ip']), array('id'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', '%s','%s'), array('%s'));  
 
-  //mysql_select_db($database_PGC, $PGC);
-//  $Result2 = mysqli_query($PGCi, $updateTime )  or die(mysqli_error($PGCi));
+// $Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , 'Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
+// 				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
+// 				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
+// 				'ip'=>$_POST['entry_ip'], 'Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'));  
 
-	$sql = $PGCwp->prepare("UPDATE pgc_flightsheet SET Time = TIME_TO_SEC(TIMEDIFF(Landing,Takeoff))/3600 WHERE Landing > Takeoff AND `Key`=%s", $_POST['recordID']);
-	$PGCwp->query($sql );
+// 	$sql = $PGCwp->prepare("UPDATE pgc_flightsheet SET Time = TIME_TO_SEC(TIMEDIFF(Landing,Takeoff))/3600 WHERE Landing > Takeoff AND `Key`=%s", $_POST['recordID']);
+// 	$PGCwp->query($sql );
+//    
+//    	$sql = $PGCwp->prepare("UPDATE pgc_flightsheet A, pgc_members B SET  A.`email` = B.`USER_ID` WHERE A.`Pilot1` = B.`NAME` AND `Key`=%s", $_POST['recordID']);
+// 	$PGCwp->query($sql );   
+
+	$sql = $wpdb->prepare("UPDATE {$flight_table} SET Time = TIME_TO_SEC(TIMEDIFF(Landing,Takeoff))/3600 WHERE Landing > Takeoff AND `id`=%s", $_POST['recordID']);
+	$wpdb->query($sql );
+
+// 	$PGCwp->query($sql );
+
    
-//  $updateTime = sprintf("UPDATE pgc_flightsheet SET Time = (TIME_TO_SEC(TIMEDIFF(Landing,Takeoff)) + 60*60*12)/3600 WHERE Landing < Takeoff AND `Key`=%s",
-//                          GetSQLValueString($_POST['recordID'], "int"));
-// 
-//   //mysql_select_db($database_PGC, $PGC);
-//   $Result2 = mysqli_query($PGCi, $updateTime )  or die(mysqli_error($PGCi));
-//   
-  
-//   $updateTime = sprintf("UPDATE pgc_flightsheet A, pgc_flightlog_charges B SET  A.`Tow Charge` = B.`charge` WHERE A.`Tow Altitude` = B.`altitude` AND `Key`=%s",
-//                          GetSQLValueString($_POST['recordID'], "int"));
-// 
-//   $Result2 = mysqli_query($PGCi, $updateTime )  or die(mysqli_error($PGCi));
-  
-//     $updateTime = sprintf("UPDATE pgc_flightsheet A, pgc_flightlog_charges B SET  A.`Tow Charge` = B.`charge` * A.Time WHERE A.`Tow Altitude` = B.`altitude` AND  A.`Tow Altitude` =  'AERO' AND`Key`=%s",
-//                          GetSQLValueString($_POST['recordID'], "int"));
+//    	$sql = $wpdb->prepare("UPDATE {$flight_table} A, pgc_members B SET  A.`email` = B.`USER_ID` WHERE A.`Pilot1` = B.`NAME` AND `id`=%s", $_POST['recordID']);
+// 	$PGCwp->query($sql );  
 
-  //mysql_select_db($database_PGC, $PGC);
-//  $Result2 = mysqli_query($PGCi, $updateTime )  or die(mysqli_error($PGCi));
- 
- /* End Calculate Time  */
- 
-//  $updateID = sprintf("UPDATE pgc_flightsheet A, pgc_members B SET  A.`email` = B.`USER_ID` WHERE A.`Pilot1` = B.`NAME` AND `Key`=%s",
-//                         GetSQLValueString($_POST['recordID'], "int"));
-						 
-   //mysql_select_db($database_PGC, $PGC);
-//   $ResultID = mysqli_query($PGCi, $updateID )  or die(mysqli_error($PGCi));
-
-   	$sql = $PGCwp->prepare("UPDATE pgc_flightsheet A, pgc_members B SET  A.`email` = B.`USER_ID` WHERE A.`Pilot1` = B.`NAME` AND `Key`=%s", $_POST['recordID']);
-	$PGCwp->query($sql );   
  
  /*== Send Email if we have a takeoff and a landing time ====*/
  If ($_POST['Landing'] <> '' AND $_POST['Takeoff'] <> '') {
 
-	$row_Flightlog= $PGCwp->get_row($PGCwp->prepare("SELECT * from pgc_flightsheet WHERE `Key` = %d", $_POST['recordID']), $output='ARRAY_A') ;
+// 	$row_Flightlog= $PGCwp->get_row($PGCwp->prepare("SELECT * from pgc_flightsheet WHERE `Key` = %d", $_POST['recordID']), $output='ARRAY_A') ;
+
+	$row_Flightlog= $wpdb->get_row($wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id` = %d", $_POST['recordID']), $output='ARRAY_A') ;
+
 	
 	$intro = "\n" . "This message was generated by the PDP when tow altitude or other data in your flight log record was updated by the flight desk after you landed." . "\n\n". "You may receive additional updates if other changes are made to this log record.". "\n\n" . "Please email the Flight Log Administrator at flightlog.pgc@gmail.com or contact a BOD member if this data is not accurate."."\n\n";
 	
-	$emaillog =  $intro . "Type: " . $row_Flightlog['Flight_Type'] . "\n" . "Key: " . $row_Flightlog['Key'] . "\n" . "Date: " . $row_Flightlog['Date'] ."\n" . "Glider: " . $row_Flightlog['Glider'] ."\n" . "Pilot1: " . $row_Flightlog['Pilot1'] ."\n" . "Pilot2: " . $row_Flightlog['Pilot2'] ."\n" . "Takeoff: " . $row_Flightlog['Takeoff'] . "\n" . "Landing: " .  $row_Flightlog['Landing'] ."\n" . "Duration: " . $row_Flightlog['Time'] ."\n".  "Tow Altitude: " . $row_Flightlog['Tow Altitude'] . "\n" . "Tow Plane: " . $row_Flightlog['Tow Plane'] . "\n" . "Tow Pilot: " . $row_Flightlog['Tow Pilot'] . "\n" . "Notes: " . $row_Flightlog['Notes'] . "\n" ;  
+	$emaillog =  $intro . "Type: " . $row_Flightlog['Flight_Type'] . "\n" . "Key: " . $row_Flightlog['id'] . "\n" . "Date: " . $row_Flightlog['Date'] ."\n" . "Glider: " . $row_Flightlog['Glider'] ."\n" . "Pilot1: " . $row_Flightlog['Pilot1'] ."\n" . "Pilot2: " . $row_Flightlog['Pilot2'] ."\n" . "Takeoff: " . $row_Flightlog['Takeoff'] . "\n" . "Landing: " .  $row_Flightlog['Landing'] ."\n" . "Duration: " . $row_Flightlog['Time'] ."\n".  "Tow Altitude: " . $row_Flightlog['Tow Altitude'] . "\n" . "Tow Plane: " . $row_Flightlog['Tow Plane'] . "\n" . "Tow Pilot: " . $row_Flightlog['Tow Pilot'] . "\n" . "Notes: " . $row_Flightlog['Notes'] . "\n" ;  
 					 
 	$webmaster = "support@pgcsoaring.org";
 	$treasurer = "treasure.pgc@gmail.com";
@@ -136,11 +126,14 @@ $Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , '
    exit();
  }
 $colname_Flightlog = "-1";
-if (isset($_GET['key'])) {
-  $colname_Flightlog = $_GET['key'];
+if (isset($_GET['id'])) {
+  $colname_Flightlog = $_GET['id'];
 }
 
-$row_Flightlog= $PGCwp->get_row($PGCwp->prepare("SELECT * from pgc_flightsheet WHERE `Key` = %d", $colname_Flightlog), $output='ARRAY_A') ;
+// $row_Flightlog= $PGCwp->get_row($PGCwp->prepare("SELECT * from pgc_flightsheet WHERE `Key` = %d", $colname_Flightlog), $output='ARRAY_A') ;
+
+
+$row_Flightlog= $wpdb->get_row($wpdb->prepare("SELECT * from {$flight_table} WHERE `id` = %d", $colname_Flightlog), $output='ARRAY_A') ;
 
 $row_Memberpilots = array();
 $request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
@@ -278,7 +271,7 @@ body,td,th {
             <table align="center" cellpadding="3" cellspacing="3" bgcolor="#000066" class="style25">
               <tr valign="baseline">
                 <td width="165" align="right" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Date:</div></td>
-                <input name="recordID" type="hidden" value=<?php echo $_GET['key'] ?> > 
+                <input name="recordID" type="hidden" value=<?php echo $_GET['id'] ?> > 
                 <td width="329" bgcolor="#CCCCCC"><input name="Date" type="text" class="style25" value="<?php echo $row_Flightlog['Date']; ?>" size="11" readonly/></td>
               </tr>
               <tr valign="baseline">
@@ -310,15 +303,15 @@ body,td,th {
                   <select name="Pilot1" class="style25" id="Pilot1" >
                  
                   		<option value="" >  </option>
-                        <option value="** New Member **" <?php if (!(strcmp("** New Member **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** New Member **</option>
-                        <option value="** Freedoms Wings **" <?php if (!(strcmp("** Freedoms Wings **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** Freedoms Wings **</option>
+                        <option value="-1" <?php if (!(strcmp("** New Member **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** New Member **</option>
+                        <option value="-2" <?php if (!(strcmp("** Freedoms Wings **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** Freedoms Wings **</option>
   						<optgroup label="Members" class="nofly" >
                         <?php                        
-                  			foreach($row_Memberpilots as $pilot ){
+                  			foreach($member_pilots as $pilot ){
                   			    if ( $pilot == $row_Flightlog['Pilot1'] ) { 
-                  			    	echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');  
+                  			    	echo(' <option value="'.$pilot->id.'" selected>'.$pilot->name.'</option>');  
                   			    } else {
-                  					echo(' <option value="'.$pilot.'">'.$pilot.'</option>');    
+                  					echo(' <option value="'.$pilot->pilot_id.'">'.$pilot->name.'</option>');    
                   				}                   
                   			}                         
 						?>
@@ -341,7 +334,7 @@ body,td,th {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Instructor:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
                     <select name="Pilot2" class="style25" id="Pilot2">
-                     <option value="" >Select</option>
+                     <option value="" >Select </option>
                         <?php                        
                   			foreach($row_Cfigpilots as $pilot ){
                   			    if ( $pilot == $row_Flightlog['Pilot2'] ) { 
@@ -410,7 +403,7 @@ body,td,th {
               </tr>
               <tr valign="baseline">
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Tow Charge:</div></td>                
-                   <td bgcolor="#CCCCCC"><input name="Tow_Charge" type="text" class="style25" value="<?php echo $row_Flightlog['Tow Charge']; ?>" size="6" maxlength="6" readonly></td>             
+                   <td bgcolor="#CCCCCC"><input name="Tow_Charge" type="text" class="style25" value="<?php echo $row_Flightlog['Tow_Charge']; ?>" size="6" maxlength="6" readonly></td>             
               </tr>
               <tr valign="baseline">
                 <td height="47" align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Notes:</div></td>
@@ -426,7 +419,9 @@ body,td,th {
             <input type="hidden" name="LOG_PAGE" value=<?php echo  $_SERVER['HTTP_REFERER']  ?>>
  -->
             <input type="hidden" name="MM_update" value="form2">
+<!-- 
             <input type="hidden" name="Key" value="<?php echo $row_Flightlog['Key']; ?>">
+ -->
             <input type="hidden" name="ParentPage" value="<?php echo  $_SERVER['HTTP_REFERER']  ?>">
           </form>
           <p>

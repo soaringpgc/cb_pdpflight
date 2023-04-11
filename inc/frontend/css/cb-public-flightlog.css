@@ -143,3 +143,35 @@ body {
 	font-size: 0;
 	line-height: 0;
 }      
+.flight_table{
+	width=99%;
+	align=center;
+	cellpadding=2;
+	cellspacing=2; 
+	bgcolor:#000066;	
+}
+.flight_row{
+	width=100%;
+	white-space: nowrap;
+	background-color:#66CCFF ;	
+}
+.data_row{
+	width=100%;
+	white-space: nowrap;
+	background-color:#ffffff ;	
+}
+.flight_cell1{
+	background-color=#66CCFF;
+	align=center;
+	font-size: 18px;
+	font-weight: bold;
+	color: #000000	
+}
+.flight_cell2{
+	bgcolor=#999999;
+	align=center;
+	ont-size: 18px; 
+	font-weight: bold; 
+	color: #000000; 
+
+}

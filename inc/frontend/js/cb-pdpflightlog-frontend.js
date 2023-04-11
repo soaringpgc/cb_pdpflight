@@ -37,7 +37,8 @@
     		var	localtime = thistime.toLocaleTimeString([], { hour12: false });
     		$(this).addClass('clicked'); 	
 			$(this).closest('td').next('td').text(localtime);
-    		$.ajax({
+// 				console.log($(this).val());
+    		$.ajax({    	
     			url: passed_vars.ajax_url,
     			method: 'POST',
     			data: {
@@ -48,8 +49,8 @@
     			 },
     			success : function( response ) {
     //                console.log( response );
-    //                alert( passed_vars.success );
-                    window.location.reload();
+//                    alert( response );
+                      window.location.reload();
                 },
                 fail : function( response ) {
                     console.log( response );
