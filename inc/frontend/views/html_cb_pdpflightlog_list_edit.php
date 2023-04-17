@@ -35,6 +35,10 @@ $query = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = '%s' ORDER
 $flight_log =  $wpdb->get_results($query ); 
 $todaycount= $wpdb->num_rows;
 
+$todaycount = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM {$flight_table} WHERE `Date` = '%s'", $pgc_flight_date));
+
+// var_dump($wpdb->last_query);
+// die();
 
 
 $totalPages_Flightlog = ceil($todaycount/$maxRows_Flightlog)-1;

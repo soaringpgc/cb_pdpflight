@@ -48,7 +48,7 @@ define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
 
 define( NS . 'PLUGIN_NAME', 'cb-pdpflightlog' );
 
-define( NS . 'PLUGIN_VERSION', '1.1.0' );
+define( NS . 'PLUGIN_VERSION', '1.2.0' );
 
 define( NS . 'PLUGIN_NAME_DIR', plugin_dir_path( __FILE__ ) );
 

@@ -1,7 +1,4 @@
 <?php
-//require dirname(__DIR__, 7) . '/Connections/PGC.php';
-// global $PGCwp; // database handle for accessing wordpress db
-// global $PGCi;  // database handle for PDP external db
 global $wpdb;
 $flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
 
@@ -42,57 +39,23 @@ if (isset($_SERVER['QUERY_STRING'])) {
 
 if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form2")) {
 
-// $PGCwp->update( 'pgc_flightlog_lastpilot', array('LastPilot'=>$_POST['Tow_Pilot'], 'TowPlane'=>$_POST['Tow_Plane']), array('seq'=>'1'));
-// $sql = $PGCwp->prepare("SELECT Date FROM pgc_flightsheet WHERE `Key` =  %s" ,$_GET['key']);
-// $flightdate=$PGCwp->get_var($sql);
-
 $sql = $wpdb->prepare("SELECT Date FROM {$flight_table} WHERE `id` =  %s" ,$_GET['id']);
 $flightdate=$wpdb->get_var($sql);
 
 $charge= $wpdb->get_var($wpdb->prepare("SELECT charge from wp_cloud_base_tow_fees WHERE altitude = %s AND valid_until IS NULL", $_POST['Tow_Altitude'])) ;
-// exit(var_dump($charge));
-
-// take care of O'  in names! an "'" is escaped with "\" to be sent over html need to 
-// remove it before saving in the database 
-// $pilot1 = str_replace(array("\'"), array("'"), $_POST['Pilot1']);
-
 $member = get_user_by('ID',$_POST['Pilot1']);
-$pilot1 = $member->first_name .' '.  $member->last_name;
+$pilot1 = $member->last_name .', '.  $member->first_name;
 
 $pilot2 = str_replace(array("\'"), array("'"), $_POST['Pilot2']);
 $tow_pilot = str_replace(array("\'"), array("'"), $_POST['Tow_Pilot']);
-
-// $Result1 = $PGCwp->update('pgc_flightsheet', array('Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
-// 				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
-// 				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
-// 				'ip'=>$_POST['entry_ip']), array('Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'), array('%s'));  
-
 
 $Result1 = $wpdb->update($flight_table, array('Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
 				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow_Altitude'=>$_POST['Tow_Altitude'], 
 				'Tow_Plane'=>$_POST['Tow_Plane'], 'Tow_Pilot'=>$tow_pilot, 'Tow_Charge'=>$charge, 'Notes'=>$_POST['Notes'], 'email'=>$member->user_email, 
 				'ip'=>$_POST['entry_ip']), array('id'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', '%s','%s'), array('%s'));  
 
-// $Result2 = $PGCwp->insert('pgc_flightsheet_audit', array('Date'=>$flightdate , 'Glider'=>$_POST['Glider'], 'Flight_Type'=>$_POST['Flight_Type'], 'Pilot1'=>$pilot1, 
-// 				'Pilot2'=>$pilot2, 'Takeoff'=>$_POST['Takeoff'], 'Landing'=>$_POST['Landing'], 'Tow Altitude'=>$_POST['Tow_Altitude'], 
-// 				'Tow Plane'=>$_POST['Tow_Plane'], 'Tow Pilot'=>$tow_pilot, 'Tow Charge'=>$charge, 'Notes'=>$_POST['Notes'], 
-// 				'ip'=>$_POST['entry_ip'], 'Key'=>$_POST['recordID']), array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'));  
-
-// 	$sql = $PGCwp->prepare("UPDATE pgc_flightsheet SET Time = TIME_TO_SEC(TIMEDIFF(Landing,Takeoff))/3600 WHERE Landing > Takeoff AND `Key`=%s", $_POST['recordID']);
-// 	$PGCwp->query($sql );
-//    
-//    	$sql = $PGCwp->prepare("UPDATE pgc_flightsheet A, pgc_members B SET  A.`email` = B.`USER_ID` WHERE A.`Pilot1` = B.`NAME` AND `Key`=%s", $_POST['recordID']);
-// 	$PGCwp->query($sql );   
-
 	$sql = $wpdb->prepare("UPDATE {$flight_table} SET Time = TIME_TO_SEC(TIMEDIFF(Landing,Takeoff))/3600 WHERE Landing > Takeoff AND `id`=%s", $_POST['recordID']);
 	$wpdb->query($sql );
-
-// 	$PGCwp->query($sql );
-
-   
-//    	$sql = $wpdb->prepare("UPDATE {$flight_table} A, pgc_members B SET  A.`email` = B.`USER_ID` WHERE A.`Pilot1` = B.`NAME` AND `id`=%s", $_POST['recordID']);
-// 	$PGCwp->query($sql );  
-
  
  /*== Send Email if we have a takeoff and a landing time ====*/
  If ($_POST['Landing'] <> '' AND $_POST['Takeoff'] <> '') {
@@ -130,34 +93,21 @@ if (isset($_GET['id'])) {
   $colname_Flightlog = $_GET['id'];
 }
 
-// $row_Flightlog= $PGCwp->get_row($PGCwp->prepare("SELECT * from pgc_flightsheet WHERE `Key` = %d", $colname_Flightlog), $output='ARRAY_A') ;
-
-
 $row_Flightlog= $wpdb->get_row($wpdb->prepare("SELECT * from {$flight_table} WHERE `id` = %d", $colname_Flightlog), $output='ARRAY_A') ;
 
-$row_Memberpilots = array();
 $request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 $request->set_param('no_fly', 'false');
 $response = rest_do_request($request);
 $server = rest_get_server();
 $member_pilots = $server->response_to_data( $response, false );
-
-foreach($member_pilots as $pilot ){
-	array_push ($row_Memberpilots, $pilot->name );	
-}
-sort($row_Memberpilots ); 
-
-$row_no_fly = array();
+sort($member_pilots ); 
+ 
 $request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 $request->set_param('no_fly', 'true');
 $response = rest_do_request($request);
 $server = rest_get_server();
-$member_pilots = $server->response_to_data( $response, false );
-
-foreach($member_pilots as $pilot ){
-	array_push ($row_no_fly, $pilot->name );	
-}
-sort($row_no_fly ); 
+$no_fly_pilots = $server->response_to_data( $response, false );
+sort($no_fly_pilots); 
 
 $row_rsGliders = array();
 $request = new WP_REST_Request('GET', '/cloud_base/v1/aircraft');
@@ -170,7 +120,6 @@ foreach($aircraft as $glider ){
 	array_push ($row_rsGliders, $glider->compitition_id );	
 }
 sort($row_rsGliders); 
-//exit(var_dump($row_rsGliders));
 
 $row_TowPlane = array();
 $request = new WP_REST_Request('GET', '/cloud_base/v1/aircraft');
@@ -183,7 +132,6 @@ foreach($aircraft as $towplane ){
 	array_push ($row_TowPlane, $towplane->compitition_id );	
 }
  sort($row_TowPlane); 
-// exit(var_dump($row_TowPlane));
 
 // select tow pilots from Wordpress user database where role = 'tow_pilot'
 $row_Towpilots = array();
@@ -219,6 +167,7 @@ $fee_table = array();
 foreach ($data as $key=>$value){
 	$fee_table[$value->altitude]=$value->charge;	
 }
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -300,29 +249,26 @@ body,td,th {
               <tr valign="baseline">
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Member:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
-                  <select name="Pilot1" class="style25" id="Pilot1" >
-                 
+                  <select name="Pilot1" class="style25" id="Pilot1" >                 
                   		<option value="" >  </option>
-                        <option value="-1" <?php if (!(strcmp("** New Member **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** New Member **</option>
-                        <option value="-2" <?php if (!(strcmp("** Freedoms Wings **", $row_Flightlog['Pilot1']))) {echo "selected=\"selected\"";} ?>>** Freedoms Wings **</option>
   						<optgroup label="Members" class="nofly" >
-                        <?php                        
+                        <?php                    
                   			foreach($member_pilots as $pilot ){
-                  			    if ( $pilot == $row_Flightlog['Pilot1'] ) { 
-                  			    	echo(' <option value="'.$pilot->id.'" selected>'.$pilot->name.'</option>');  
+                  			    if ( $pilot->name == $row_Flightlog['Pilot1']) { 
+                  			    	echo(' <option value="'.$pilot->pilot_id.'" selected>'.$pilot->name.'</option>');  
                   			    } else {
                   					echo(' <option value="'.$pilot->pilot_id.'">'.$pilot->name.'</option>');    
                   				}                   
-                  			}                         
+                  			}                       
 						?>
 					</optgroup>
 					  <optgroup label="Possible No Fly" class="nofly" >
                         <?php                        
-                  			foreach($row_no_fly as $pilot ){
-                  			    if ( $pilot == $row_Flightlog['Pilot1'] ) { 
-                  			    	echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');  
+                  			foreach($no_fly_pilots as $pilot ){
+                  			    if ( $pilot->name == $row_Flightlog['Pilot1'] ) { 
+                  			    	echo(' <option value="'.$pilot->pilot_id.'" selected>'.$pilot->name.'</option>');  
                   			    } else {
-                  					echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
+                  					echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name.'</option>');    
                   				}                   
                   			}                         
 						?>					  					  
@@ -364,7 +310,7 @@ body,td,th {
                 <td bgcolor="#CCCCCC"><select name="Tow_Altitude" class="style25">
                     <?php
                     foreach($fee_table as $key=>$value  ){
-                    	if ( $key == $row_Flightlog['Tow Altitude']){
+                    	if ( $key == $row_Flightlog['Tow_Altitude']){
                     		echo(' <option value="'.$key.'" selected>'.$key.'</option>');                  	
                     	} else {
                     		echo(' <option value="'.$key.'" >'.$key.'</option>');    
@@ -378,7 +324,7 @@ body,td,th {
                 <td bgcolor="#CCCCCC"><select name="Tow_Plane" class="style25">
                    <?php
                        foreach($row_TowPlane as $tplane ){
-                  		    if ( $tplane == $row_Flightlog['Tow Plane'] ) { 
+                  		    if ( $tplane == $row_Flightlog['Tow_Plane'] ) { 
                   		    	echo(' <option value="'.$tplane.'" selected>'.$tplane.'</option>');  
                   		    } else {
                   				echo(' <option value="'.$tplane.'" class="nofly">'.$tplane.'</option>');    
@@ -392,7 +338,7 @@ body,td,th {
                 <td bgcolor="#CCCCCC"><select name="Tow_Pilot" class="style25">
                     <?php
                     foreach($row_Towpilots as $pilot ){
-                    	if ( $pilot == $row_Flightlog['Tow Pilot']){
+                    	if ( $pilot == $row_Flightlog['Tow_Pilot']){
                     		echo(' <option value="'.$pilot.'" selected>'.$pilot.'</option>');                  	
                     	} else {
                     		echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
@@ -415,13 +361,7 @@ body,td,th {
                 </div></td>
                 </tr>
             </table>
-<!-- 
-            <input type="hidden" name="LOG_PAGE" value=<?php echo  $_SERVER['HTTP_REFERER']  ?>>
- -->
             <input type="hidden" name="MM_update" value="form2">
-<!-- 
-            <input type="hidden" name="Key" value="<?php echo $row_Flightlog['Key']; ?>">
- -->
             <input type="hidden" name="ParentPage" value="<?php echo  $_SERVER['HTTP_REFERER']  ?>">
           </form>
           <p>

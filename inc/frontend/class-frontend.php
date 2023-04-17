@@ -263,11 +263,16 @@ class Frontend {
 			wp_redirect( wp_login_url() );
 		}
 
-		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
+		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, flightyear, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
 		$result = $wpdb->get_results($sql);
+		if( $result[0]->flightyear != date('Y') ){
+			$yearkey = 1;
+		} else {
+			$yearkey = $result[0]->yearkey+1;
+		}
 
         $wpdb->insert($flight_table, array( 'Date'=>date("Y-m-d"), 'Tow_Plane'=>$result[0]->Tow_Plane, 
-        	'Tow_Pilot'=>$result[0]->Tow_Pilot, 'Time'=>"0.0",'yearkey'=>$result[0]->yearkey+1,
+        	'Tow_Pilot'=>$result[0]->Tow_Pilot, 'Time'=>"0.0",'yearkey'=>$yearkey,
         	'flightyear'=>date('Y') ));
       	wp_redirect($_GET['source_page']);
      	exit();
@@ -384,19 +389,6 @@ class Frontend {
 
          }        
         
-        
- //        $result = mysqli_query($PGCi, "Select * From  pgc_flightsheet") or die('Query failed!');
-         
-//         while($row = mysqli_fetch_assoc($result)) {
-//            if(!$flag) {
-//              // display field/column names as first row
-//              echo implode("\t", array_keys($row)) . "\r\n";  //https:wordpress.stackexchange.com/tags
-//              $flag = true;
-//            }
-//            array_walk($row,  array( $this ,'cleanData'));
-//            echo implode("\t", array_values($row)) . "\r\n";   
-//           }
-//          exit;
     } //pdp_export_data()
                	
 	/**
