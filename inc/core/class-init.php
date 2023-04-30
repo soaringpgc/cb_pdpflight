@@ -64,6 +64,7 @@ class Init {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_public_hooks();
+		$this->define_rest_hooks();
 	}
 
 	/**
@@ -98,10 +99,8 @@ class Init {
 	}
 	public function define_rest_hooks() {
 
-		$plugin_rest = new Rest\Rest( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
-		
+		$plugin_rest = new Rest\Rest( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );		
 		$this->loader->add_action( 'rest_api_init', $plugin_rest, 'register_routes');
-
 	}
 
 	/**

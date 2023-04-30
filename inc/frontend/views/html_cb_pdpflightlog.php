@@ -5,12 +5,12 @@ $table_name = $wpdb->prefix . "cloud_base_aircraft";
 $table_type = $wpdb->prefix . "cloud_base_aircraft_type";	
 $table_status = $wpdb->prefix . "cloud_base_aircraft_status";	
 
-$sql = "SELECT id, compitition_id  FROM {$table_name} s inner join {$table_type} t on s.aircraft_type=t.id inner join {$table_status} u on s.status=u.id WHERE t.aircraft_type='glider' ORDER BY s.aircraft_type DESC, s.registration ASC" ;				
-$sql  = $wpdb->prepare( "SELECT s.id, s.compitition_id  FROM {$table_name} s inner join {$table_type} t on s.aircraft_type=t.id inner join {$table_status} u on s.status=u.id WHERE t.aircraft_type=%s ORDER BY  s.compitition_id DESC", 'glider');
-$glider = $spdb->get_results($sql); 
+$sql = "SELECT id, compitition_id  FROM {$table_name} s inner join {$table_type} t on s.aircraft_type=t.id inner join {$table_status} u on s.status=u.id WHERE t.title LIKE ='%glider%' ORDER BY s.aircraft_type DESC, s.registration ASC" ;				
+$sql  = $wpdb->prepare( "SELECT s.id, s.compitition_id  FROM {$table_name} s inner join {$table_type} t on s.aircraft_type=t.id inner join {$table_status} u on s.status=u.id WHERE t.title=%s ORDER BY  s.compitition_id DESC", 'glider');
+$glider = $wpdb->get_results($sql); 
 // get tow planes
-$sql  = $wpdb->prepare( "SELECT s.id, s.compitition_id  FROM {$table_name} s inner join {$table_type} t on s.aircraft_type=t.id inner join {$table_status} u on s.status=u.id WHERE t.aircraft_type=%s ORDER BY  s.compitition_id DESC", 'tow');
-$tow_plane = $spdb->get_results($sql); 
+$sql  = $wpdb->prepare( "SELECT s.id, s.compitition_id  FROM {$table_name} s inner join {$table_type} t on s.aircraft_type=t.id inner join {$table_status} u on s.status=u.id WHERE t.title=%s ORDER BY  s.compitition_id DESC", 'tow');
+$tow_plane = $wpdb->get_results($sql); 
 // get tow pilots
 $Towpilots = array();
 $args = array('role'=> 'tow_pilot', 'role__not_in'=>'inactive', 'orderby'=>'user_nice_name', 'order'=> 'ASC');

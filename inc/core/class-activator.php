@@ -109,7 +109,6 @@ function copy_pdp_flights(){
 		}	
 		$sql = "SELECT * from pgc_flightsheet"; // current year 2023
 		$flights =  mysqli_query($PGCi, $sql );
-		foreach($flights as $flight ) {
 			$data= array( 
 				'flightyear'   => '2023',
 				'yearkey'      => $flight['Key'],
@@ -130,8 +129,7 @@ function copy_pdp_flights(){
 				'email' 	   => $flight['email'],
 				'mail_count'   => $flight['mail_count']	
 			); 						
-			$wpdb->insert($wp_pdp_flight_log , $data );		
-		}	
+			$wpdb->insert($wp_pdp_flight_log , $data );			
 	}
 }
 
