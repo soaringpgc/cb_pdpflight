@@ -139,88 +139,82 @@ class Rest extends \WP_REST_Controller {
 					date("Y"));	
 		}
 			
-		$resutls  = $wpdb->get_results($sql); 	
-		return new \WP_REST_Response ($resutls); 
+		$results  = $wpdb->get_results($sql); 	
+		return new \WP_REST_Response ($results); 
 	}
 //  create new flight 
 	public function post_flight_data( \WP_REST_Request $request) {
-		global $wpdb; 
-		$table_name =  $wpdb->prefix . 'cloud_base_field_duty';
 		
-	// need calendar_id, trade_id, and member_id  	
-		if(isset($request['calendar_id']) && isset($request['trade_id']) && isset($request['member_id'])){	  
-  			$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_id` = %d AND trade_id = %d" , $request['calendar_id'], $request['trade_id'] );	
-			$id = $wpdb->get_var($sql); 
- 			if( $id == null ){
-	  			$record = array( 'calendar_id'=>  $request['calendar_id'], 'trade_id'=> $request['trade_id'], 'member_id'=>  $request['member_id']);	 			  	 
- 				$result = $wpdb->insert($table_name, $record);				
- 			} else {
- 				return new \WP_Error( 'duplicate', esc_html__( 'member already assigned', 'my-text-domain' ), array( 'status' => 409) );
- 			} 
- 		    return new \WP_REST_Response ( $result); 		
-		} else {
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
+		if (!isset($request['flightyear'])  or  !isset($request['flightyear']) ){
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 		}
-	}	
 	
-//  update field_duty. 	
+		global $wpdb; 
+		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+ 
+// 		isset($request['id']) 			? $id=$request['id'] 					: $id=null;
+		isset($request['flightyear']) 	? $flightyear=$request['flightyear'] 	: $flightyear=date('Y');
+  		isset($request['yearkey']) 		? $yearkey=$request['yearkey'] 			: $yearkey=null;
+ 		isset($request['date']) 		? $date=$request['date'] 				: $date=date('Y-m-d');
+		isset($request['glider']) 		? $glider=$request['glider'] 			: $glider=null;
+		isset($request['flight_type']) 	? $flight_type=$request['flight_type'] 	: $flight_type=null;
+		isset($request['pilot1']) 		? $pilot1=$request['pilot1'] 			: $pilot1=null;
+		isset($request['pilot2']) 		? $pilot2=$request['pilot2'] 			: $pilot2=null;
+		isset($request['takeoff']) 		? $takeoff=$request['takeoff'] 			: $takeoff=null;
+		isset($request['landing']) 		? $landing=$request['landing'] 			: $landing=null;
+		isset($request['time']) 		? $time=$request['time'] 				: $time=null;
+		isset($request['tow_altitude']) ? $tow_altitude=$request['tow_altitude'] :  $tow_altitude=null;
+		isset($request['tow_pilot']) 	? $tow_pilot=$request['tow_pilot'] 		: $tow_pilot=null;
+		isset($request['tow_plane']) 	? $tow_plane=$request['tow_plane'] 		: $tow_plane=null;
+		isset($request['tow_charge']) 	? $tow_charge=$request['tow_charge'] 	: $tow_charge=null;
+		isset($request['notes']) 		? $notes=$request['notes'] 				: $notes=null;
+
+        $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
+        	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
+        	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
+        $result = $wpdb->insert($flight_table, $data); 		
+		
+ 		if($result == '1' ){
+			$sql = $wpdb->prepare("SELECT id FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
+					date("Y"));	
+			$record_id  = $wpdb->get_var($sql); 	
+			return new \WP_REST_Response ($record_id); 				
+ 		}
+	}		
+//  update pdp flight sheet. 	
 	public function put_flight_data( \WP_REST_Request $request) {
 		global $wpdb; 
- 		$calendar_name   =  $wpdb->prefix . 'cloud_base_calendar';
-		$field_name      =  $wpdb->prefix . 'cloud_base_field_duty';
+		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 
-		$member = null;
-	  	if (isset($request['member_id']) &&  !($request['member_id'] ==0 )) { // get id of the member leave at null if zero 
-			$member = $request['member_id'] ;
+		if (!isset($request['id']) ){
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 		}
-		if (isset($request['id'])){
-			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `id` = %d" ,  $request['id']);	
- 	 		$id = $wpdb->get_var($sql); 
- 			if( $id == null ){
- 				return new \WP_Error( 'Failed', esc_html__( 'Not Found', 'my-text-domain' ), array( 'status' => 404) );	     
- 			} else {
- 				$record = array( 'member_id'=>$member );		// update record 		 	 						
- 				$result = $wpdb->update($field_name, $record, array('id' => $id ));	// update existing. 
- 				$sql = $wpdb->prepare("SELECT * FROM {$field_name} WHERE `id` = %d" ,  $request['id']);	
- 	 			$result = $wpdb->get_results($sql); 
- 				return new \WP_REST_Response ( $result); 	 
- 			}
-					
-		} elseif (isset($request['date']) && isset($request['trade_id']) ){ // get id of the date		
- 	   		$sql = $wpdb->prepare("SELECT id FROM {$calendar_name} WHERE `calendar_date` = %s" ,  $request['date']);	
- 	 		$id = $wpdb->get_var($sql); 
- 			if( $id == null ){
- 				return new \WP_Error( ' Failed', esc_html__( 'Not Found', 'my-text-domain' ), array( 'status' => 404) );	     
- 			} else{
-  			 	 $sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %d AND `trade` = %d " , $id, $request['trade_id'] );	 	
- 				 $fid = $wpdb->get_var($sql); // get field duty record. 	
-				 if( $fid == null ){
- 				 	if ( $request['trade_id'] != "1" ){
- 						return new \WP_Error( ' Failed', esc_html__( 'Not Found', 'my-text-domain' ), array( 'status' => 404) );	
- 					}  else {
- 					 	$record = array('calendar_id'=> $id ,'trade'=> $request['trade_id'], 'member_id'=>$member );// new record 			
- 						$result = $wpdb->insert($field_name, $record);	 // add new 
- //							return new \WP_REST_Response ( $wpdb->last_query); 	
- 					} 					  
-  				 } else{
- 				   	$record = array('trade'=> $request['trade_id'], 'member_id'=>$member );		// update record 		 	 						
- 					$result = $wpdb->update($field_name, $record, array('id' => $fid ));	// update existing. 
- 				}
- 			}
-		   	return new \WP_REST_Response ( $result); 	 	
-	     } else {	     
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
-  	   } 
-	}			
-//  delete field_duty. 	
-	public function delete_flight_data( \WP_REST_Request $request) {
-
+ 			
+ 		$fields = array('flightyear', 'yearkey', 'date', 'glider', 'flight_type', 'pilot1', 
+ 			'pilot2', 'takeoff', 'landing', 'time', 'tow_altitude', 'tow_pilot', 'tow_plane', 
+ 			'tow_charge', 'notes' );
+									
 		global $wpdb; 
-		$table_name =  $wpdb->prefix . 'loud_base_field_duty';		
-		
-		if (!isset($request['id'])){
-			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
-		}	
-		$wpdb->delete($table_name , array('id'=> $request['id']));			
+ 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+ 		$record = [];
+ 		foreach( $fields as $field) {
+ 			if( isset($request[$field]) ){
+ 				$record[$field]=$request[$field];		
+ 			}
+ 		} 				 		
+ 		$result = $wpdb->update($flight_table, $record, array('id' =>$request['id']));	// update existing.  		 		
+ 		return new \WP_REST_Response ($result); 		
+	}			
+//  delete flilght log. 	
+	public function delete_flight_data( \WP_REST_Request $request) {
+	// not implmemented. 
+// 
+// 		global $wpdb; 
+// 		$table_name =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
+// 		
+// 		if (!isset($request['id'])){
+// 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
+// 		}	
+// 		$wpdb->delete($table_name , array('id'=> $request['id']));			
 	}	
 }
