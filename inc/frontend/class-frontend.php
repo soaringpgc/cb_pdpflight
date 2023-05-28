@@ -218,15 +218,15 @@ class Frontend {
 
 	} // flight_log_new()	
 		
-	public function pdp_flight_log(){ 
-     	if (isset($_GET['pgc_year'])) {
-     		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
-     	}elseif (isset($_GET['flight_date']) ) {
-     		wp_redirect($_GET['source_page'].'?flight_date='.$_GET['flight_date']);
-     	} else {
-     		wp_redirect($_GET['source_page']);
-     	}
-     }
+// 	public function pdp_flight_log(){ 
+//      	if (isset($_GET['pgc_year'])) {
+//      		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
+//      	}elseif (isset($_GET['flight_date']) ) {
+//      		wp_redirect($_GET['source_page'].'?flight_date='.$_GET['flight_date']);
+//      	} else {
+//      		wp_redirect($_GET['source_page']);
+//      	}
+//      }
 			
 	public function flight_metrics( $atts = array() ) {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
@@ -402,8 +402,29 @@ class Frontend {
 
          }        
         
-    } //pdp_export_data()
-               	
+    } //pdp_flight_log()
+	public function pdp_flight_log($atts = array() ){
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+
+    	wp_register_script( 'pdp_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore',
+		 'workflow', 'pdp_templates'), $this->version, false );
+
+    		$dateToBePassed = array(
+ 				'root' => esc_url_raw( rest_url() ),
+ 				'nonce' => wp_create_nonce( 'wp_rest' ),
+ 				'success' => __( 'Data Has been updated!', 'your-text-domain' ),
+ 				'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+ 				'current_user_id' => get_current_user_id()    	    	
+     		);   	
+     		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+     		);
+
+		include_once 'views/html_cb_pdp_flightlog.php';
+//		return display_flights();
+	}   // pdp_flight_log
 	/**
 	 * Registers all shortcodes at once
 	 *
@@ -414,6 +435,7 @@ class Frontend {
 		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
 		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
 		add_shortcode( 'cb_pgc_flight_log_new', array( $this, 'flight_log_new' ) );
+		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
 
 	} // register_shortcodes()
 	/**

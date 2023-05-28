@@ -41,7 +41,18 @@ tr.border_bottom td {
 	color: #FFFF66;
 	font-size: 16px;
 }
-
+.edit{
+	display: none;
+}
+.view{
+	display: inline;
+}
+.editing .edit {
+	display: inline;
+}
+.editing .view {
+	display: none;
+}
 .BoldMetrics
 {
 	font-weight: bold;
@@ -196,3 +207,31 @@ optgroup.nofly{
 	background-color: #000000;
 	color: #ffffff;
 }
+.viewstop{
+	display: none;
+}
+.viewstart{
+	display: inline;
+}
+.inflight .viewstart {
+	display: none;
+}
+.inflight .viewstop {
+	display: inline;
+}
+.landed .viewstart  {
+	display: none;
+}
+.landed .viewstop  {
+	display: none;
+}
+.landed .time  {
+	display: inline;
+}
+.time{
+	display: none;
+}
+.landed .timestart{
+	display: none;
+} 
+textarea { vertical-align: top; }​

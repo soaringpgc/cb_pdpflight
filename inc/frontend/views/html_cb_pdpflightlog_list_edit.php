@@ -18,6 +18,9 @@ error_reporting(E_ALL);
 
 date_default_timezone_set('America/New_York');
 $pgc_flight_date = date("Y-m-d");
+// var_dump($pgc_flight_date );
+// die();
+
 
 $maxRows_Flightlog = 10;
 $pageNum_Flightlog = 0;
@@ -25,10 +28,9 @@ if (isset($_GET['pageNum_Flightlog'])) {
   $pageNum_Flightlog = $_GET['pageNum_Flightlog'];
 }
 $startRow_Flightlog = $pageNum_Flightlog * $maxRows_Flightlog;
-// $query = $PGCwp->prepare("SELECT * FROM pgc_flightsheet WHERE `Date` = '%s' ORDER BY `Key` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
 
-// $flight_log =  $PGCwp->get_results($query ); 
-// $todaycount= $PGCwp->num_rows;
+// $query = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE CONVERT_TZ(`Date`, 'UTC', 'US/Eastern' )= '%s' ORDER BY `yearkey` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
+// $query = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = CURRENT_DATE() ORDER BY `yearkey` DESC  LIMIT %d, %d  ", $startRow_Flightlog, $maxRows_Flightlog);
 
 $query = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = '%s' ORDER BY `yearkey` DESC  LIMIT %d, %d  ", $pgc_flight_date, $startRow_Flightlog, $maxRows_Flightlog);
 

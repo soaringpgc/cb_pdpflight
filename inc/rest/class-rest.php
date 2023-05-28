@@ -131,43 +131,45 @@ class Rest extends \WP_REST_Controller {
 				$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = %s" , $request['start']);			 
 			}
 		} else {
-  			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = %s" , date("Y-m-d") );	
+  			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Date` = %s ORDER BY yearkey DESC" , date("Y-m-d") );	
 		
 		}
 		if(isset( $request['last'])){
 			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
 					date("Y"));	
-		}
-			
+		}			
 		$results  = $wpdb->get_results($sql); 	
 		return new \WP_REST_Response ($results); 
 	}
 //  create new flight 
 	public function post_flight_data( \WP_REST_Request $request) {
 		
-		if (!isset($request['flightyear'])  or  !isset($request['flightyear']) ){
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
-		}
+// 		if (!isset($request['flightyear'])  or  !isset($request['flightyear']) ){
+// 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
+// 		}
 	
 		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  date("Y"));	
+		$result = $wpdb->get_var($sql); 
+		$yearkey = $result + 1; 	
  
 // 		isset($request['id']) 			? $id=$request['id'] 					: $id=null;
 		isset($request['flightyear']) 	? $flightyear=$request['flightyear'] 	: $flightyear=date('Y');
-  		isset($request['yearkey']) 		? $yearkey=$request['yearkey'] 			: $yearkey=null;
- 		isset($request['date']) 		? $date=$request['date'] 				: $date=date('Y-m-d');
-		isset($request['glider']) 		? $glider=$request['glider'] 			: $glider=null;
-		isset($request['flight_type']) 	? $flight_type=$request['flight_type'] 	: $flight_type=null;
-		isset($request['pilot1']) 		? $pilot1=$request['pilot1'] 			: $pilot1=null;
-		isset($request['pilot2']) 		? $pilot2=$request['pilot2'] 			: $pilot2=null;
-		isset($request['takeoff']) 		? $takeoff=$request['takeoff'] 			: $takeoff=null;
-		isset($request['landing']) 		? $landing=$request['landing'] 			: $landing=null;
-		isset($request['time']) 		? $time=$request['time'] 				: $time=null;
-		isset($request['tow_altitude']) ? $tow_altitude=$request['tow_altitude'] :  $tow_altitude=null;
-		isset($request['tow_pilot']) 	? $tow_pilot=$request['tow_pilot'] 		: $tow_pilot=null;
-		isset($request['tow_plane']) 	? $tow_plane=$request['tow_plane'] 		: $tow_plane=null;
-		isset($request['tow_charge']) 	? $tow_charge=$request['tow_charge'] 	: $tow_charge=null;
-		isset($request['notes']) 		? $notes=$request['notes'] 				: $notes=null;
+//   		isset($request['yearkey']) 		? $yearkey=$request['yearkey'] 			: $yearkey=null;
+ 		isset($request['Date']) 		? $date=$request['Date'] 				: $date=date('Y-m-d');
+		isset($request['Glider']) 		? $glider=$request['Glider'] 			: $glider=null;
+		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type=null;
+		isset($request['Pilot1']) 		? $pilot1=$request['Pilot1'] 			: $pilot1=null;
+		isset($request['Pilot2']) 		? $pilot2=$request['Pilot2'] 			: $pilot2=null;
+		isset($request['Takeoff']) 		? $takeoff=$request['Takeoff'] 			: $takeoff=null;
+		isset($request['Landing']) 		? $landing=$request['Landing'] 			: $landing=null;
+		isset($request['Time']) 		? $time=$request['Time'] 				: $time=null;
+		isset($request['Tow_Altitude']) ? $tow_altitude=$request['Tow_Altitude'] :  $tow_altitude=null;
+		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=null;
+		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=null;
+		isset($request['Tow_Charge']) 	? $tow_charge=$request['Tow_Charge'] 	: $tow_charge=null;
+		isset($request['Notes']) 		? $notes=$request['Notes'] 				: $notes=null;
 
         $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
@@ -175,10 +177,11 @@ class Rest extends \WP_REST_Controller {
         $result = $wpdb->insert($flight_table, $data); 		
 		
  		if($result == '1' ){
-			$sql = $wpdb->prepare("SELECT id FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
-					date("Y"));	
-			$record_id  = $wpdb->get_var($sql); 	
+			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
+			$record_id  = $wpdb->get_results($sql); 	
 			return new \WP_REST_Response ($record_id); 				
+ 		} else {
+ 			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) ); 
  		}
 	}		
 //  update pdp flight sheet. 	
@@ -189,10 +192,11 @@ class Rest extends \WP_REST_Controller {
 		if (!isset($request['id']) ){
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 		}
- 			
- 		$fields = array('flightyear', 'yearkey', 'date', 'glider', 'flight_type', 'pilot1', 
- 			'pilot2', 'takeoff', 'landing', 'time', 'tow_altitude', 'tow_pilot', 'tow_plane', 
- 			'tow_charge', 'notes' );
+ 		$id = stripslashes_deep($request['id']); //added stripslashes_deep which removes WP escaping.
+	
+ 		$fields = array('flightyear', 'yearkey', 'Date', 'Glider', 'Flight_Type', 'Pilot1', 
+ 			'Pilot2', 'Takeoff', 'Landing', 'Time', 'Tow_Altitude', 'Tow_Pilot', 'Tow_Plane', 
+ 			'Tow_Charge', 'Notes' );
 									
 		global $wpdb; 
  		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
@@ -201,9 +205,9 @@ class Rest extends \WP_REST_Controller {
  			if( isset($request[$field]) ){
  				$record[$field]=$request[$field];		
  			}
- 		} 				 		
- 		$result = $wpdb->update($flight_table, $record, array('id' =>$request['id']));	// update existing.  		 		
- 		return new \WP_REST_Response ($result); 		
+ 		} 			 		 		
+ 		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		 		
+ 		return new \WP_REST_Response ($record); 		
 	}			
 //  delete flilght log. 	
 	public function delete_flight_data( \WP_REST_Request $request) {
