@@ -405,23 +405,28 @@ class Frontend {
     } //pdp_flight_log()
 	public function pdp_flight_log($atts = array() ){
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-
+ 		global $wpdb; 
+		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
+					date("Y"));				
+		$last_yearkey = $wpdb->get_var($sql); 	
 
     	wp_register_script( 'pdp_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore',
-		 'workflow', 'pdp_templates'), $this->version, false );
+// 	    wp_register_script( 'validation',  plugins_url('/cloudbase/includes/backbone-validation-min.js'));	
+	    
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 'validation',
+		 'pdp_templates'), $this->version, false );
 
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),
  				'nonce' => wp_create_nonce( 'wp_rest' ),
  				'success' => __( 'Data Has been updated!', 'your-text-domain' ),
  				'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
- 				'current_user_id' => get_current_user_id()    	    	
+ 				'current_user_id' => get_current_user_id(),
+ 				'last_yearkey' =>  $last_yearkey	    	
      		);   	
      		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before'
      		);
-
 		include_once 'views/html_cb_pdp_flightlog.php';
 //		return display_flights();
 	}   // pdp_flight_log

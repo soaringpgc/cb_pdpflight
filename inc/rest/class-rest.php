@@ -206,8 +206,10 @@ class Rest extends \WP_REST_Controller {
  				$record[$field]=$request[$field];		
  			}
  		} 			 		 		
- 		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		 		
- 		return new \WP_REST_Response ($record); 		
+ 		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		
+ 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);			
+		$results  = $wpdb->get_results($sql); 			 		 		
+ 		return new \WP_REST_Response ($results); 		
 	}			
 //  delete flilght log. 	
 	public function delete_flight_data( \WP_REST_Request $request) {

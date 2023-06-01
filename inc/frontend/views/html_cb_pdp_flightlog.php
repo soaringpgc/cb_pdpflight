@@ -18,9 +18,9 @@
 
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div class="flex-container">
-   <div id="eflights">
-    <h3 class="datetime"> Flight Editor</h3>
+<div >
+   <div id="eflights" >
+    <h3 class="datetime hidden"> Flight Editor</h3>
     <?php 	
    		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
@@ -70,7 +70,8 @@
         		
       if( current_user_can( 'read' ) ) {	
       
-      echo ('<form id="addFlight" action="#" ><div >
+      echo ('<form id="addFlight" action="#" class="hidden">
+      <div class="container">
   	    <input type = "hidden"
           id = "id"
           size = "2"
@@ -88,7 +89,7 @@
          echo ('</select>  </div> <div class="form-row">   
         <label for="glider">Glider: </label>
         <select name="Glider" id="Glider" form="addFlight" >
-        <option value="" selected>Select Aircraft</option>');
+        <option value=" " selected>Select Aircraft</option>');
      	foreach($aircraft as $key){ 	
      		if ($key->type == 'Glider'){
      			echo '<option value=' . $key->compitition_id  . '>'. $key->compitition_id . '</option>';
@@ -98,7 +99,7 @@
         </select>  </div> <div class="form-row">   
         <label for="pilots">Pilot: </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
-        <option value="" selected>Select Member</option>
+        <option value=" " selected>Select Member</option>
   			<optgroup label="Members" class="nofly" >');               
          		foreach($member_pilots as $pilot ){
          			echo(' <option value="'. $pilot->name .'">'.$pilot->name.'</option>');                     
@@ -126,12 +127,12 @@
         echo ('</select></div>
         <div class="form-row">  
        	 	<label for="launch">Launch:</label>
-			<input type="time" id="Takeoff" name="Takeoff" size="5">
+			<input type="time" id="Takeoff" name="Takeoff" value=" " >
 		</div> 
 
 		<div class="form-row"> 
         	<label for="landing">Landing:</label>
-			<input type="time" id="Landing" name="Landing" size="5">
+			<input type="time" id="Landing" name="Landing">
 		</div> 
 		
         <div class="form-row"> 
@@ -161,24 +162,51 @@
      		}
          };           
          echo ( '</select></div>         
-         <div><label for="Notes">Notes: </label>
-          <textarea  form="addFlight" id="Notes" name="Notes"  rows=7 cols=17">
-         </textarea></div></form></div>
+         <div class="form-row"><label for="Notes">Notes: </label>
+          <textarea  form="addFlight" id="Notes" name="Notes"  rows=4 cols=35">
+         </textarea></div></div>
         <div id="addorupdate">
         <button  id="add"  class="view">ADD</button>
         <button  id="update"  class="edit">Update</button>
         <button  id="cancel" >Cancel</button>
 		</div>
-         
+	</form>
+              <div class="Title flight_list">
+                   <p class="flight_list"> <button  id="flight_button"  class="view">ADD FLight</button>
+               Today\'s Flights ' . $active_date . '</p>
+             </div>
+             <div class="Heading">
+                 <div class="Cell0">
+                     <p>Flight</p>
+                 </div>
+                <div class="Cell">
+                     <p>Glider</p>
+                 </div>
+                 <div class="Cell2">
+                     <p>Pilot</p>
+                 </div>
+                 <div class="Cell">
+                     <p>Action</p>
+                 </div>
+                 <div class="Cell">
+                     <p>Time</p>
+                 </div>
+                  <div class="Cell">
+                     <p>Altitude</p>
+                 </div>
+                 <div class="Cell">
+                     <p>Tug</p>
+                 </div>  
+              </div>      
           ' );
 
      } else {
      	Echo 'Please log in. ';
      }
 ?>
+<!-- 
      </div>
-      <div class="aside"> 
-         <div  class="TowFee Table" id="flights">
+         <div  class="TowFee Table aside" id="flights">
              <div class="Title ">
                  <p>Today's Flights <?php echo $active_date ?></p>
              </div>
@@ -206,12 +234,12 @@
                  </div>
              </div>
          </div>
-     </div>
    </div>
+ -->
 <!-- 
 	<div class="footer">Today's Flights </div>
   </div>
- -->
-</div>
 
+</div>
+ -->
 
