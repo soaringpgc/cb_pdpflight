@@ -97,7 +97,7 @@
          };     
         echo ( ' <option value="0" >PVT</option>
         </select>  </div> <div class="form-row">   
-        <label for="pilots">Pilot: </label>
+        <label for="pilots">Pilot: (Member to be charged) </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
         <option value=" " selected>Select Member</option>
   			<optgroup label="Members" class="nofly" >');               
@@ -171,9 +171,9 @@
         <button  id="cancel" >Cancel</button>
 		</div>
 	</form>
-              <div class="Title flight_list">
-                   <p class="flight_list"> <button  id="flight_button"  class="view">ADD FLight</button>
-               Today\'s Flights ' . $active_date . '</p>
+              <div class="Title">
+                   <div class="Heading" id="addbutton"> <button  id="flight_button"  class="view">ADD FLight</button>
+              <div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
              </div>
              <div class="Heading">
                  <div class="Cell0">

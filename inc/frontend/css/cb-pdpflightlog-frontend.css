@@ -267,3 +267,12 @@ flight_list .editing{
 Heading .editing{
 	display: none;
 }
+#flight_button    {
+    width: 100px;
+    background: red;
+    float: left;
+}
+#editDate  {
+    width: 500px;
+    float: right;
+}

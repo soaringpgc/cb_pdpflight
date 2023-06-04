@@ -32,6 +32,8 @@
 	 });	 
 	 
 	var app = app || {};
+	app.working_date = (new Date()).toISOString().split('T')[0];
+	$('#editDate').text('Flight Log for: ' +app.working_date);
  
 	app.Model = Backbone.Model.extend({
 	// over ride the sync function to include the Wordpress nonce. 
@@ -85,7 +87,7 @@
 
     app.FlightList= app.Collection.extend({
     	model: app.Flight,
-    	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
+    	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog?start=' + app.working_date,  
 //     	comparators: {
 //     		yearkey: function(Flight){
 //     			return(Number(Flight.get("yearkey")));
@@ -243,14 +245,17 @@
       		var max_key = Number(max_flight.get('yearkey'));
       	
       	} else {
-      		var max_key =  Number(cloud_base_public_vars.yearkey );
+      		var max_key =  Number(cloud_base_public_vars.last_yearkey );
       	}       	
       	   	
       	formData['yearkey'] = max_key+1;
       	formData['Time'] = " ";
 //       	console.log(this.collection.max('yearkey'));
 //         	alert(JSON.stringify(formData));
-      	this.collection.create( formData, {wait: false});
+      	this.collection.create( formData, {wait: false});      	         
+// clean out the form:
+		this.cancelItem(e);
+
       },
       updateItem: function(e){     	
 		e.preventDefault();
@@ -309,8 +314,7 @@
         });
          
 // clean out the form:
-		this.cancelItem(e);
- 
+		this.cancelItem(e); 
 		$("#addorupdate").removeClass('editing');	
       	},
       cancelItem: function(e){
