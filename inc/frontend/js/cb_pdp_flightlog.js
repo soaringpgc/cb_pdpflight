@@ -88,10 +88,9 @@
     app.FlightList= app.Collection.extend({
     	model: app.Flight,
     	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog?start=' + app.working_date,  
-//     	comparators: {
-//     		yearkey: function(Flight){
-//     			return(Number(Flight.get("yearkey")));
-//     		},
+    	comparator: function(Flight){
+    			return(-Number(Flight.get("yearkey")));
+    		},
 //     		landed: function(Flight){
 //     			return( Flight.get(Landing) != "" ? true : false);
 //     		}
@@ -204,6 +203,7 @@
         this.render();
         this.listenTo(this.collection, 'add', this.renderItem);
         this.listenTo(this.collection, 'reset', this.render);
+//         this.collection.on('change', this.render, this);
       },
       render: function(){
       	this.collection.each(function(item){	
@@ -246,16 +246,20 @@
       	
       	} else {
       		var max_key =  Number(cloud_base_public_vars.last_yearkey );
-      	}       	
+      	} 
+      	if(formData['Pilot1'] == ' ') {
+      		alert('Pilot 1 can not be blank');
+      	} else {    	
       	   	
       	formData['yearkey'] = max_key+1;
       	formData['Time'] = " ";
 //       	console.log(this.collection.max('yearkey'));
 //         	alert(JSON.stringify(formData));
-      	this.collection.create( formData, {wait: false});      	         
+      	this.collection.create( formData, {wait: false, at: 0});   
+//       	this.collection.sortBy('yearkey') ;   
 // clean out the form:
 		this.cancelItem(e);
-
+		}
       },
       updateItem: function(e){     	
 		e.preventDefault();
@@ -390,13 +394,6 @@
  	 	preinitialize(){
  	 	   this.collection = new app.FlightList();
  	 	},	
-//          renderItem: function(item){
-//             var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag });
-//             var itemView = new expandedView({
-//       	  		model: item
-//       		})
-//       		this.$el.append( itemView.render().el);   
-//          }
       	renderItem: function(item){    
 // convert SQL time to Javascript   
 			if(item.get('Takeoff') != null){
