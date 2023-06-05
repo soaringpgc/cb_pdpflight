@@ -236,9 +236,13 @@ optgroup.nofly{
 } 
 textarea { vertical-align: top; }
 form {
+  margin: 0 auto;
+}
+#addFlight{
   width: 50%;
   margin: 0 auto;
 }
+
 .container {
     width:80%;
     margin:2 auto;
@@ -258,13 +262,16 @@ h3 {
     font-weight:bold;
     color:blue;
 }
-flight_list{
+.flight_list{
 	display: inline;
 }
-flight_list .editing{
+.flight_list .editing{
 	display: none;
 }
-Heading .editing{
+.Heading .editing{
+	display: none;
+}
+.Title .editing{
 	display: none;
 }
 #flight_button    {
@@ -275,4 +282,7 @@ Heading .editing{
 #editDate  {
     width: 500px;
     float: right;
+}
+.Row .editing{
+	display: none;
 }

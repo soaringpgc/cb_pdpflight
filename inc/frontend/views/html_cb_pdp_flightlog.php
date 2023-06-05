@@ -72,6 +72,7 @@
       
       echo ('<form id="addFlight" action="#" class="hidden">
       <div class="container">
+      	<h3> Flight Editor</h3>
   	    <input type = "hidden"
           id = "id"
           size = "2"
@@ -171,8 +172,8 @@
         <button  id="cancel" >Cancel</button>
 		</div>
 	</form>
-              <div class="Title">
-                   <div class="Heading"> <button  id="flight_button"  class="view">ADD FLight</button>
+              <div class="Title flightlist">
+                   <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button>
               <div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
              </div>
              <div class="Heading">

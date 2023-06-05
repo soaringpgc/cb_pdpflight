@@ -28,7 +28,10 @@
 	 $("#flight_button").on('click', function(e){
 // 	 		alert('add flight');
 	 		$("#addFlight").removeClass("hidden");
-	 		$(".flight_list").addClass("editing");    	  
+	 		$(".flight_list").addClass("editing");   
+	 		$('.Title').toggleClass('editing'); 	
+ 		 	$('.Heading').toggleClass('editing'); 	 
+ 		 	$('.Row').toggleClass('editing'); 	 	  
 	 });	 
 	 
 	var app = app || {};
@@ -116,7 +119,10 @@
    		update: function(){
 			var localmodel = this.model;
  			$("#addorupdate").addClass('editing'); 	
- 			$("#addFlight").removeClass("hidden");		
+ 			$("#addFlight").removeClass("hidden");	
+ 		 	$('.Title').toggleClass('editing'); 	
+ 		    $('.Heading').toggleClass('editing'); 	
+					
              // NTFS this requires the form id's to be the same as the model id's.
              // we are looping over the form, picking up the id's and then getting the 
              // value of the same id in the model and then loading it back into the form
@@ -346,8 +352,10 @@
       	});  
       	$("#addorupdate").removeClass('editing');		    
       	$("#addFlight").addClass("hidden");   
-      	$(".flight_list").removeClass("editing");   		   
-      		    	
+
+      	 $('.Title').toggleClass('editing'); 	
+ 		 $('.Heading').toggleClass('editing'); 	
+ 		         		    	
       }
 	});
 // 	app.FlightsView = app.CollectionView.extend({

@@ -174,11 +174,38 @@ class Rest extends \WP_REST_Controller {
         $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
         	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
+
+        $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
+        	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Tow_Altitude'=>$tow_altitude, 
+        	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
+
         $result = $wpdb->insert($flight_table, $data); 		
 		
  		if($result == '1' ){
 			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
 			$record_id  = $wpdb->get_results($sql); 	
+/*
+		The following is becasue wpdb->insert does not handel insertin "nulls" well. They end up as 
+		zero. inorder to maintain nuls the following inserts Takeoff, Landing and Time ONLY if they
+		are set
+*/			
+			if(isset($request['Takeoff'])){
+				$record['Takeoff'] =$request['Takeoff'];
+			}
+			if(isset($request['Landing'])){
+				$record['Landing'] =$request['Landing'];
+			}
+			if(isset($request['Time'])){
+				$record['Time'] =$request['Time'];
+			}	
+			if (isset($request['Takeoff']) || isset($request['Landing']) || isset($request['Time'] ))	{
+				$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		
+			}
+			
+			
+			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
+			$record_id  = $wpdb->get_results($sql); 	
+					
 			return new \WP_REST_Response ($record_id); 				
  		} else {
  			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) ); 
