@@ -172,7 +172,7 @@
 		</div>
 	</form>
               <div class="Title">
-                   <div class="Heading" id="addbutton"> <button  id="flight_button"  class="view">ADD FLight</button>
+                   <div class="Heading"> <button  id="flight_button"  class="view">ADD FLight</button>
               <div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
              </div>
              <div class="Heading">

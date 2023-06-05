@@ -201,15 +201,23 @@
 //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
 //         this.collection.sort();
         this.render();
-        this.listenTo(this.collection, 'add', this.renderItem);
+//         this.listenTo(this.collection, 'add', this.renderItem);
         this.listenTo(this.collection, 'reset', this.render);
-//         this.collection.on('change', this.render, this);
+        this.listenTo(this.collection, 'add', this.render_add);
       },
       render: function(){
       	this.collection.each(function(item){	
   			this.renderItem(item);    	
       	}, this );
       },
+      render_add: function(){
+  		this.$('.Row').html('');
+
+      	this.collection.each(function(item){	
+  			this.renderItem(item);    	
+      	}, this );
+      },
+      clearList: function() { this.$('.Row').html('') },
       events:{
       	'click #add' : 'addItem',
       	'click #update' : 'updateItem',
@@ -253,10 +261,12 @@
       	   	
       	formData['yearkey'] = max_key+1;
       	formData['Time'] = " ";
-//       	console.log(this.collection.max('yearkey'));
-//         	alert(JSON.stringify(formData));
-      	this.collection.create( formData, {wait: false, at: 0});   
-//       	this.collection.sortBy('yearkey') ;   
+      	this.collection.create( formData, {wait: false});  
+      	this.collection.reset(); 
+//     	this.collection.sortBy('yearkey') ;   
+//     	this.collection.render ;   
+//        	var index = this.collection.indexOf(last_model);
+//        $("div:eq(" + index.toString() + ")").before(this.collection.render().el);
 // clean out the form:
 		this.cancelItem(e);
 		}
