@@ -231,9 +231,6 @@ optgroup.nofly{
 .time{
 	display: none;
 }
-.landed .timestart{
-	display: none;
-} 
 textarea { vertical-align: top; }
 form {
   margin: 0 auto;

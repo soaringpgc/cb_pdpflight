@@ -37,11 +37,9 @@
 	var app = app || {};
 	app.working_date = (new Date()).toISOString().split('T')[0];
 	$('#editDate').text('Flight Log for: ' +app.working_date);
- 
-	app.Model = Backbone.Model.extend({
-	// over ride the sync function to include the Wordpress nonce. 
-	// going to need this for everything so do it once.  
-	  	sync: function( method, model, options ){
+// Define Flight Model and how to get it. 
+	app.Flight = Backbone.Model.extend({
+		sync: function( method, model, options ){
     		return Backbone.sync(method, this, jQuery.extend( options, {
       			beforeSend: function (xhr) {
 //      			alert(cloud_base_public_vars.nonce);
@@ -49,18 +47,8 @@
       			},
    			} ));	
    		},	
-	});
-
-	app.Flight = app.Model.extend({
 		initialize: function(){
-// 			_.extend(this, new Backbone.Workflow(this, {attrName:'status'})
-// 			);
-// 			this.bind('transition:from:staged', function(){
-// 				this.set('start_time', new Date().toISOString());
-// 			});
-// 			this.bind('transition:from:inflight', function(){
-// 				this.set('end_time', new Date().toISOString());
-// 			});
+
 		},
 // 		validation:{
 // 			Glider:{
@@ -77,20 +65,21 @@
 		},
 		wait: true
 	});
-// collections	
-    app.Collection = Backbone.Collection.extend({	
-    	sync: function( method, model, options ){
-    		return Backbone.sync(method, this, jQuery.extend( options, {
-      			beforeSend: function (xhr) {
-        		xhr.setRequestHeader( 'X-WP-NONCE', cloud_base_public_vars.nonce );
-      			},
-   			} ));	
-   		},	
-   	 }) ; 
+//  collections	
+//     app.Collection = Backbone.Collection.extend({	
+//     	sync: function( method, model, options ){
+//     		return Backbone.sync(method, this, jQuery.extend( options, {
+//       			beforeSend: function (xhr) {
+//         		xhr.setRequestHeader( 'X-WP-NONCE', cloud_base_public_vars.nonce );
+//       			},
+//    			} ));	
+//    		},	
+//    	 }) ; 
 
-    app.FlightList= app.Collection.extend({
+// Define Flight list collection. 
+    app.FlightList= Backbone.Collection.extend({
     	model: app.Flight,
-    	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog?start=' + app.working_date,  
+    	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
     	comparator: function(Flight){
     			return(-Number(Flight.get("yearkey")));
     		},
@@ -98,9 +87,11 @@
 //     			return( Flight.get(Landing) != "" ? true : false);
 //     		}
 //     	}
-   	 }) ; 		
-// model view	
-	app.ModelView = Backbone.View.extend({
+   	 }) ; 	
+   	 
+// Define model view	
+	app.FlightView = Backbone.View.extend({
+	 	template: flighttemplate_pdp,    
 		tagName: 'div',
         className: 'Row',
 		render: function(){
@@ -161,8 +152,8 @@
 // 			       alert('updated'); 
 			    }, 
 			    error: function(model, error){
-// 			    	alert('Error: ' + error);
-// 			    	console.log(error);
+			    	alert('Error: ' + error);
+			    	console.log(error);
 			    }			
 			});
 		},
@@ -197,13 +188,13 @@
 			});	
 		}
 	});
-	app.FlightView = app.ModelView.extend({
-	        template: flighttemplate_pdp,     
-	});	
+
 // 		
 	app.CollectionView =  Backbone.View.extend({         
       initialize: function(){
-        this.collection.fetch({reset:true});
+      	var fetch_string = '{reset:true, data: $.param({start: ' +app.working_date +  '})}';
+//       	alert(fetch_string);
+        this.collection.fetch(fetch_string);
 //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
 //         this.collection.sort();
         this.render();
@@ -269,10 +260,6 @@
       	formData['Time'] = " ";
       	this.collection.create( formData, {wait: false});  
       	this.collection.reset(); 
-//     	this.collection.sortBy('yearkey') ;   
-//     	this.collection.render ;   
-//        	var index = this.collection.indexOf(last_model);
-//        $("div:eq(" + index.toString() + ")").before(this.collection.render().el);
 // clean out the form:
 		this.cancelItem(e);
 		}
@@ -358,67 +345,82 @@
  		         		    	
       }
 	});
-// 	app.FlightsView = app.CollectionView.extend({
-// 	 	el: '#flights', 
-// 		localDivTag: '#addFlight Div',
-// 	 	preinitialize(){
-// 			this.collection = new app.FlightList();
-// 	 	},	
-// 	    initialize: function(){
-// 	      var self = this;
-// 	 	  this.collection = new app.FlightList();
-//     	  this.collection.fetch({reset:true, wait: true });    
-// 		  
-//           this.listenTo(this.collection, 'add', this.renderItem);
-//           this.listenTo(this.collection, 'reset', this.render);
-//         },
-//         render: function(){
-//       	  this.collection.each(function(item){
-//   		  this.renderItem(item);    	
-//       	}, this );
-//       },
-//       renderItem: function(item){    
-// // convert SQL time to Javascript   
-// 			if(item.get('Takeoff') != null){
-//       			var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
-// 				// adding 'inflight' class to the row. used below.... 
-//              	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
-// // convert javascript time to SQL
-// //      		alert(launch.toISOString().slice(0, 19).replace('T', ' '));
-// //       			item.set({'start_display_time':  launch.toLocaleTimeString('en-US',{ hour12:false})}, {silent: true });
-//       		} else {
-//        			item.set({'Takeoff': ""}, {silent: true });
-//       		}
-//       		if(item.get('Landing') != null && item.get('Landing') != 0){
-//       			var landing =  new Date(item.get('Landing'));
-//       			// add 'landed' class to this row... used below. 
-//       			var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});
-// //       			item.set({'end_display_time':  landing.toLocaleTimeString('en-US', { hour12:false})}, {silent: true });
-//       		} else {
-//       			item.set({'Landing': ""}, {silent: true });
-//       		}
-// 			if(expandedView === undefined ){
-//             	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
-//             }
-//             var itemView = new expandedView({
-//       	  		model: item
-//       		})
-//       		this.$el.append( itemView.render().el);   
-//         }
-// 	}); 
-	app.EditView = app.CollectionView.extend({
-	 	el: '#eflights', 
-		localDivTag: '#addFlight div',
- 	 	preinitialize(){
- 	 	   this.collection = new app.FlightList();
- 	 	},	
-      	renderItem: function(item){    
+	app.FlightsView = app.CollectionView.extend({
+	 	el: '#flights', 
+		localDivTag: '#addFlight Div',
+	 	preinitialize(){
+			this.collection = new app.FlightList();
+	 	},	
+	    initialize: function(){
+	      var self = this;
+	 	  this.collection = new app.FlightList();
+    	  this.collection.fetch({reset:true, wait: true });    
+		  
+          this.listenTo(this.collection, 'add', this.renderItem);
+          this.listenTo(this.collection, 'reset', this.render);
+        },
+        render: function(){
+      	  this.collection.each(function(item){
+  		  this.renderItem(item);    	
+      	}, this );
+      },
+      renderItem: function(item){    
 // convert SQL time to Javascript   
 			if(item.get('Takeoff') != null){
       			var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
 				// adding 'inflight' class to the row. used below.... 
              	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
 // convert javascript time to SQL
+//      		alert(launch.toISOString().slice(0, 19).replace('T', ' '));
+//       			item.set({'start_display_time':  launch.toLocaleTimeString('en-US',{ hour12:false})}, {silent: true });
+      		} else {
+       			item.set({'Takeoff': ""}, {silent: true });
+      		}
+      		if(item.get('Landing') != null && item.get('Landing') != 0){
+      			var landing =  new Date(item.get('Landing'));
+      			// add 'landed' class to this row... used below. 
+      			var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});
+//       			item.set({'end_display_time':  landing.toLocaleTimeString('en-US', { hour12:false})}, {silent: true });
+      		} else {
+      			item.set({'Landing': ""}, {silent: true });
+      		}
+			if(expandedView === undefined ){
+            	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
+            }
+            var itemView = new expandedView({
+      	  		model: item
+      		})
+      		this.$el.append( itemView.render().el);   
+        }
+	}); 
+	app.EditView = app.CollectionView.extend({
+	 	el: '#eflights', 
+		localDivTag: '#addFlight div',
+ 	 	preinitialize(){
+ 	 	   this.collection = new app.FlightList();
+ 	 	},	
+ 	 	 	 	
+ 	    initialize: function(){
+	      var self = this;
+	 	  this.collection = new app.FlightList();
+    	  this.collection.fetch({reset:true, wait: true });    
+		  
+          this.listenTo(this.collection, 'add', this.renderItem);
+          this.listenTo(this.collection, 'reset', this.render);
+          this.listenTo(this.collection, 'add', this.render_add);
+        },
+//         render: function(){
+//       	  this.collection.each(function(item){
+//   		  this.renderItem(item);    	
+//       	}, this );
+//       },	 	
+//  	 	
+//  	 		 	 	 	 	 	
+      	renderItem: function(item){    
+ 			if( (typeof item.get('Takeoff') !== 'undefined' ) && isNaN(item.get('Takeoff'))){
+      			var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
+				// adding 'inflight' class to the row. used below.... 
+             	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
       		} else {
        			item.set({'Takeoff': ""}, {silent: true });
       		}

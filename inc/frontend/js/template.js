@@ -14,8 +14,8 @@ var flighttemplate_pdp = _.template(`
   		 <button id="landing" class="viewstop  buttonlanding"></button>
      </div  >
      <div class="Cell" >
-     <label class="timestart"> <%=  Takeoff %> </label >
-     <label class="hidden"> <%=  Landing %> </label >
+     <label class="viewstop"> <%=  Takeoff %> </label >
+     <label class="viewstop"> <%=  Landing %> </label >
      <label class="time"> <%=  Time %> </label >
      </div>
      
