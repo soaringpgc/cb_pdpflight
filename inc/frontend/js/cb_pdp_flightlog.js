@@ -51,11 +51,10 @@
 		sync: function( method, model, options ){
     		return Backbone.sync(method, this, jQuery.extend( options, {
       			beforeSend: function (xhr) {
-//      			alert(cloud_base_public_vars.nonce);
         		xhr.setRequestHeader( 'X-WP-NONCE', cloud_base_public_vars.nonce );
       			},
-   			} ));	
-   		},	
+    			} ));	
+    		},	
 		initialize: function(){
 
 		},
@@ -84,11 +83,7 @@
      	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
     	comparator: function(Flight){
     			return(-Number(Flight.get("yearkey")));
-    		},
-//     		landed: function(Flight){
-//     			return( Flight.get(Landing) != "" ? true : false);
-//     		}
-//     	}
+    		}
    	 }) ; 	
    	 
 // Define model view	
@@ -142,15 +137,11 @@
 			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
 			var launch = new  Date();
 // 			this.model.set({'Takeoff': launch.toLocaleTimeString('en-US',  {hour12:false})});								
-// 			this.model.set({'Takeoff':  launch.toLocaleTimeString('en-US',  {hour12:false})});
-// 			this.model.set({'start_display_time':  launch.toLocaleTimeString('en-US',  {hour12:false})});
-			this.$el.addClass('inflight'); 	
-// 			alert(this.model.get('id'));
-			
+			this.$el.addClass('inflight'); 				
 			this.model.save(
  				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
 				{
-// 				patch:true,
+ 				patch:true,
 // 				wait: true,
 			    success: function(model, resp, opt) {
 // 			       alert('updated'); 
@@ -164,23 +155,22 @@
 		landing_time: function(){
 			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
 			var landing = new Date(); 
-			var now = new Date();
-			var dd = String(now.getDate()).padStart(2, '0');
-			var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
-			var yyyy = now.getFullYear();			
-		    var today = yyyy + '-' + mm + '-' + dd;
-			// recreate take off time. 													
+			// recreate take off time.
+			  var now = new Date();
+			  var dd = String(now.getDate()).padStart(2, '0');
+			  var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
+			  var yyyy = now.getFullYear();			
+		      var today = yyyy + '-' + mm + '-' + dd; 													
 			var launch =  new Date(today+'T'+(this.model.get('Takeoff')).replace(/-/g,"/"));
 			var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
 			var hours = Math.round(temptime *100) / 100 ;
-// 			this.model.set({'Time' : hours});
 			
 			this.$el.addClass('landed'); 
 // 			this.model.save();
 			this.model.save(
  				{ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours},
 				{
-				patch:true,
+ 				patch:true,
 // 				wait: true,
 			    success: function(model, resp, opt) {
 //  			       alert('updated'); 
@@ -263,8 +253,18 @@
       	   	
       	formData['yearkey'] = max_key+1;
       	formData['Time'] = " ";
-      	this.collection.create( formData, {wait: false});  
-//       	this.collection.reset(); 
+      	this.collection.create( formData, 
+      		{
+      		wait: true,
+      		success: function(model, resp, opt) {
+//       		console.log(model);
+//       		console.log(resp);
+//       		console.log(opt);
+//       				alert('success');
+      		}
+      		
+      		});  
+//        	this.collection.reset(); 
 // clean out the form:
 		this.cancelItem(e);
 		}
@@ -294,7 +294,11 @@
       		formData[el.id] = $(el).val();
       	  }
       	});
-     	var updateModel = this.collection.get(formData.id);  
+      	if (typeof formData.id === 'undefined'){
+      		var updateModel = this.collection.findWhere({"yearkey": Number(formData.yearkey)});  
+      	} else {
+      		var updateModel = this.collection.get(formData.id);  
+      	}
 //      	var old_takeoff = updateModel.get('Takeoff');
 //    		var old_landing = updateModel.get('Landing');  	
    		if(typeof formData['Takeoff'] === 'undefined' )  	{
@@ -303,7 +307,7 @@
   		if(typeof formData['Landing'] === 'undefined' )  	{
    			formData['Landing'] = '00:00:00';	
    		}
-   		alert(formData['Landing'])  ;   
+//    		alert(formData['Landing'])  ;   
    		if ( (formData['Takeoff'] != '00:00:00' )  &&  ( formData['Landing'] != '00:00:00') ){
 //    			var old_takeoff = updateModel.get('Takeoff');
 //    			var old_landing = updateModel.get('Landing');
@@ -319,28 +323,7 @@
    		} else {
    			formData['Time'] = '00:00:00';	   		
    		}
-     	            	       	
-
-// 		var now = new Date();
-// 		var dd = String(now.getDate()).padStart(2, '0');
-// 		var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
-// 		var yyyy = now.getFullYear();			
-// 		var today = yyyy + '-' + mm + '-' + dd;
-		// recreate take off time. 		
-									
-// 		if((formData['Takeoff'] != old_takeoff || formData['Landing'] != old_landing) && (formData['Landing'] != undefined)){
-// // 				alert('Take off time has changed'); 
-// 			var launch =  new Date(today+'T'+(formData['Takeoff']).replace(/-/g,"/"));	
-// 			if (formData['Landing'] != null){
-// 				var landing =  new Date(today+'T'+(formData['Landing']).replace(/-/g,"/"));
-// 				var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
-// 				var hours = Math.round(temptime *100) / 100 ;      	
-//       			formData['Time'] =  hours;	
-// 			} else{
-// 				formData['Landing'] =  0;
-// 				formData['Time'] = 0;			
-// 			}	
-// 		}  		
+     	            	       			
         updateModel.save(formData, {wait: true,
         	error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
@@ -456,11 +439,10 @@
       			var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
 				// adding 'inflight' class to the row. used below.... 
              	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
-      		} else {
-       			item.set({'Takeoff': ""}, {silent: true });
-      		}
-//       		alert( item.get('Landing').length);
-//       		console.log(item);
+      		} // else {
+//        			item.set({'Takeoff': ""}, {silent: true });
+//       		}
+
  			if(  item.get('Landing') !=  '00:00:00' ){
  			
 //  			if( (typeof item.get('Landing') !== 'undefined' ) && isNaN(item.get('Landing')) && (item.get('Landing') !=  '00:00:00') ){
@@ -468,9 +450,9 @@
       			// add 'landed' class to this row... used below. 
       			var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});
       			
-      		} else {
-      			item.set({'Landing': ""}, {silent: true });
-      		}
+      		} // else {
+//       			item.set({'Landing': ""}, {silent: true });
+//       		}
 			if(expandedView === undefined ){
             	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
             }

@@ -205,8 +205,9 @@ class Rest extends \WP_REST_Controller {
 						
 // 			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
 // 			$record_id  = $wpdb->get_results($sql); 	
-					
-			return new \WP_REST_Response ($record_id); 				
+			
+   			wp_send_json($record_id, 201);				
+//   			return new \WP_REST_Response ($record_id); 				
  		} else {
  			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) ); 
  		}

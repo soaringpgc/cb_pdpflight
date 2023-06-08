@@ -75,8 +75,12 @@
       	<h3> Flight Editor</h3>
   	    <input type = "hidden"
           id = "id"
-          size = "2"
+          size = "8"
           name = "id"/>   
+        <input type = "hidden"
+          id = "yearkey"
+          size = "4"
+          name = "flightyear"/>    
         <div class="form-row"> 
         <label for="Flight_Type">Type: </label>
         <select name="Flight_Type" id="Flight_Type" form="addFlight" >');
@@ -96,7 +100,7 @@
      			echo '<option value=' . $key->compitition_id  . '>'. $key->compitition_id . '</option>';
      		}
          };     
-        echo ( ' <option value="0" >PVT</option>
+        echo ( ' <option value="PVT" >PVT</option>
         </select>  </div> <div class="form-row">   
         <label for="pilots">Pilot: (Member to be charged) </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
