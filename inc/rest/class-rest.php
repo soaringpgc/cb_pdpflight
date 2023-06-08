@@ -121,7 +121,8 @@ class Rest extends \WP_REST_Controller {
    		 	)) 
    		 );	
     }      
-	public function get_flight_data( \WP_REST_Request $request) {		
+	public function get_flight_data( \WP_REST_Request $request) {	
+		date_default_timezone_set('America/New_York');	
  		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		if(isset( $request['start'])){
@@ -162,9 +163,9 @@ class Rest extends \WP_REST_Controller {
 		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type=null;
 		isset($request['Pilot1']) 		? $pilot1=$request['Pilot1'] 			: $pilot1=null;
 		isset($request['Pilot2']) 		? $pilot2=$request['Pilot2'] 			: $pilot2=null;
-		isset($request['Takeoff']) 		? $takeoff=$request['Takeoff'] 			: $takeoff=null;
-		isset($request['Landing']) 		? $landing=$request['Landing'] 			: $landing=null;
-		isset($request['Time']) 		? $time=$request['Time'] 				: $time=null;
+		isset($request['Takeoff']) 		? $takeoff=$request['Takeoff'] 			: $takeoff='00:00:00';
+		isset($request['Landing']) 		? $landing=$request['Landing'] 			: $landing='00:00:00';
+		isset($request['Time']) 		? $time=$request['Time'] 				: $time='00:00:00';
 		isset($request['Tow_Altitude']) ? $tow_altitude=$request['Tow_Altitude'] :  $tow_altitude=null;
 		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=null;
 		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=null;
@@ -175,9 +176,9 @@ class Rest extends \WP_REST_Controller {
         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
         	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
 
-        $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
-        	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Tow_Altitude'=>$tow_altitude, 
-        	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
+//         $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
+//         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Tow_Altitude'=>$tow_altitude, 
+//         	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
 
         $result = $wpdb->insert($flight_table, $data); 		
 		
@@ -185,26 +186,25 @@ class Rest extends \WP_REST_Controller {
 			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
 			$record_id  = $wpdb->get_results($sql); 	
 /*
-		The following is becasue wpdb->insert does not handel insertin "nulls" well. They end up as 
-		zero. inorder to maintain nuls the following inserts Takeoff, Landing and Time ONLY if they
+		The following is becasue wpdb->insert does not handel inserting "nulls" well. They end up as 
+		zero. inorder to maintain nulls the following inserts Takeoff, Landing and Time ONLY if they
 		are set
 */			
-			if(isset($request['Takeoff'])){
-				$record['Takeoff'] =$request['Takeoff'];
-			}
-			if(isset($request['Landing'])){
-				$record['Landing'] =$request['Landing'];
-			}
-			if(isset($request['Time'])){
-				$record['Time'] =$request['Time'];
-			}	
-			if (isset($request['Takeoff']) || isset($request['Landing']) || isset($request['Time'] ))	{
-				$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		
-			}
-			
-			
-			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
-			$record_id  = $wpdb->get_results($sql); 	
+// 			if(isset($request['Takeoff'])){
+// 				$record['Takeoff'] =$request['Takeoff'];
+// 			}
+// 			if(isset($request['Landing'])){
+// 				$record['Landing'] =$request['Landing'];
+// 			}
+// 			if(isset($request['Time'])){
+// 				$record['Time'] =$request['Time'];
+// 			}	
+// 			if (isset($request['Takeoff']) || isset($request['Landing']) || isset($request['Time'] ))	{
+// 				$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		
+// 			}
+						
+// 			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
+// 			$record_id  = $wpdb->get_results($sql); 	
 					
 			return new \WP_REST_Response ($record_id); 				
  		} else {
