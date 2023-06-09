@@ -18,9 +18,8 @@
 
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div >
-   <div id="eflights" >
-    <h3 class="datetime hidden"> Flight Editor</h3>
+<div>
+   <div id="eflights" style="width: 90%; margin: auto auto;" >
     <?php 	
    		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
@@ -100,8 +99,7 @@
      			echo '<option value=' . $key->compitition_id  . '>'. $key->compitition_id . '</option>';
      		}
          };     
-        echo ( ' <option value="PVT" >PVT</option>
-        </select>  </div> <div class="form-row">   
+        echo ( '</select>  </div> <div class="form-row">   
         <label for="pilots">Pilot: (Member to be charged) </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
         <option value=" " selected>Select Member</option>
@@ -170,7 +168,7 @@
          };           
          echo ( '</select></div>         
          <div class="form-row"><label for="Notes">Notes: </label>
-          <textarea  form="addFlight" id="Notes" name="Notes"  rows=4 cols=35">
+          <textarea  form="addFlight" id="Notes" name="Notes"  rows=3 cols=35">
          </textarea></div></div>
         <div id="addorupdate">
         <button  id="add"  class="view">ADD</button>
@@ -183,25 +181,25 @@
               <div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
              </div>
              <div class="Heading">
-                 <div class="Cell0">
+                 <div class="fl_Cell0">
                      <p>Flight</p>
                  </div>
-                <div class="Cell">
+                <div class="fl_Cell0">
                      <p>Glider</p>
                  </div>
-                 <div class="Cell2">
+                 <div class="fl_Cell2">
                      <p>Pilot</p>
                  </div>
-                 <div class="Cell">
+                 <div class="fl_Cell0">
                      <p>Action</p>
                  </div>
-                 <div class="Cell">
+                 <div class="fl_Cell">
                      <p>Time</p>
                  </div>
-                  <div class="Cell">
+                  <div class="fl_Cell1">
                      <p>Altitude</p>
                  </div>
-                 <div class="Cell">
+                 <div class="fl_Cell0">
                      <p>Tug</p>
                  </div>  
               </div>      

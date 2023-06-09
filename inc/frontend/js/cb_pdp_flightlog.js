@@ -57,11 +57,9 @@
 // 		validation:{
 // 			Glider:{
 // 				required: true,
-// 				  length: 4
 // 			},
 // 			Pilot1:{
 // 				required: true,
-// 				  length: 4
 // 			},	
 // 		},
 		defaults: {	
@@ -243,20 +241,18 @@
       	} 
       	if(formData['Pilot1'] == ' ') {
       		alert('Pilot 1 can not be blank');
-      	} else {    	
-      	   	
-      	formData['yearkey'] = max_key+1;
-      	formData['Time'] = " ";
-      	this.collection.create( formData, 
-      		{
-      		wait: true,
-      		success: function(model, resp, opt) {
-//       		console.log(model);
-//       		console.log(resp);
-//       		console.log(opt);
+      	} else {    	      	   	
+      		formData['yearkey'] = max_key+1;
+      		formData['Time'] = " ";
+      		this.collection.create( formData, 
+      			{
+      			wait: true,
+      			success: function(model, resp, opt) {
+//       			console.log(model);
+//       			console.log(resp);
+//       			console.log(opt);
 //       				alert('success');
-      		}
-      		
+      			}      		
       		});  
 //        	this.collection.reset(); 
 // clean out the form:
@@ -315,7 +311,7 @@
    		} else {
    			formData['Time'] = '00:00:00';	   		
    		}
-        updateModel.save(formData, {wait: true,
+        updateModel.save(formData, {wait: false,
         	error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"])},
