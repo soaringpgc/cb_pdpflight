@@ -74,11 +74,11 @@
       	<div class="container">
       	<div id="addorupdate" >
       	<div class="div-left"> 
-        	<button  id="add"  class="view">ADD</button>
-        	<button  id="update"  class="edit">Update</button>
+        	<button  id="add"  class="view" style="background-color:red; color:black;">ADD</button>
+        	<button  id="update"  class="edit" style="background-color:orange; color:black;">Update</button>
         </div>
         <div class="div-right">
-        	<button  id="cancel" style="" >Cancel</button>
+        	<button  id="cancel" style="background-color:yellow; color:black;" >Cancel</button>
         	</div>
 		</div><br>
   	    <input type = "hidden"
