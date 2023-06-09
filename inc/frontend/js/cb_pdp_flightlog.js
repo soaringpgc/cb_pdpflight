@@ -31,12 +31,9 @@
 	 		$(".flight_list").addClass("editing");   
 	 		$('.Title').toggleClass('editing'); 	
  		 	$('.Heading').toggleClass('editing'); 	 	 	
-// 
-// 	 		$('.Title').css('display', 'none'); 	
-//  		 	$('.Heading').css('display', 'none'); 	 	 	
-//  		 	$('.Row').css('display', 'none'); 	 	  
+ 		 	$('.Heading').addClass("hidden"); 	 	 	
+ 		 	$('.Row').addClass("hidden"); 	 	  
 	 });	 
-	 
 	 
 	var app = app || {};
 	app.working_date = (new Date()).toISOString().split('T')[0];
@@ -113,6 +110,10 @@
 			var localmodel = this.model;
  			$("#addorupdate").addClass('editing'); 	
  			$("#addFlight").removeClass("hidden");	
+ 			
+      	    $('.Heading').addClass("hidden"); 	 	 	
+ 		    $('.Row').addClass("hidden"); 	 	  
+
  		 	$('.Title').toggleClass('editing'); 	
  		    $('.Heading').toggleClass('editing'); 	
 					
@@ -349,11 +350,13 @@
 				$('#'+el.id).val('');
       	});  
       	$("#addorupdate").removeClass('editing');		    
-      	$("#addFlight").addClass("hidden");   
+      	$("#addFlight").addClass("hidden");  
+      	 
+      	 $('.Heading').removeClass("hidden"); 	 	 	
+ 		 $('.Row').removeClass("hidden"); 	 	  
 
       	 $('.Title').toggleClass('editing'); 	
- 		 $('.Heading').toggleClass('editing'); 	
- 		         		    	
+ 		 $('.Heading').toggleClass('editing'); 	 		         		    	
       },
       resetLanding : function(e){
      	 	$('#Landing').val(null);	
