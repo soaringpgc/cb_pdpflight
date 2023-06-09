@@ -62,6 +62,9 @@
 // 				required: true,
 // 			},	
 // 		},
+		modelChanged: function(){
+			alert('model changed!');
+		},
 		defaults: {	
 			Flight_Type	: "REG",
 			Takeoff	: '00:00:00',
@@ -87,6 +90,14 @@
         className: 'Row',
 		render: function(){
 			this.$el.html( this.template(this.model.toJSON() ) );
+			if (this.model.get('Landing') == '00:00:00' ){
+ 				this.$el.removeClass('landed'); 				
+ 			}
+ 			if (this.model.get('Takeoff') == '00:00:00' ){
+ 				this.$el.removeClass('inflight'); 
+ 				this.$el.removeClass('landed'); 					
+ 			}
+
 			this.$input = this.$('.edit');
 			return this;
 		},
@@ -309,13 +320,14 @@
 			var hours = Math.round(temptime *100) / 100 ;      	
       		formData['Time'] =  hours;	   			
    		} else {
-   			formData['Time'] = '00:00:00';	   		
+   			formData['Time'] = '00:00:00';	 		
    		}
         updateModel.save(formData, {wait: false,
         	error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"])},
       		success: function(){
+//       		   			this.$el.removeClass('landed');   
 //       				var mresult= JSON.parse(response.responseText);     	
       				}        	       
         });         

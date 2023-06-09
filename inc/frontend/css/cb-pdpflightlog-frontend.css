@@ -248,7 +248,7 @@ form {
 }
 
 .form-row {
-    line-height:24pt;
+    line-height:20pt;
     border: solid 1px black;
 }
 
@@ -363,4 +363,12 @@ H3{
     padding-left: 5px;
     padding-right: 5px;
     width: 240px;
+}
+.div-left{
+    float:left;
+    padding-left:10px;
+}
+.div-right{
+    float:right;
+    padding-right:10px;
 }

@@ -70,8 +70,17 @@
       if( current_user_can( 'read' ) ) {	
       
       echo ('<form id="addFlight" action="#" class="hidden">
-      <div class="container">
-      	<h3> Flight Editor</h3>
+
+      	<div class="container">
+      	<div id="addorupdate" >
+      	<div class="div-left"> 
+        	<button  id="add"  class="view">ADD</button>
+        	<button  id="update"  class="edit">Update</button>
+        </div>
+        <div class="div-right">
+        	<button  id="cancel" style="" >Cancel</button>
+        	</div>
+		</div><br>
   	    <input type = "hidden"
           id = "id"
           size = "8"
@@ -170,11 +179,6 @@
          <div class="form-row"><label for="Notes">Notes: </label>
           <textarea  form="addFlight" id="Notes" name="Notes"  rows=3 cols=35">
          </textarea></div></div>
-        <div id="addorupdate">
-        <button  id="add"  class="view">ADD</button>
-        <button  id="update"  class="edit">Update</button>
-        <button  id="cancel" >Cancel</button>
-		</div>
 	</form>
               <div class="Title flightlist">
                    <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button>
