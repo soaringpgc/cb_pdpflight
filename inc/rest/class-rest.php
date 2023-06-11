@@ -151,6 +151,7 @@ class Rest extends \WP_REST_Controller {
 	
 		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
 // 		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  date("Y"));	
 // 		$yearkey = $wpdb->get_var($sql); 	
 		if (!isset($request['yearkey']) ){
@@ -172,8 +173,13 @@ class Rest extends \WP_REST_Controller {
 		isset($request['Tow_Altitude']) ? $tow_altitude=$request['Tow_Altitude'] :  $tow_altitude=null;
 		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=null;
 		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=null;
-		isset($request['Tow_Charge']) 	? $tow_charge=$request['Tow_Charge'] 	: $tow_charge=null;
+// 		isset($request['Tow_Charge']) 	? $tow_charge=$request['Tow_Charge'] 	: $tow_charge=null;
 		isset($request['Notes']) 		? $notes=$request['Notes'] 				: $notes=null;
+
+		$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s", $request['Tow_Altitude']);	
+		$charge = $wpdb->get_var($sql);
+		$charge == null ? $tow_charge=999 : $tow_charge = $charge; 
+
 
         $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
@@ -200,6 +206,14 @@ class Rest extends \WP_REST_Controller {
 	public function put_flight_data( \WP_REST_Request $request) {
 		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
+ 		$record = [];
+
+		if(isset( $request['Tow_Altitude'])){
+			$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s", $request['Tow_Altitude']);	
+			$charge = $wpdb->get_var($sql);
+			$charge == null ? $record['Tow_Charge']=999 : $record['Tow_Charge'] = $charge; 
+		}
 
 		if (!isset($request['id']) ){
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
@@ -208,18 +222,20 @@ class Rest extends \WP_REST_Controller {
 	
  		$fields = array('flightyear', 'yearkey', 'Date', 'Glider', 'Flight_Type', 'Pilot1', 
  			'Pilot2', 'Takeoff', 'Landing', 'Time', 'Tow_Altitude', 'Tow_Pilot', 'Tow_Plane', 
- 			'Tow_Charge', 'Notes' );
+ 			 'Notes' );
 									
 		global $wpdb; 
  		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
- 		$record = [];
+
  		foreach( $fields as $field) {
  			if( isset($request[$field]) ){
  				$record[$field]=$request[$field];		
  			}
  		} 			 		 		
- 		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  		
- 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);			
+ 		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  	
+//  	return new \WP_REST_Response ($wpdb->last_query); 
+ 			
+ 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);		 			
 		$results  = $wpdb->get_results($sql); 			 		 		
  		return new \WP_REST_Response ($results); 		
 	}			
