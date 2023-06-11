@@ -6,6 +6,7 @@ var flighttemplate_pdp = _.template(`
      <div class="hidden"><%= id %></div>
      <label class="hidden"><%=  Flight_Type %></label>
      <label class="fl_Cell0"> <%=  yearkey %></label>
+     <label class="fl_Cell0a"><%=  Flight_Type %></label>
      <label class="fl_Cell0a">  <%=  Glider %></label>
      <label class="fl_Cell2"> <%= Pilot1 %></label>   
      <label class="hidden"> <%= Pilot2 %></label>     	  	 

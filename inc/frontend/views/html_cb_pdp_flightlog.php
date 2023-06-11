@@ -189,6 +189,9 @@
                  <div class="fl_Cell0">
                      <p>Flight</p>
                  </div>
+                 <div class="fl_Cell0">
+                     <p>Type</p>
+                 </div>
                 <div class="fl_Cell0">
                      <p>Glider</p>
                  </div>
