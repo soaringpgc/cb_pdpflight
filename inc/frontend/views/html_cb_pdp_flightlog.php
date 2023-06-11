@@ -132,11 +132,10 @@
          echo ( '</select> </div> <div class="form-row"> 
         <label for="altitude">Altitude: </label>
         <select name="Tow_Altitude" id="Tow_Altitude" form="addFlight">
-        	<option value="invalid"  selected>$$$</option>');        
+        	<option value=" "  selected>$$$</option>');        
      		foreach($fees as $key){ 	
      			echo '<option value=' .  $key->altitude . '>'. $key->altitude . '</option>';
-        	 };      
-        	 echo '<option value= self_launch > Self Launch </option>';             
+        	 };                  
         echo ('</select></div>
         <div class="form-row">  
        	 	<label for="launch">Launch:</label>

@@ -372,3 +372,8 @@ H3{
     float:right;
     padding-right:10px;
 }
+table.logbook, th.logbook, td.logbook{
+  border: 1px solid black;
+   border-collapse: collapse;
+/*   border-radius: 10px; */
+}

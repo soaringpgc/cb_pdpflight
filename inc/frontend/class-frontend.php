@@ -430,6 +430,11 @@ class Frontend {
 		include_once 'views/html_cb_pdp_flightlog.php';
 //		return display_flights();
 	}   // pdp_flight_log
+	public function personal_log($atts = array() ){
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+		include_once 'views/html_cb_personal_log.php';
+
+	}   // personal_log		
 	/**
 	 * Registers all shortcodes at once
 	 *
@@ -441,6 +446,7 @@ class Frontend {
 		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
 		add_shortcode( 'cb_pgc_flight_log_new', array( $this, 'flight_log_new' ) );
 		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
+		add_shortcode( 'personal_log', array( $this, 'personal_log' ) );
 
 	} // register_shortcodes()
 	/**

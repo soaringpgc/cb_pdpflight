@@ -66,7 +66,7 @@
 			Flight_Type	: "REG",
 			Takeoff	: '00:00:00',
 			Landing	: '00:00:00',
-			Time	: '00:00:00',			
+			Time	: '0.0',			
 		},
 		wait: true
 	});
@@ -251,6 +251,7 @@
       	} else {
       		var max_key =  Number(cloud_base_public_vars.last_yearkey );
       	} 
+      	console.log(formData);
       	if(formData['Pilot1'] == ' ') {
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
