@@ -53,7 +53,12 @@
 	 		$("#Notes").val(' ');		
 	 	}
 	 });
-	 
+	 var $body = $("body");
+	 $(document).on({
+   		 ajaxSend: function() { $body.addClass("loading");    },
+     	 ajaxComplete: function() { $body.removeClass("loading"); }    
+	});
+	
 	var app = app || {};
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
 	app.working_date = (new Date()).toISOString().split('T')[0];

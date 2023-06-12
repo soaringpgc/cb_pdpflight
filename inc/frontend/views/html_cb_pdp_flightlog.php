@@ -217,6 +217,7 @@
      	Echo 'Please log in. ';
      }
 ?>
+<div class="modal"></div>
 <!-- 
      </div>
          <div  class="TowFee Table aside" id="flights">
