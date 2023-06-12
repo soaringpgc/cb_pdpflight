@@ -1,6 +1,5 @@
 (function( $ ) {
 	'use strict';
-// 	console.log('cloud_base_public_vars');
 //  console.log(cloud_base_public_vars);
 	/**
 	 * All of the code for your public-facing JavaScript source
@@ -33,9 +32,30 @@
  		 	$('.Heading').toggleClass('editing'); 	 	 	
  		 	$('.Heading').addClass("hidden"); 	 	 	
  		 	$('.Row').addClass("hidden"); 	 	  
-	 });	 
+	 });	
+	 $("#Tow_Altitude").on('blur', function(){
+	 	if($("#Tow_Altitude").val() == 'Self' ){
+	 		$("#Tow_Pilot").val(' ');	
+	 		$("#Tow_Plane").val(' ');	  	 	
+	 	}
+	 });
+	 
+	 $("#Flight_Type").on('blur', function(){
+	 	if($("#Flight_Type").val() == 'AOF' ){
+	 		$("#Tow_Altitude").val('0');	
+	 		$("#Tow_Altitude").addClass('hidden');	
+	 		$("#Notes").val('AOF ');	
+	 		$("#Pilot2").val('');	
+	 		$("#Pilot2").addClass('hidden');	  	  	 	
+	 	} else {
+	 		$("#Pilot2").removeClass('hidden');	
+	 		$("#Tow_Altitude").removeClass('hidden');
+	 		$("#Notes").val(' ');		
+	 	}
+	 });
 	 
 	var app = app || {};
+	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
 	app.working_date = (new Date()).toISOString().split('T')[0];
 	$('#editDate').text('Flight Log for: ' +app.working_date);
 // Define Flight Model and how to get it. 
@@ -64,9 +84,19 @@
 		},
 		defaults: {	
 			Flight_Type	: "REG",
+			flightyear: new Date().getFullYear(),			
+			Date: app.working_date,
+			Glider: "",
+			Pilot1: "",
+			Pilot2: "",
 			Takeoff	: '00:00:00',
 			Landing	: '00:00:00',
-			Time	: '0.0',			
+			Time	: '0.0',
+			Tow_Altitude: "9000",
+			Tow_Pilot: ""	,	
+			Tow_Plane: "76P",
+			Tow_Charge: "999",
+			Notes: " "
 		},
 		wait: true
 	});
@@ -94,7 +124,6 @@
  				this.$el.removeClass('inflight'); 
  				this.$el.removeClass('landed'); 					
  			}
-
 			this.$input = this.$('.edit');
 			return this;
 		},
@@ -251,7 +280,7 @@
       	} else {
       		var max_key =  Number(cloud_base_public_vars.last_yearkey );
       	} 
-      	console.log(formData);
+//       	console.log(formData);
       	if(formData['Pilot1'] == ' ') {
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
@@ -369,9 +398,9 @@
 	app.EditView = app.CollectionView.extend({
 	 	el: '#eflights', 
 		localDivTag: '#addFlight div',
- 	 	preinitialize(){
- 	 	   this.collection = new app.FlightList();
- 	 	},	 	 	 	 	
+ 	 	preinitialize(){ 
+//  	 	    this.collection = new app.FlightList(); 	 	    
+  	 	},	 		 	 	
  	    initialize: function(){
 	      var self = this;
 	 	  this.collection = new app.FlightList();

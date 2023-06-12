@@ -73,14 +73,14 @@
 
       	<div class="container">
       	<div id="addorupdate" >
-      	<div class="div-left"> 
-        	<button  id="add"  class="view" style="background-color:red; color:black;">ADD</button>
-        	<button  id="update"  class="edit" style="background-color:orange; color:black;">Update</button>
-        </div>
-        <div class="div-right">
-        	<button  id="cancel" style="background-color:yellow; color:black;" >Cancel</button>
-        	</div>
-		</div><br>
+      		<div class="div-left" > 
+       	 		<button  id="add"  class="view" style="background-color:red; color:black; font-size:14px">ADD</button>
+       	 		<button  id="update"  class="edit" style="background-color:orange; color:black;  font-size:14px";">Update</button>
+       	 	</div>
+       	 	<div class="div-right">
+       	 		<button  id="cancel" style="background-color:yellow; color:black;  font-size:14px"" >Cancel</button>
+       	 	</div>
+		</div>
   	    <input type = "hidden"
           id = "id"
           size = "8"
@@ -109,7 +109,7 @@
      		}
          };     
         echo ( '</select>  </div> <div class="form-row">   
-        <label for="pilots">Pilot: (Member to be charged) </label>
+        <label for="pilots">Pilot:  </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
         <option value=" " selected>Select Member</option>
   			<optgroup label="Members" class="nofly" >');               
@@ -174,7 +174,8 @@
      				echo '<option value=' . $key->compitition_id  . '>'.$key->compitition_id  . '</option>';
      			}
      		}
-         };           
+         };   
+        echo '<option value="self">Self Launch</option>';        
          echo ( '</select></div>         
          <div class="form-row"><label for="Notes">Notes: </label>
           <textarea  form="addFlight" id="Notes" name="Notes"  rows=3 cols=35">
