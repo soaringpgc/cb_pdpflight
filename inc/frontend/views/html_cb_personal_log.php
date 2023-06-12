@@ -8,9 +8,10 @@ $flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';
 $user= wp_get_current_user();		
 $display_name = $user->last_name .', '.  $user->first_name;
 
-$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `Pilot1`=%s AND `flightyear`=%d ORDER BY yearkey DESC", $display_name,  date("Y") );				
-// var_dump($sql);
-// die();
+$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE (`Pilot1`=%s OR `Pilot2`=%s  OR `Tow_Pilot`=%s )AND `flightyear`=%d ORDER BY yearkey DESC",
+		 $display_name,  $display_name, $display_name, date("Y") );				
+var_dump($sql);
+die();
 $my_flights = $wpdb->get_results($sql); 
 // get tow planes
 
@@ -44,7 +45,7 @@ echo('<div>
     	echo(' <td  class="logbook">'.  $item->Landing    .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Time    .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Tow_Pilot    .'</td>');   
-    	echo(' <td  class="logbook" >'.  $item->Tow_Pilot    .'</td>');   
+    	echo(' <td  class="logbook" >'.  $item->Tow_Plane    .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Tow_Charge    .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Notes    .'</td></tr>');   
     }   

@@ -375,6 +375,7 @@ H3{
 table.logbook, th.logbook, td.logbook{
   border: 1px solid black;
    border-collapse: collapse;
+   background-color: #cccccc;
 /*   border-radius: 10px; */
 }
 /* Start by setting display:none to make this hidden.
