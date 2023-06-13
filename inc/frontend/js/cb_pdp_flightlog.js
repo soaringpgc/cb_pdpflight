@@ -62,6 +62,7 @@
 	var app = app || {};
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
 	app.working_date = (new Date()).toISOString().split('T')[0];
+	
 	$('#editDate').text('Flight Log for: ' +app.working_date);
 // Define Flight Model and how to get it. 
 	app.Flight = Backbone.Model.extend({
@@ -123,7 +124,8 @@
 		render: function(){
 			this.$el.html( this.template(this.model.toJSON() ) );
 			if (this.model.get('Landing') == '00:00:00' ){
- 				this.$el.removeClass('landed'); 				
+ 				this.$el.removeClass('landed'); 
+ 				this.$el.addClass('inflight'); 				
  			}
  			if (this.model.get('Takeoff') == '00:00:00' ){
  				this.$el.removeClass('inflight'); 
@@ -222,16 +224,23 @@
 	});
 
 // 		
-	app.CollectionView =  Backbone.View.extend({         
+	app.EditView =  Backbone.View.extend({ 
+		el: '#eflights', 
+		localDivTag: '#addFlight div',
+ 	 	preinitialize(){ 
+//  	 	    this.collection = new app.FlightList(); 	 	    
+  	 	},	 		 	 	        
       initialize: function(){
-      	var fetch_string = '{reset:true, data: $.param({start: ' +app.working_date +  '})}';
-        this.collection.fetch(fetch_string);
-//         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
-//         this.collection.sort();
-        this.render();
-//         this.listenTo(this.collection, 'add', this.renderItem);
-        this.listenTo(this.collection, 'reset', this.render);
-        this.listenTo(this.collection, 'add', this.render_add);
+         this.collection = new app.FlightList();
+         var fetch_string = '{reset:true, wait: true , data: $.param({start: ' +app.working_date +  '})}';
+         this.collection.fetch({reset:true, data: $.param({start: app.working_date })});      	 
+//     	  this.collection.fetch({reset:true, wait: true });    		  
+          this.listenTo(this.collection, 'reset', this.render);
+          this.listenTo(this.collection, 'add', this.render_add);
+      
+// //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
+// //         this.collection.sort();
+//         this.render();
       },
       render: function(){
       	this.collection.each(function(item){	
@@ -398,45 +407,29 @@
       	},
       resetTakeoff: function(e){
       		$('#Takeoff').val(null);
-      	}
-	});
-	app.EditView = app.CollectionView.extend({
-	 	el: '#eflights', 
-		localDivTag: '#addFlight div',
- 	 	preinitialize(){ 
-//  	 	    this.collection = new app.FlightList(); 	 	    
-  	 	},	 		 	 	
- 	    initialize: function(){
-	      var self = this;
-	 	  this.collection = new app.FlightList();
-    	  this.collection.fetch({reset:true, wait: true });    
-		  
-//           this.listenTo(this.collection, 'add', this.renderItem);
-          this.listenTo(this.collection, 'reset', this.render);
-          this.listenTo(this.collection, 'add', this.render_add);
-        }, 	 		 	 	 	 	 	
-      	renderItem: function(item){    
- 			if( item.get('Takeoff') != '00:00:00'  ){
+      	},
+      renderItem: function(item){    
+ 		if( item.get('Takeoff') != '00:00:00'  ){
 //  			if( (typeof item.get('Takeoff') !== 'undefined' ) && isNaN(item.get('Takeoff'))){
-      			var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
+      		var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
 				// adding 'inflight' class to the row. used below.... 
-             	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
-      		} 
- 			if(  item.get('Landing') !=  '00:00:00' ){ 			
+         	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
+      	} 
+ 		if(  item.get('Landing') !=  '00:00:00' ){ 			
 //  			if( (typeof item.get('Landing') !== 'undefined' ) && isNaN(item.get('Landing')) && (item.get('Landing') !=  '00:00:00') ){
-      			var landing =  new Date(item.get('Landing'));
-      			// add 'landed' class to this row... used below. 
-      			var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});      			
-      		} 
-			if(expandedView === undefined ){
-            	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
-            }
-            var itemView = new expandedView({
-      	  		model: item
-      		})
-      		this.$el.append( itemView.render().el);   
+      		var landing =  new Date(item.get('Landing'));
+      		// add 'landed' class to this row... used below. 
+      		var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});      			
+      	} 
+		if(expandedView === undefined ){
+        	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
         }
-	}); 
+        var itemView = new expandedView({
+      		model: item
+      	})
+      	this.$el.append( itemView.render().el);   
+        }	
+	});
 
    $(function(){
   
