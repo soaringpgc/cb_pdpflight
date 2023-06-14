@@ -181,10 +181,13 @@
           <textarea  form="addFlight" id="Notes" name="Notes"  rows=3 cols=35">
          </textarea></div></div>
 	</form>
+            
               <div class="Title flightlist">
-                   <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button>
-              <div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
-             </div>
+                   <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button>');
+//             echo ( '<input type="text" id="datepicker" class="hidden"> 
+//                    <form class="hidden" id="changedate" action="#" ><button  id="select_date"  class="view">Select Date</button></form>');
+            echo ( '<div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
+             </div><div id="flight_table"> 
              <div class="Heading">
                  <div class="fl_Cell0">
                      <p>Flight</p>
@@ -210,7 +213,8 @@
                  <div class="fl_Cell0">
                      <p>Tug</p>
                  </div>  
-              </div>      
+              </div> 
+              </div>     
           ' );
 
      } else {

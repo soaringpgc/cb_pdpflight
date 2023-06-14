@@ -77,6 +77,8 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+  		wp_register_style('jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
+    	wp_enqueue_style('jquery-ui');
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdpflightlog-frontend.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . 'flightlog', plugin_dir_url( __FILE__ ) . 'css/cb-public-flightlog.css', array(), $this->version, 'all' );
@@ -415,7 +417,7 @@ class Frontend {
 // 	    wp_register_script( 'validation',  plugins_url('/cloudbase/includes/backbone-validation-min.js'));	
 	    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 'validation',
-		 'pdp_templates'), $this->version, false );
+		 'pdp_templates', 'jquery-ui-datepicker'), $this->version, false );
 
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),

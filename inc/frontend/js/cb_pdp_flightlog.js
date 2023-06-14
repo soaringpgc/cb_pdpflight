@@ -144,6 +144,7 @@
 		},
    		update: function(){
 			var localmodel = this.model;
+			console.log(localmodel);
  			$("#addorupdate").addClass('editing'); 	
  			$("#addFlight").removeClass("hidden");	
  			
@@ -227,6 +228,7 @@
 	app.EditView =  Backbone.View.extend({ 
 		el: '#eflights', 
 		localDivTag: '#addFlight div',
+		localRowTag: '#flight_table div',
  	 	preinitialize(){ 
 //  	 	    this.collection = new app.FlightList(); 	 	    
   	 	},	 		 	 	        
@@ -237,6 +239,10 @@
 //     	  this.collection.fetch({reset:true, wait: true });    		  
           this.listenTo(this.collection, 'reset', this.render);
           this.listenTo(this.collection, 'add', this.render_add);
+
+          
+         $( "#datepicker" ).datepicker();
+
       
 // //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
 // //         this.collection.sort();
@@ -295,6 +301,11 @@
       		var max_key =  Number(cloud_base_public_vars.last_yearkey );
       	} 
 //       	console.log(formData);
+
+//       	if(formData['Flight_Type'] == ' ') {
+//       		alert('Type can not be blank');
+//       		return;
+//       	} 
       	if(formData['Pilot1'] == ' ') {
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
@@ -383,9 +394,10 @@
       cancelItem: function(e){
       	$(this.localDivTag).children('input').each(function(i, el ){
 				$('#'+el.id).val('');
-      	});       
+      	}); 
+      	// don't clean out these fields       
       	$(this.localDivTag).children('select').each(function(i, el ){
-      		if('#'+el.id == '#Tow_Pilot' || '#'+el.id == '#Tow_Plane'){
+      		if('#'+el.id == '#Tow_Pilot' || '#'+el.id == '#Tow_Plane' || '#'+el.id == '#Flight_Type' ){
       			return;
       		}
 			$('#'+el.id).val('');

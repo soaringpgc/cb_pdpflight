@@ -273,6 +273,10 @@ h3 {
 .Heading .editing{
 	display: none;
 }
+.Title {
+	width 100%;
+	display: table;
+}
 .Title .editing{
 	display: none;
 	align-content: center;
@@ -293,12 +297,20 @@ h3 {
 	background-color: #444444;
 	align-content: center;
 }
+#flight_table{
+	display: table; 
+}
+
+
 .Row{
 	background-color: #eeeeee;
+	display: table-row;
 }
 .Heading{
 	background-color: #999999;
 	align-content: center;
+	width 100%;
+	display: table-row;
 }
 H3{
 	background-color: #999999;
