@@ -231,6 +231,7 @@
 //  	 	    this.collection = new app.FlightList(); 	 	    
   	 	},	 		 	 	        
       initialize: function(){
+      	 var self=this;
          this.collection = new app.FlightList();
          var fetch_string = '{reset:true, wait: true , data: $.param({start: ' +app.working_date +  '})}';
          this.collection.fetch({reset:true, data: $.param({start: app.working_date })});      	 
@@ -239,9 +240,14 @@
           this.listenTo(this.collection, 'add', this.render_add);
 
           
-         $( "#datepicker" ).datepicker();
-
-      
+         $( "#datepicker" ).datepicker({
+         	dateFormat: 'yy-mm-dd',
+         	onSelect: function (dateText, inst) {
+         		app.working_date= dateText;
+         		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "yellow");
+         		self.collection.reset(self.collection.fetch({data: $.param({start: app.working_date })}));           	
+         	}         
+         });      
 // //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
 // //         this.collection.sort();
 //         this.render();

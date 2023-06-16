@@ -184,8 +184,8 @@
             
               <div class="Title flightlist">
                    <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button>');
-//             echo ( '<input type="text" id="datepicker" class="hidden"> 
-//                    <form class="hidden" id="changedate" action="#" ><button  id="select_date"  class="view">Select Date</button></form>');
+            echo ( '<input type="text" id="datepicker" class="hidden"> 
+                   <form class="hidden" id="changedate" action="#" ><button  id="select_date"  class="view">Select Date</button></form>');
             echo ( '<div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
              </div>
              <div class="Heading">
