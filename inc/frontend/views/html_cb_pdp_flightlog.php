@@ -187,7 +187,7 @@
 //             echo ( '<input type="text" id="datepicker" class="hidden"> 
 //                    <form class="hidden" id="changedate" action="#" ><button  id="select_date"  class="view">Select Date</button></form>');
             echo ( '<div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
-             </div><div id="flight_table"> 
+             </div>
              <div class="Heading">
                  <div class="fl_Cell0">
                      <p>Flight</p>
@@ -198,16 +198,19 @@
                 <div class="fl_Cell0">
                      <p>Glider</p>
                  </div>
-                 <div class="fl_Cell2">
+                 <div class="fl_Cell">
                      <p>Pilot</p>
+                 </div>
+                 <div class="fl_Cell">
+                     <p>Instructor</p>
                  </div>
                  <div class="fl_Cell0">
                      <p>Action</p>
                  </div>
-                 <div class="fl_Cell">
+                 <div class="fl_Cell0">
                      <p>Time</p>
                  </div>
-                  <div class="fl_Cell1">
+                  <div class="fl_Cell0">
                      <p>Altitude</p>
                  </div>
                  <div class="fl_Cell0">
@@ -222,42 +225,3 @@
      }
 ?>
 <div class="modal"></div>
-<!-- 
-     </div>
-         <div  class="TowFee Table aside" id="flights">
-             <div class="Title ">
-                 <p>Today's Flights <?php echo $active_date ?></p>
-             </div>
-             <div class="Heading">
-                 <div class="Cell0">
-                     <p>Flight</p>
-                 </div>
-                <div class="Cell">
-                     <p>Glider</p>
-                 </div>
-                 <div class="Cell2">
-                     <p>Pilot</p>
-                 </div>
-                 <div class="Cell">
-                     <p>Action</p>
-                 </div>
-                 <div class="Cell">
-                     <p>Time</p>
-                 </div>
-                  <div class="Cell">
-                     <p>Altitude</p>
-                 </div>
-                 <div class="Cell">
-                     <p>Tug</p>
-                 </div>
-             </div>
-         </div>
-   </div>
- -->
-<!-- 
-	<div class="footer">Today's Flights </div>
-  </div>
-
-</div>
- -->
-

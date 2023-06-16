@@ -25,7 +25,6 @@
 	 *
 	 */
 	 $("#flight_button").on('click', function(e){
-// 	 		alert('add flight');
 	 		$("#addFlight").removeClass("hidden");
 	 		$(".flight_list").addClass("editing");   
 	 		$('.Title').toggleClass('editing'); 	
@@ -49,8 +48,7 @@
 	 		$("#Pilot2").addClass('hidden');	  	  	 	
 	 	} else {
 	 		$("#Pilot2").removeClass('hidden');	
-	 		$("#Tow_Altitude").removeClass('hidden');
-	 		$("#Notes").val(' ');		
+	 		$("#Tow_Altitude").removeClass('hidden');	
 	 	}
 	 });
 	 var $body = $("body");

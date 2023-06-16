@@ -300,7 +300,9 @@ h3 {
 #flight_table{
 	display: table; 
 }
-
+.table{
+	display: table; 
+}
 
 .Row{
 	background-color: #eeeeee;
