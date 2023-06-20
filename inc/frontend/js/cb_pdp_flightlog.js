@@ -83,9 +83,6 @@
 // 				required: true,
 // 			},	
 // 		},
-		modelChanged: function(){
-			alert('model changed!');
-		},
 		defaults: {	
 			Flight_Type	: "REG",
 			flightyear: new Date().getFullYear(),			
@@ -134,9 +131,7 @@
 			return this;
 		},
 		initialize: function(){
-    		this.model.on('change', this.render, this); 		
-// 			 $('#flightCount').text('Flights: ' +this.collection.length);
-    		
+    		this.model.on('change', this.render, this); 		    		
   		},
 		events:{
 			'click label' : 'update',
@@ -236,17 +231,16 @@
          this.collection = new app.FlightList();
          var fetch_string = '{reset:true, wait: true , data: $.param({start: ' +app.working_date +  '})}';
          this.collection.fetch({reset:true, data: $.param({start: app.working_date })});      	 
-//     	  this.collection.fetch({reset:true, wait: true });    		  
-          this.listenTo(this.collection, 'reset', this.render);
-          this.listenTo(this.collection, 'add', this.render_add);
-          
+//     	 this.collection.fetch({reset:true, wait: true });    		  
+         this.listenTo(this.collection, 'reset', this.render);
+         this.listenTo(this.collection, 'add', this.render_add);          
          $( "#datepicker" ).datepicker({
          	dateFormat: 'yy-mm-dd',
          	onSelect: function (dateText, inst) {
          		app.working_date= dateText;
+         		var results = self.collection.fetch({ wait: true, data: $.param({start: app.working_date })});
+         		self.collection.reset(results); 
          		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "yellow");
-         		self.collection.reset(self.collection.fetch({data: $.param({start: app.working_date })}));  
-         		$('#flightCount').text('Flights: ' +this.collection.length);         	
          	}         
          });    
 // //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
@@ -329,8 +323,8 @@
       			}      		
       		});  
 //        	this.collection.reset(); 
-// clean out the form:
  		$('#flightCount').text('Flights: ' +this.collection.length);
+ // clean out the form:		
 		this.cancelItem(e);
 		}
       },
