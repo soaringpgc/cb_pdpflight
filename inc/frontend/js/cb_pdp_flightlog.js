@@ -111,7 +111,8 @@
      	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
     	comparator: function(Flight){
     			return(-Number(Flight.get("yearkey")));
-    		}
+    		},
+    		
    	 }) ; 	
    	 
 // Define model view	
@@ -133,7 +134,9 @@
 			return this;
 		},
 		initialize: function(){
-    		this.model.on('change', this.render, this);
+    		this.model.on('change', this.render, this); 		
+// 			 $('#flightCount').text('Flights: ' +this.collection.length);
+    		
   		},
 		events:{
 			'click label' : 'update',
@@ -222,13 +225,11 @@
 		}
 	});
 
-// 		
 	app.EditView =  Backbone.View.extend({ 
 		el: '#eflights', 
 		localDivTag: '#addFlight div',
 		localRowTag: '#flight_table div',
- 	 	preinitialize(){ 
-//  	 	    this.collection = new app.FlightList(); 	 	    
+ 	 	preinitialize(){ 	 	    
   	 	},	 		 	 	        
       initialize: function(){
       	 var self=this;
@@ -238,24 +239,26 @@
 //     	  this.collection.fetch({reset:true, wait: true });    		  
           this.listenTo(this.collection, 'reset', this.render);
           this.listenTo(this.collection, 'add', this.render_add);
-
           
          $( "#datepicker" ).datepicker({
          	dateFormat: 'yy-mm-dd',
          	onSelect: function (dateText, inst) {
          		app.working_date= dateText;
          		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "yellow");
-         		self.collection.reset(self.collection.fetch({data: $.param({start: app.working_date })}));           	
+         		self.collection.reset(self.collection.fetch({data: $.param({start: app.working_date })}));  
+         		$('#flightCount').text('Flights: ' +this.collection.length);         	
          	}         
-         });      
+         });    
 // //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
 // //         this.collection.sort();
 //         this.render();
       },
+
       render: function(){
       	this.collection.each(function(item){	
   			this.renderItem(item);    	
       	}, this );
+      	 $('#flightCount').text('Flights: ' +this.collection.length);
       },
       render_add: function(){
    		this.$('.Row').html('');
@@ -327,6 +330,7 @@
       		});  
 //        	this.collection.reset(); 
 // clean out the form:
+ 		$('#flightCount').text('Flights: ' +this.collection.length);
 		this.cancelItem(e);
 		}
       },

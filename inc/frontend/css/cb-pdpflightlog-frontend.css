@@ -287,8 +287,12 @@ h3 {
     float: left;
 }
 #editDate  {
-    width: 900px;
+    width: 815px;
     float: center;
+}
+#flightCount  {
+    float: right;
+    background: green;
 }
 .Row .editing{
 	display: none;

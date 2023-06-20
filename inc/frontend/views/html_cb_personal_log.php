@@ -10,8 +10,6 @@ $display_name = $user->last_name .', '.  $user->first_name;
 
 $sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE (`Pilot1`=%s OR `Pilot2`=%s  OR `Tow_Pilot`=%s )AND `flightyear`=%d ORDER BY yearkey DESC",
 		 $display_name,  $display_name, $display_name, date("Y") );				
-var_dump($sql);
-die();
 $my_flights = $wpdb->get_results($sql); 
 // get tow planes
 
