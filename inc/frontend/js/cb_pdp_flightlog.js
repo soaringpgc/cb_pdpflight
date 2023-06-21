@@ -1,6 +1,5 @@
 (function( $ ) {
 	'use strict';
-//  console.log(cloud_base_public_vars);
 	/**
 	 * All of the code for your public-facing JavaScript source
 	 * should reside in this file.
@@ -59,7 +58,7 @@
 	
 	var app = app || {};
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
-	app.working_date = (new Date()).toISOString().split('T')[0];
+	app.working_date = (new Date()).toISOString({timeZone:"America/NEW_YORK"}).split('T')[0];
 	
 	$('#editDate').text('Flight Log for: ' +app.working_date);
 // Define Flight Model and how to get it. 
@@ -85,7 +84,7 @@
 // 		},
 		defaults: {	
 			Flight_Type	: "REG",
-			flightyear: new Date().getFullYear(),			
+			flightyear: new Date({timeZone:"America/NEW_YORK"}).getFullYear(),			
 			Date: app.working_date,
 			Glider: "",
 			Pilot1: "",
@@ -108,8 +107,7 @@
      	url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
     	comparator: function(Flight){
     			return(-Number(Flight.get("yearkey")));
-    		},
-    		
+    		},    		
    	 }) ; 	
    	 
 // Define model view	
@@ -140,7 +138,7 @@
 		},
    		update: function(){
 			var localmodel = this.model;
-			console.log(localmodel);
+
  			$("#addorupdate").addClass('editing'); 	
  			$("#addFlight").removeClass("hidden");	
  			
@@ -172,9 +170,9 @@
 				$('#'+el.id).val(localmodel.get(el.id));
       		});
 		},  
-		launch_time: function(){
-			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-			var launch = new  Date();
+		launch_time: function(){ 
+// 			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+			var launch = new Date();
 // 			this.model.set({'Takeoff': launch.toLocaleTimeString('en-US',  {hour12:false})});								
 			this.$el.addClass('inflight'); 				
 			this.model.save(
@@ -192,7 +190,7 @@
 			});
 		},
 		landing_time: function(){
-			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+// 			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
 			var landing = new Date(); 
 			// recreate take off time.
 			  var now = new Date();
@@ -237,9 +235,11 @@
          $( "#datepicker" ).datepicker({
          	dateFormat: 'yy-mm-dd',
          	onSelect: function (dateText, inst) {
+				$('.Row').remove();
          		app.working_date= dateText;
-         		var results = self.collection.fetch({ wait: true, data: $.param({start: app.working_date })});
-         		self.collection.reset(results); 
+//          		self.collection.reset(); 	
+         		self.collection.fetch({ wait: true, reset:true, data: $.param({start: app.working_date })});
+//           		self.collection.reset(results); 				
          		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "yellow");
          	}         
          });    
@@ -249,6 +249,7 @@
       },
 
       render: function(){
+//       alert(this.collection.length);
       	this.collection.each(function(item){	
   			this.renderItem(item);    	
       	}, this );
@@ -301,7 +302,6 @@
       	} else {
       		var max_key =  Number(cloud_base_public_vars.last_yearkey );
       	} 
-//       	console.log(formData);
 
 //       	if(formData['Flight_Type'] == ' ') {
 //       		alert('Type can not be blank');
@@ -423,13 +423,13 @@
       		$('#Takeoff').val(null);
       	},
       renderItem: function(item){    
- 		if( item.get('Takeoff') != '00:00:00'  ){
+ 		if( item.get('Takeoff') != '00:00:00' &&  item.get('Takeoff') != null  ){
 //  			if( (typeof item.get('Takeoff') !== 'undefined' ) && isNaN(item.get('Takeoff'))){
       		var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
 				// adding 'inflight' class to the row. used below.... 
          	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
       	} 
- 		if(  item.get('Landing') !=  '00:00:00' ){ 			
+ 		if(  item.get('Landing') !=  '00:00:00'  &&  item.get('Landing') !=  null){ 			
 //  			if( (typeof item.get('Landing') !== 'undefined' ) && isNaN(item.get('Landing')) && (item.get('Landing') !=  '00:00:00') ){
       		var landing =  new Date(item.get('Landing'));
       		// add 'landed' class to this row... used below. 
@@ -444,18 +444,18 @@
       	this.$el.append( itemView.render().el);   
         }	
 	});
-
-   $(function(){
-  
-   if (typeof cb_admin_tab !== 'undefined' ){
-   		switch(cb_admin_tab){
-   			case "flights" : 
-//    				new app.FlightsView();
-      			new app.EditView();
-   			break;
-   		}
-   	} else {
-
-   	}
-   });
+	new app.EditView();
+//    $(function(){
+//   
+//    if (typeof cb_admin_tab !== 'undefined' ){
+//    		switch(cb_admin_tab){
+//    			case "flights" : 
+// //    				new app.FlightsView();
+//       			new app.EditView();
+//    			break;
+//    		}
+//    	} else {
+// 
+//    	}
+//    });
 })( jQuery );
