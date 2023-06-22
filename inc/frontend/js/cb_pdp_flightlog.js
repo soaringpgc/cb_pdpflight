@@ -58,8 +58,21 @@
 	
 	var app = app || {};
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
-	app.working_date = (new Date()).toISOString({timeZone:"America/NEW_YORK"}).split('T')[0];
-	
+
+	const dateObj = new Date() // Gets the current date and time as an object
+	const formattingOptions = {  // format string for Intl.DateTimeFormat
+ 		 day: 'numeric',
+ 		 month: 'numeric', 
+ 		 year: 'numeric',
+ 		 timeZone: 'America/NEW_YORK',
+	}	
+	// get the date in mm/dd/yyyyy form ??!!!!!!
+	const pgc_date = new Intl.DateTimeFormat('en-us', formattingOptions).format(dateObj);
+	// get a New date object with the previously generated date pattern
+	// and spit it out as yyyy-mm-dd. Just to fix javascript from jumping ahead
+	// at 8:00PM (EDT) -- this is nuts. 
+	app.working_date = (new Date(pgc_date)).toISOString().split('T')[0];
+		
 	$('#editDate').text('Flight Log for: ' +app.working_date);
 // Define Flight Model and how to get it. 
 	app.Flight = Backbone.Model.extend({
