@@ -165,6 +165,7 @@
              // we are looping over the form, picking up the id's and then getting the 
              // value of the same id in the model and then loading it back into the form
              //  someone (probably me) is going to hate me in the future.  -dsj
+             // this loops over the FORM and looks for a value for each input 
             $(this.localDivTag).children('input').each(function(i, el ){
       		   if(el.type === "checkbox" ){
       		   		if (localmodel.get(el.id) === "1" ){

@@ -177,48 +177,48 @@ class Frontend {
 
 	} // flight_log()	
 	
-	public function flight_log_new( $atts = array() ) {
-	
-	
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
- 				), $this->version, false );		
-//     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
-//     		'ajax_url' =>  admin_url('admin-ajax.php'),
+// 	public function flight_log_new( $atts = array() ) {
+// 	
+// 	
+// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+//  				), $this->version, false );		
+// //     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
+// //     		'ajax_url' =>  admin_url('admin-ajax.php'),
+// //     		'root' => esc_url_raw( rest_url() ),
+// //      		'nonce' => wp_create_nonce( 'wp_rest' ),
+// //      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+// //      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+// //      		'current_user_id' => get_current_user_id()
+// //     		)	
+// //     	);	
+//   	$dateToBePassed = array(
+//      		'ajax_url' =>  admin_url('admin-ajax.php'),
 //     		'root' => esc_url_raw( rest_url() ),
 //      		'nonce' => wp_create_nonce( 'wp_rest' ),
 //      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
 //      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
 //      		'current_user_id' => get_current_user_id()
-//     		)	
-//     	);	
-  	$dateToBePassed = array(
-     		'ajax_url' =>  admin_url('admin-ajax.php'),
-    		'root' => esc_url_raw( rest_url() ),
-     		'nonce' => wp_create_nonce( 'wp_rest' ),
-     		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-     		'current_user_id' => get_current_user_id()
- 
-    		);   	
-    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-    	); 		
-	
-		ob_start();
-	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
-			$new_log = false;
-			
- 			
-				include ('views/html_cb_flight_log_new.php');	
-		display_flight_log_new();
-			
-		$output = ob_get_contents();
-
-		ob_end_clean();
-
-		return $output;
-
-	} // flight_log_new()	
+//  
+//     		);   	
+//     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+//     	); 		
+// 	
+// 		ob_start();
+// 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
+// 			$new_log = false;
+// 			
+//  			
+// 				include ('views/html_cb_flight_log_new.php');	
+// 		display_flight_log_new();
+// 			
+// 		$output = ob_get_contents();
+// 
+// 		ob_end_clean();
+// 
+// 		return $output;
+// 
+// 	} // flight_log_new()	
 		
 // 	public function pdp_flight_log(){ 
 //      	if (isset($_GET['pgc_year'])) {
@@ -404,7 +404,7 @@ class Frontend {
 
          }        
         
-    } //pdp_flight_log()
+    } //pdp_export_data()
 	public function pdp_flight_log($atts = array() ){
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
  		global $wpdb; 
@@ -446,7 +446,7 @@ class Frontend {
 
 		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
 		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
-		add_shortcode( 'cb_pgc_flight_log_new', array( $this, 'flight_log_new' ) );
+// 		add_shortcode( 'cb_pgc_flight_log_new', array( $this, 'flight_log_new' ) );
 		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
 		add_shortcode( 'personal_log', array( $this, 'personal_log' ) );
 

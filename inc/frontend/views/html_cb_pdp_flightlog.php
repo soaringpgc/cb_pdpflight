@@ -182,7 +182,7 @@
          </textarea></div></div>
 	</form>
             
-              <div class="Title flightlist">
+              <div id="flight_table" class="Title flightlist">
                    <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button><div id="flightCount">Count</div>');
 // not quite ready for prime time.                    
              if( current_user_can( 'cb_edit_flight' ) ) {	        

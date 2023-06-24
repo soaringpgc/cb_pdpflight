@@ -1,8 +1,5 @@
 <?php
-//require dirname(__DIR__, 7) . '/Connections/PGC.php';
-//require_once($filesafe . '/PGC.php');
-// global $PGCwp; // database handle for accessing wordpress db
-// global $PGCi;  // database handle for PDP external db
+
 global $wpdb; 
 $flight_table =  $wpdb->prefix . "cloud_base_pdp_flight_sheet";	 
 ?>
