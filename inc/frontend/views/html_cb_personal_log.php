@@ -19,6 +19,7 @@ echo('<div>
     <tr class ="logbook" >
         <th  class="logbook"> Flight </th>
         <th  class="logbook"> Type </th>
+        <th  class="logbook"> Date </th>
         <th  class="logbook" > Glider </th>
         <th   class="logbook"> Pilot </th>
         <th   class="logbook"> Instuctor </th>
@@ -35,7 +36,8 @@ echo('<div>
     foreach($my_flights as $item ){                 		    	
     	echo(' <tr  ><td class="logbook">'.  $item->yearkey     .'</td>');    
     	echo(' <td class="logbook">'.  $item->Flight_Type .'</td>');   
-    	echo(' <td  class="logbook" >'.  $item->Flight_Type .'</td>');   
+    	echo(' <td  class="logbook" >'.  $item->Date .'</td>');   
+    	echo(' <td  class="logbook" >'.  $item->Glider .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Pilot1       .    '</td>');   
     	echo(' <td  class="logbook" >'.  $item->Pilot2       .'</td>');   
     	echo(' <td  class="logbook"class="logbook" >'.  $item->Tow_Altitude    .'</td>');   
