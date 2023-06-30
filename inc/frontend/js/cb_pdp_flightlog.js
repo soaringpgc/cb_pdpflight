@@ -193,7 +193,7 @@
  				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
 				{
  				patch:true,
-// 				wait: true,
+ 				wait: false,
 			    success: function(model, resp, opt) {
 // 			       alert('updated'); 
 			    }, 
@@ -220,7 +220,7 @@
  				{ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours},
 				{
  				patch:true,
-// 				wait: true,
+				wait: false,
 			    success: function(model, resp, opt) {
 //  			       alert('updated'); 
 			    }, 
@@ -241,8 +241,8 @@
       initialize: function(){
       	 var self=this;
          this.collection = new app.FlightList();
-         var fetch_string = '{reset:true, wait: true , data: $.param({start: ' +app.working_date +  '})}';
-         this.collection.fetch({reset:true, data: $.param({start: app.working_date })});      	 
+//          var fetch_string = '{reset:true, wait: true , data: $.param({start: ' +app.working_date +  '})}';
+         this.collection.fetch({reset:true, wait: true , data: $.param({start: app.working_date })});      	 
 //     	 this.collection.fetch({reset:true, wait: true });    		  
          this.listenTo(this.collection, 'reset', this.render);
          this.listenTo(this.collection, 'add', this.render_add);          
@@ -328,7 +328,7 @@
       		formData['Time'] = " ";
       		this.collection.create( formData, 
       			{
-      			wait: true,
+//       			wait: true,
       			success: function(model, resp, opt) {
 //       			console.log(model);
 //       			console.log(resp);
