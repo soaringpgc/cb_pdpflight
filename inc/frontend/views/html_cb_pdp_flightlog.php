@@ -88,7 +88,7 @@
         <input type = "hidden"
           id = "yearkey"
           size = "4"
-          name = "flightyear"/>    
+          name = "yearkey"/>    
         <div class="form-row"> 
         <label for="Flight_Type">Type: </label>
         <select name="Flight_Type" id="Flight_Type" form="addFlight" >');
@@ -125,7 +125,7 @@
           echo ( '<div class="form-row">    
         <label for="Pilot2">Instructor: </label>
         <select name="Pilot2" id="Pilot2" form="addFlight">
-        <option value="" selected>None</option>');       
+        <option value=" " selected>None</option>');       
      	    foreach($instructors as $key){ 	
      	    	echo '<option value="' . $key->name  . '" >'. $key->name . '</option>';
             };               
@@ -139,7 +139,7 @@
         echo ('</select></div>
         <div class="form-row">  
        	 	<label for="launch">Launch:</label>
-			<input type="time" id="Takeoff" name="Takeoff" value=" " >
+			<input type="time" id="Takeoff" name="Takeoff" >
 			<button id="reset_time_launch" type="button">Reset</button>
 		</div> 
 

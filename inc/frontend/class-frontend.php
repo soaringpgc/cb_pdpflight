@@ -129,9 +129,8 @@ class Frontend {
 
 	}
 	public function flight_log( $atts = array() ) {
-	
-	
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+		
+	wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
  				), $this->version, false );		
 //     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
 //     		'ajax_url' =>  admin_url('admin-ajax.php'),
@@ -414,10 +413,12 @@ class Frontend {
 		$last_yearkey = $wpdb->get_var($sql); 	
 
     	wp_register_script( 'pdp_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
+//     	wp_register_script('dualStorage','https://cdnjs.cloudflare.com/ajax/libs/Backbone.dualStorage/1.4.1/backbone.dualstorage.min.js');
+
 // 	    wp_register_script( 'validation',  plugins_url('/cloudbase/includes/backbone-validation-min.js'));	
 	    
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 'validation',
-		 'pdp_templates', 'jquery-ui-datepicker'), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
+		'validation', 'pdp_templates', 'jquery-ui-datepicker'), $this->version, false );
 
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),

@@ -42,19 +42,19 @@
 	 	if($("#Flight_Type").val() == 'AOF' ){
 	 		$("#Tow_Altitude").val('0');	
 	 		$("#Tow_Altitude").addClass('hidden');	
-	 		$("#Notes").val('AOF ');	
-	 		$("#Pilot2").val('');	
+	 		$("#Notes").val('AOF :');	
+	 		$("#Pilot2").val(' ');	
 	 		$("#Pilot2").addClass('hidden');	  	  	 	
 	 	} else {
 	 		$("#Pilot2").removeClass('hidden');	
 	 		$("#Tow_Altitude").removeClass('hidden');	
 	 	}
 	 });
-	 var $body = $("body");
-	 $(document).on({
-   		 ajaxSend: function() { $body.addClass("loading");    },
-     	 ajaxComplete: function() { $body.removeClass("loading"); }    
-	});
+ 	 var $body = $("body");
+// 	 $(document).on({
+//    		 ajaxSend: function() { $body.addClass("loading");    },
+//      	 ajaxComplete: function() { $body.removeClass("loading"); }    
+// 	});
 	
 	var app = app || {};
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
@@ -129,6 +129,7 @@
 		tagName: 'div',
         className: 'Row',
 		render: function(){
+	
 			this.$el.html( this.template(this.model.toJSON() ) );
 			if (this.model.get('Landing') == '00:00:00' ){
  				this.$el.removeClass('landed'); 
@@ -139,10 +140,11 @@
  				this.$el.removeClass('landed'); 					
  			}
 			this.$input = this.$('.edit');
-			return this;
+ 			return this;
 		},
 		initialize: function(){
-    		this.model.on('change', this.render, this); 		    		
+        		this.model.on('change', this.render, this); 	
+//        		this.model.bind('change',_.bind(this.render, this));
   		},
 		events:{
 			'click label' : 'update',
@@ -185,26 +187,24 @@
       		});
 		},  
 		launch_time: function(){ 
-// 			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
 			var launch = new Date();
 // 			this.model.set({'Takeoff': launch.toLocaleTimeString('en-US',  {hour12:false})});								
-			this.$el.addClass('inflight'); 				
+			this.$el.addClass('inflight'); 	
+			this.model.set({Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})})	;		
 			this.model.save(
- 				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
+//  				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
 				{
  				patch:true,
- 				wait: false,
 			    success: function(model, resp, opt) {
-// 			       alert('updated'); 
+//  			       alert('updated takeoff'); 
 			    }, 
 			    error: function(model, error){
 			    	alert('Error: ' + error);
-			    	console.log(error);
+// 			    	console.log(error);
 			    }			
 			});
 		},
 		landing_time: function(){
-// 			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
 			var landing = new Date(); 
 			// recreate take off time.
 			  var now = new Date();
@@ -216,29 +216,26 @@
 			var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
 			var hours = Math.round(temptime *100) / 100 ;			
 			this.$el.addClass('landed'); 
+			this.model.set({ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours});
 			this.model.save(
- 				{ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours},
+//  				{ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours},
 				{
  				patch:true,
-				wait: false,
 			    success: function(model, resp, opt) {
-//  			       alert('updated'); 
+//   			       alert('updated landing'); 
 			    }, 
 			    error: function(model, error){
-			    	alert('Error: ' + error);
-			    	console.log(error);
+// 			    	alert('Error: ' + error);
+// 			    	console.log(error);
 			    }			
 			});	
-		}
+ 		}
 	});
-
 	app.EditView =  Backbone.View.extend({ 
 		el: '#eflights', 
 		localDivTag: '#addFlight div',
-		localRowTag: '#flight_table div',
- 	 	preinitialize(){ 	 	    
-  	 	},	 		 	 	        
-      initialize: function(){
+		localRowTag: '#flight_table div',	 		 	 	        
+      	initialize: function(){
       	 var self=this;
          this.collection = new app.FlightList();
 //          var fetch_string = '{reset:true, wait: true , data: $.param({start: ' +app.working_date +  '})}';
@@ -271,7 +268,6 @@
       },
       render_add: function(){
    		this.$('.Row').html('');
-
       	this.collection.each(function(item){	
   			this.renderItem(item);    	
       	}, this );
@@ -324,30 +320,55 @@
       	if(formData['Pilot1'] == ' ') {
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
-      		formData['yearkey'] = max_key+1;
-      		formData['Time'] = " ";
+      		formData['yearkey'] = max_key+1;     		
+      		if(typeof formData['Takeoff'] === 'undefined' )  	{
+   				formData['Takeoff'] = '00:00:00';	
+   			}
+  			if(typeof formData['Landing'] === 'undefined' )  	{
+   				formData['Landing'] = '00:00:00';	
+   			}
+   			if ( (formData['Takeoff'] != '00:00:00' )  &&  ( formData['Landing'] != '00:00:00') ){
+				var now = new Date();
+				var dd = String(now.getDate()).padStart(2, '0');
+				var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
+				var yyyy = now.getFullYear();			
+				var today = yyyy + '-' + mm + '-' + dd;
+				var launch =  new Date(today+'T'+(formData['Takeoff']).replace(/-/g,"/"));
+				var landing =  new Date(today+'T'+(formData['Landing']).replace(/-/g,"/"));
+				var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
+				var hours = Math.round(temptime *100) / 100 ;      	
+      			formData['Time'] =  hours;	   			
+   			} else {
+   				formData['Time'] = ' ';	 		
+   			}
+      		formData['Date'] = app.working_date;
+ 			$body.addClass("loading");      
+ 			 	      		
       		this.collection.create( formData, 
       			{
-//       			wait: true,
+       			wait: true,
       			success: function(model, resp, opt) {
-//       			console.log(model);
+      			$body.removeClass("loading");
+//         			console.log(model);
 //       			console.log(resp);
 //       			console.log(opt);
 //       				alert('success');
-      			}      		
-      		});  
-//        	this.collection.reset(); 
+      			},
+      			error: function(model, resp, opt) {
+      				$body.removeClass("loading");
+      			},  	  	
+      		});     	
  		$('#flightCount').text('Flights: ' +this.collection.length);
  // clean out the form:		
 		this.cancelItem(e);
 		}
       },
       updateItem: function(e){     	
-		e.preventDefault();
+		e.preventDefault();		
  		var formData ={};
 		// grab all of the input fields from the form. 
   		$(this.localDivTag).children('input').each(function(i, el ){
-//  		$('#addFlight div').children('input').each(function(i, el ){ 		
+//  		$('#addFlight div').children('input').each(function(i, el ){ 	
  		 if($(el).val() != ''){
 		  	if($(el).hasClass('checked_class')){
 		  		formData[el.id]=($(el).is(":checked")? true : false );
@@ -362,6 +383,7 @@
       		formData[el.id] = $(el).val();
       	  }
       	});
+      	      	 				
       	$(this.localDivTag).children('textarea').each(function(i, el ){
       	  if($(el).val() != ''){
       		formData[el.id] = $(el).val();
@@ -372,8 +394,8 @@
       	} else {
       		var updateModel = this.collection.get(formData.id);  
       	}
-     	var old_takeoff = updateModel.get('Takeoff');
-   		var old_landing = updateModel.get('Landing');  	
+//      	var old_takeoff = updateModel.get('Takeoff');
+//    		var old_landing = updateModel.get('Landing');  	
    		if(typeof formData['Takeoff'] === 'undefined' )  	{
    			formData['Takeoff'] = '00:00:00';	
    		}
@@ -456,7 +478,7 @@
       		model: item
       	})
       	this.$el.append( itemView.render().el);   
-        }	
+        }
 	});
 	new app.EditView();
 //    $(function(){

@@ -150,12 +150,12 @@ class Rest extends \WP_REST_Controller {
 // 		}
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
-// 		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  date("Y"));	
-// 		$yearkey = $wpdb->get_var($sql); 	
-		if (!isset($request['yearkey']) ){
-			return new \WP_Error( 'missing yearkey', esc_html__( 'missing yearkey.', 'my-text-domain' ), array( 'status' => 400 ) );
-		} 
-		$yearkey = $request['yearkey'];
+		$sql = $wpdb->prepare("SELECT MAX(yearkey) FROM {$flight_table} WHERE `flightyear`=%s",  date("Y"));	
+		$yearkey = $wpdb->get_var($sql)+1; 	
+// 		if (!isset($request['yearkey']) ){
+// 			return new \WP_Error( 'missing yearkey', esc_html__( 'missing yearkey.', 'my-text-domain' ), array( 'status' => 400 ) );
+// 		} 
+// 		$yearkey = $request['yearkey'];
  
 // 		isset($request['id']) 			? $id=$request['id'] 					: $id=null;
 		isset($request['flightyear']) 	? $flightyear=$request['flightyear'] 	: $flightyear=date('Y');
