@@ -18,9 +18,8 @@ echo('<div>
     if($user->ID == 0){
     	echo( '<tr class ="logbook"  span="13">You Must Login to view your logbook</tr>');
     } else {
-		echo( '<tr class ="logbook"  span="13">Log Book for: ' . $display_name . '</tr>');
-	}
-    echo( '<tr class ="logbook" >
+		echo( '<tr class ="logbook"  span="13">Log Book for: ' . $display_name . '</tr>
+		<tr class ="logbook" >
         <th  class="logbook"> Flight </th>
         <th  class="logbook"> Type </th>
         <th  class="logbook"> Date </th>
@@ -52,7 +51,8 @@ echo('<div>
     	echo(' <td  class="logbook" >'.  $item->Tow_Plane    .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Tow_Charge    .'</td>');   
     	echo(' <td  class="logbook" >'.  $item->Notes    .'</td></tr>');   
-    }   
+    } 
+    }  
  echo("</table></div>");
  
  ?> 
