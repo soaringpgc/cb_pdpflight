@@ -14,9 +14,13 @@ $my_flights = $wpdb->get_results($sql);
 // get tow planes
 
 echo('<div>
-    <table class="logbook" >
-     <tr class ="logbook"  span="13">Log Book for: ' . $display_name . '</tr>
-    <tr class ="logbook" >
+    <table class="logbook" >');
+    if($user->ID == 0){
+    	echo( '<tr class ="logbook"  span="13">You Must Login to view your logbook</tr>');
+    } else {
+		echo( '<tr class ="logbook"  span="13">Log Book for: ' . $display_name . '</tr>');
+	}
+    echo( '<tr class ="logbook" >
         <th  class="logbook"> Flight </th>
         <th  class="logbook"> Type </th>
         <th  class="logbook"> Date </th>
