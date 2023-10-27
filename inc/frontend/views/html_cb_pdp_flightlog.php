@@ -42,13 +42,27 @@
 		$server = rest_get_server();
 		$member_pilots = $server->response_to_data( $response, false );
 		// sort($member_pilots ); 
+		foreach($member_pilots as $pilot) {
+			$pilot->nofly = false; 
+		}
 		 
 		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 		$request->set_param('no_fly', 'true');
 		$response = rest_do_request($request);
 		$server = rest_get_server();
 		$no_fly_pilots = $server->response_to_data( $response, false );
-		// sort($no_fly_pilots); 
+		// sort($no_fly_pilots);
+		foreach($no_fly_pilots as $pilot) {
+			$pilot->nofly = true; 
+		}
+		$members = array_merge($member_pilots, $no_fly_pilots );
+		function sort_members($a, $b) { 
+    		if($a->last_name == $b->last_name) {
+        		return 0;
+    		} 
+    		return ($a->last_name < $b->last_name) ? -1 : 1;
+		} 
+		usort($members, 'sort_members'); 
 
 		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 		$request->set_param( 'role', 'cfi_g' );
@@ -111,17 +125,23 @@
         echo ( '</select>  </div> <div class="form-row">   
         <label for="pilots">Pilot:  </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
-        <option value=" " selected>Select Member</option>
-  			<optgroup label="Members" class="nofly" >');               
-         		foreach($member_pilots as $pilot ){
-         			echo(' <option value="'. $pilot->name .'">'.$pilot->name.'</option>');                     
-         		}                       			
-			echo('	</optgroup>
-				<optgroup label="Possible No Fly" class="nofly" >');                   
-              		foreach($no_fly_pilots as $pilot ){
-              			echo(' <option value="'. $pilot->name .'" >'. $pilot->name . '</option>');                       
-              		}                         									  
-		  echo('</optgroup> </select></div>');
+        <option value=" " selected>Select Member</option>');
+//   		echo('<optgroup label="Members" class="nofly" >');               
+//          		foreach($member_pilots as $pilot ){
+//          			echo(' <option value="'. $pilot->name .'">'.$pilot->name.'</option>');                     
+//          		}                       			
+// 			echo('	</optgroup>
+// 				<optgroup label="Possible No Fly" class="nofly" >');                   
+//               		foreach($no_fly_pilots as $pilot ){
+//               			echo(' <option value="'. $pilot->name .'" >'. $pilot->name . '</option>');                       
+//               		}                         									  
+// 		  echo('</optgroup> </select></div>');
+//          		foreach($member_pilots as $pilot ){
+//          			echo(' <option value="'. $pilot->name .'">'.$pilot->name.'</option>');                     
+//          		}                       			
+         foreach($members as $pilot ){
+         	echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');                      
+         }                       			
           echo ( '<div class="form-row">    
         <label for="Pilot2">Instructor: </label>
         <select name="Pilot2" id="Pilot2" form="addFlight">
