@@ -2,8 +2,6 @@
 global $wpdb;
 $flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
 
-?>
-<?php
 error_reporting(E_ALL);
 //ini_set('display_errors', 'On');
 $view_only = true; 
@@ -105,6 +103,9 @@ $response = rest_do_request($request);
 $server = rest_get_server();
 $member_pilots = $server->response_to_data( $response, false );
 // sort($member_pilots ); 
+		foreach($member_pilots as $pilot) {
+			$pilot->nofly = false; 
+		}
  
 $request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 $request->set_param('no_fly', 'true');
@@ -112,6 +113,18 @@ $response = rest_do_request($request);
 $server = rest_get_server();
 $no_fly_pilots = $server->response_to_data( $response, false );
 // sort($no_fly_pilots); 
+		foreach($no_fly_pilots as $pilot) {
+			$pilot->nofly = true; 
+		}
+$members = array_merge($member_pilots, $no_fly_pilots );
+function sort_members($a, $b) { 
+    if($a->last_name == $b->last_name) {
+        return 0;
+    } 
+    return ($a->last_name < $b->last_name) ? -1 : 1;
+} 
+
+usort($members, 'sort_members'); 
 
 $row_rsGliders = array();
 $request = new WP_REST_Request('GET', '/cloud_base/v1/aircraft');
@@ -255,28 +268,30 @@ body,td,th {
                 <td bgcolor="#CCCCCC"><span class="style17">
                   <select name="Pilot1" class="style25" id="Pilot1" >                 
                   		<option value="" >  </option>
-  						<optgroup label="Members" class="nofly" >
-                        <?php                    
-                  			foreach($member_pilots as $pilot ){
-                  			    if ( $pilot->name == $row_Flightlog['Pilot1']) { 
-                  			    	echo(' <option value="'.$pilot->pilot_id.'" selected>'.$pilot->name.'</option>');  
-                  			    } else {
-                  					echo(' <option value="'.$pilot->pilot_id.'">'.$pilot->name.'</option>');    
-                  				}                   
-                  			}                       
+<!--   						<optgroup label="Members" class="nofly" >   --> 
+                        <?php                  
+//                   			foreach($member_pilots as $pilot ){
+//                   			    if ( $pilot->name == $row_Flightlog['Pilot1']) { 
+//                   			    	echo(' <option value="'.$pilot->pilot_id.'" selected>'.$pilot->name.'</option>');  
+//                   			    } else {
+//                   					echo(' <option value="'.$pilot->pilot_id.'">'.$pilot->name.'</option>');    
+//                   				}                   
+//                   			}                       
 						?>
+<!-- 
 					</optgroup>
 					  <optgroup label="Possible No Fly" class="nofly" >
+ -->
                         <?php                        
-                  			foreach($no_fly_pilots as $pilot ){
+                  			foreach($members as $pilot ){
                   			    if ( $pilot->name == $row_Flightlog['Pilot1'] ) { 
                   			    	echo(' <option value="'.$pilot->pilot_id.'" selected>'.$pilot->name.'</option>');  
                   			    } else {
-                  					echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name.'</option>');    
+                  					echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');    
                   				}                   
                   			}                         
 						?>					  					  
-					  </optgroup?
+<!-- 					  </optgroup? -->
                   </select>
                 </span></td>
               </tr>
