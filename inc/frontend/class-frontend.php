@@ -263,31 +263,23 @@ class Frontend {
 		if ( !current_user_can('flight_edit')){
 			wp_redirect( wp_login_url() );
 		}
-
+			// get the last Tow Plane, Tow Pilot and flight year from the database. 
 		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, flightyear, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
 		$result = $wpdb->get_results($sql);
-// 		if( $result[0]->flightyear != date('Y') ){
-// 			$yearkey = 1;
-// 		} else {
-// 			$yearkey = $result[0]->yearkey+1;
-// 		}
-			
-		if( $result[0]->flightyear != date('Y') ){
-        $sql = $wpdb->prepare("INSERT INTO {$flight_table} ( Date, Tow_Plane, Tow_Pilot, 
-        		Time, yearkey, flightyear) VALUES ( %s, %s, %s, %d, %d, %d)",  date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, date('Y'), 1, date('Y'));
-		} else {
-        $sql = $wpdb->prepare("INSERT INTO {$flight_table} ( Date, Tow_Plane, Tow_Pilot, 
-        		Time, yearkey, flightyear) VALUES ( %s, %s, %s, %d, 
-        	(SELECT * FROM ( SELECT MAX(yearkey)+1 FROM {$flight_table} WHERE flightyear = %d ) as m), %d)",  date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, date('Y') , date('Y'));
+			// check to see if we are in a new year. 			
+			if( $result[0]->flightyear != date('Y') ){
+       	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
+       	 			( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
+       	 			VALUES ( %s, %s, %s, %d, %d, %d)",  date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, 1, date('Y'));
+			} else {
+       	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
+       	 		( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
+       	 		VALUES ( %s, %s, %s, %d, (SELECT * FROM ( SELECT MAX(yearkey)+1 FROM {$flight_table} WHERE flightyear = %d ) as m), %d)", 
+       	 			 date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, date('Y') , date('Y'));
 		}
 // 		var_dump($sql);
-// 		die();
-		
+// 		die();		
 		$wpdb->query($sql);
-
-//         $wpdb->insert($flight_table, array( 'Date'=>date("Y-m-d"), 'Tow_Plane'=>$result[0]->Tow_Plane, 
-//         	'Tow_Pilot'=>$result[0]->Tow_Pilot, 'Time'=>"0.0",'yearkey'=>$yearkey,
-//         	'flightyear'=>date('Y') ));
       	wp_redirect($_GET['source_page']);
      	exit();
      }	// pdp_flight_log_add()
