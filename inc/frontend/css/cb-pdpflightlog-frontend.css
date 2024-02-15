@@ -99,7 +99,11 @@ tr{
 .fl_style3 {font-size: 16px; font-weight: bold; }
 .fl_style16 {color: #CCCCCC; }
 .fl_style24 {color: #000000}
-.fl_style25 {font-size: 18px; font-weight: bold; color: #000000; }
+.fl_style25 {
+	font-size: 18px; 
+	font-weight: 
+	color: #000000; 
+}
 .fl_style27 {font-size: 18px; font-weight: bold; color: #000000; }
 
 .fl_style29 {
@@ -175,8 +179,8 @@ tr{
   left: 50%;
   transform: translate(0%, -50%);  background: #ffffff;
   border: 3px solid #666666;
-  width: 50%;
-  height: 50%;
+  width: 40%;
+  height: 75%;
   left: 25%;
   height:"350px"; 
   overflow-y:auto;
@@ -396,6 +400,9 @@ table.logbook, th.logbook, td.logbook{
    background-color: #cccccc;
 /*   border-radius: 10px; */
 }
+td.hidden{
+	visibility: hidden;
+}
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
    with position:fixed. Width, height, top and left speak
@@ -425,4 +432,26 @@ body.loading .modal {
    modal element will be visible */
 body.loading .modal {
     display: block;
+}
+td .detail {
+ 	font-size: 
+ 	18px; font-weight: 
+/*  	bold;  */
+ 	color: #000000;  
+ 	text-align: left;
+ 	vertical-align: middle;
+ 	nowrap;
+	background-color: #cccccc;
+}
+.fl_header {
+	font-size: 18px; 
+	font-weight: 
+	color: #000000; 
+	background-color: #66CCFF;
+}
+.fl_flight_row {
+	font-size: 18px; 
+	font-weight: 
+	color: #000000; 
+	background-color: #FFFFFF;
 }

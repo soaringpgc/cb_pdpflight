@@ -109,26 +109,26 @@ class Init {
 	 *
 	 * @access    private
 	 */
-	private function define_admin_hooks() {
-
-		$plugin_admin = new Admin\Admin( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
-		/*
-		 * Additional Hooks go here
-		 *
-		 * e.g.
-		 *
-		 * //admin menu pages
-		 * $this->loader->add_action('admin_menu', $plugin_admin, 'add_plugin_admin_menu');
-		 *
-		 *  //plugin action links
-		 * $this->loader->add_filter( 'plugin_action_links_' . $this->plugin_basename, $plugin_admin, 'add_additional_action_link' );
-		 *
-		 */
-	}
+// 	private function define_admin_hooks() {
+// 
+// 		$plugin_admin = new Admin\Admin( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
+// 
+// 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+// 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+// 
+// 		/*
+// 		 * Additional Hooks go here
+// 		 *
+// 		 * e.g.
+// 		 *
+// 		 * //admin menu pages
+// 		 * $this->loader->add_action('admin_menu', $plugin_admin, 'add_plugin_admin_menu');
+// 		 *
+// 		 *  //plugin action links
+// 		 * $this->loader->add_filter( 'plugin_action_links_' . $this->plugin_basename, $plugin_admin, 'add_additional_action_link' );
+// 		 *
+// 		 */
+// 	}
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality

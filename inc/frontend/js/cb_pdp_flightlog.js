@@ -49,7 +49,8 @@
 	 		$("#Pilot2").removeClass('hidden');	
 	 		$("#Tow_Altitude").removeClass('hidden');	
 	 	}
-	 });
+	 });	 
+	 
  	 var $body = $("body");
 // 	 $(document).on({
 //    		 ajaxSend: function() { $body.addClass("loading");    },

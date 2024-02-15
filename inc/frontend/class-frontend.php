@@ -77,7 +77,7 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-  		wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
+  		wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/themes/base/jquery-ui.css');
     	wp_enqueue_style('jquery-ui');
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdpflightlog-frontend.css', array(), $this->version, 'all' );
@@ -143,6 +143,7 @@ class Frontend {
 //     	);	
   	$dateToBePassed = array(
      		'ajax_url' =>  admin_url('admin-ajax.php'),
+     		'post_url' =>  admin_url('admin-post.php'),
     		'root' => esc_url_raw( rest_url() ),
      		'nonce' => wp_create_nonce( 'wp_rest' ),
      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
@@ -258,28 +259,33 @@ class Frontend {
 		 * class.
 		 */
      public function pdp_flight_log_add(){
-     	global $wpdb;
-     	$flight_table =  $wpdb->prefix . "cloud_base_pdp_flight_sheet";	 
+//      	global $wpdb;
+//      	$flight_table =  $wpdb->prefix . "cloud_base_pdp_flight_sheet";	 
+// modified to use REST call 
+
 		if ( !current_user_can('flight_edit')){
 			wp_redirect( wp_login_url() );
 		}
+  		$request = new \WP_REST_Request('POST', '/cloud_base/v1/pdp_flightlog');
+  		$response = rest_do_request($request);
+
 			// get the last Tow Plane, Tow Pilot and flight year from the database. 
-		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, flightyear, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
-		$result = $wpdb->get_results($sql);
-			// check to see if we are in a new year. 			
-			if( $result[0]->flightyear != date('Y') ){
-       	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
-       	 			( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
-       	 			VALUES ( %s, %s, %s, %d, %d, %d)",  date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, 1, date('Y'));
-			} else {
-       	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
-       	 		( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
-       	 		VALUES ( %s, %s, %s, %d, (SELECT * FROM ( SELECT MAX(yearkey)+1 FROM {$flight_table} WHERE flightyear = %d ) as m), %d)", 
-       	 			 date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, date('Y') , date('Y'));
-		}
+// 		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, flightyear, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
+// 		$result = $wpdb->get_results($sql);
+// 			// check to see if we are in a new year. 			
+// 			if( $result[0]->flightyear != date('Y') ){
+//        	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
+//        	 			( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
+//        	 			VALUES ( %s, %s, %s, %d, %d, %d)",  date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, 1, date('Y'));
+// 			} else {
+//        	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
+//        	 		( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
+//        	 		VALUES ( %s, %s, %s, %d, (SELECT * FROM ( SELECT MAX(yearkey)+1 FROM {$flight_table} WHERE flightyear = %d ) as m), %d)", 
+//        	 			 date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, date('Y') , date('Y'));
+// 		}
 // 		var_dump($sql);
 // 		die();		
-		$wpdb->query($sql);
+// 		$wpdb->query($sql);
       	wp_redirect($_GET['source_page']);
      	exit();
      }	// pdp_flight_log_add()
@@ -302,8 +308,6 @@ class Frontend {
  *
  */
      public function pdp_update_time(){
-// 		global $PGCwp; // database handle for accessing wordpress db
-// 		global $PGCi;  // database handle for PDP external db
 		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
     

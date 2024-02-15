@@ -14,7 +14,14 @@
 }    
 #flight-log .editing input.edit {
   display: inline; /* Shows input text box when .editing*/
-}  
+} 
+/* 
+table{
+   overflow-y:scroll;
+   height:600px;
+   display:block;
+} 
+ */
 div .pdp-table {
     display: table;
      padding: 5px;

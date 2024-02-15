@@ -20,7 +20,112 @@ date_default_timezone_set('America/New_York');
 $pgc_flight_date = date("Y-m-d");
 // var_dump($pgc_flight_date );
 // die();
+/////================================================================================================
 
+$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
+$request->set_param('no_fly', 'false');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$member_pilots = $server->response_to_data( $response, false );
+// sort($member_pilots ); 
+		foreach($member_pilots as $pilot) {
+			$pilot->nofly = false; 
+		}
+ 
+$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
+$request->set_param('no_fly', 'true');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$no_fly_pilots = $server->response_to_data( $response, false );
+// sort($no_fly_pilots); 
+		foreach($no_fly_pilots as $pilot) {
+			$pilot->nofly = true; 
+		}
+$members = array_merge($member_pilots, $no_fly_pilots );
+function sort_members($a, $b) { 
+    if($a->last_name == $b->last_name) {
+        return 0;
+    } 
+    return ($a->last_name < $b->last_name) ? -1 : 1;
+} 
+
+usort($members, 'sort_members'); 
+
+$row_rsGliders = array();
+$request = new WP_REST_Request('GET', '/cloud_base/v1/aircraft');
+$request->set_param('type', 'glider');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$aircraft = $server->response_to_data( $response, false );
+
+foreach($aircraft as $glider ){
+	array_push ($row_rsGliders, $glider->compitition_id );	
+}
+sort($row_rsGliders); 
+
+$row_TowPlane = array();
+$request = new WP_REST_Request('GET', '/cloud_base/v1/aircraft');
+$request->set_param('type', 'tow');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$aircraft = $server->response_to_data( $response, false );
+
+foreach($aircraft as $towplane ){
+	array_push ($row_TowPlane, $towplane->compitition_id );	
+}
+ sort($row_TowPlane); 
+
+// select tow pilots from Wordpress user database where role = 'tow_pilot'
+$row_Towpilots = array();
+$args = array('role'=> 'tow_pilot', 'role__not_in'=>'inactive', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$tow_pilots = get_users( $args );
+
+foreach($tow_pilots as $pilot ){
+	$pilot_user = get_userdata( $pilot->id );
+	array_push ($row_Towpilots, ($pilot_user->last_name .', '. $pilot_user->first_name ));	
+}
+sort($row_Towpilots ); 
+
+// select instructors from Wordpress user database where role = 'cfi_g'
+$row_Cfigpilots = array();
+$args = array('role'=> 'cfi_g', 'role__not_in'=>'inactive', 'orderby'=>'user_nice_name', 'order'=> 'ASC');
+$cfi_pilots = get_users($args );
+
+foreach($cfi_pilots as $pilot ){
+	$pilot_user = get_userdata( $pilot->id );
+	array_push ($row_Cfigpilots, ($pilot_user->last_name .', '. $pilot_user->first_name ));	
+}
+sort($row_Cfigpilots ); 
+
+$row_rsAltitudes = array();
+$request = new WP_REST_Request('GET', '/cloud_base/v1/fees');
+//$request->set_param('type', 'glider');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$data = $server->response_to_data( $response, false );
+
+$fee_table = array();
+
+foreach ($data as $key=>$value){
+	$fee_table[$value->altitude]=$value->charge;	
+}
+
+$row_rsAltitudes = array();
+$request = new WP_REST_Request('GET', '/cloud_base/v1/flight_types');
+//$request->set_param('type', 'glider');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$ftype = $server->response_to_data( $response, false );
+
+// $flight_type_table = array();
+// 
+// foreach ($ftype as $type ){
+// 	array_push ($flight_type_table, $type);	
+// 	
+// }
+
+
+/////========================================
 
 $maxRows_Flightlog = 10;
 $pageNum_Flightlog = 0;
@@ -38,9 +143,6 @@ $flight_log =  $wpdb->get_results($query );
 $todaycount= $wpdb->num_rows;
 
 $todaycount = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM {$flight_table} WHERE `Date` = '%s'", $pgc_flight_date));
-
-// var_dump($wpdb->last_query);
-// die();
 
 
 $totalPages_Flightlog = ceil($todaycount/$maxRows_Flightlog)-1;
@@ -71,49 +173,14 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 </head>
 
 <body id="cb_pdp_body">
-<table width:"100%"; height:"100%" align="center" cellpadding="2" cellspacing="2" bordercolor="#000033" bgcolor="#666666">
-  <tr width="100%">
-        <th><div align="center">
-            <table width="100%">
-                <tr>   
-                	<td width="5%"> </td>                
- 					<td width="8%" <?php if ( !$view_only ){ echo ' bgcolor="#FF9900"'; } ?> >
- 						<div align="center">
- 							<span class="fl_style25">
-							<?php if ( !$view_only ){ 					
-								echo ('<form action="'. admin_url("admin-post.php").'" method="get">');
-                    			echo ('<input type="hidden" name="action" value="pdp_flight_log_add">');
-                    	//		echo ('<input type="hidden" name="page_id" value=' . get_the_id(). '>');
-                    			echo ('<input type="hidden" name="source_page" value="' );
-                    			echo  the_permalink() ;	
-                    			echo ('"><input type="submit" value="Add Flight">
-                 			</form>');
-                 			} ?> 
-							</span>
-						</div>
-					</td>
-                    <td width="73%"><div align="center"><span class="fl_style1"> PGC DATA PORTAL - FLIGHT SHEET for <?php echo$pgc_flight_date ?></span></div></td>
-             		<?php if ( $view_only )  {     
-             			echo ('<td></td>');
-             		} else {
-             		//	echo ('<td width="8%" bgcolor="#006633"><div align="center"><a href="pgc_flightsheet_help.php" class="fl_style25">HELP</a></div></td> ' );
-             			echo ('<td width="8%" bgcolor="#006633"><div align="center"><button class="open">Help</button></div></td> ' );
-             		}
-             		?>
-             	
-                    <td width="5%"class="fl_style1"><?php echo 'TDA: ' . $todaycount ?> </td>  
-                    
-                    
                                  		<!--Creates the popup body-->
-<div class="popup-overlay">
+<div  class="popup-overlay"  id="helpPage">
 <!--Creates the popup content-->
     <h4>PGC PDP Help<button class="close">Close</button>  </h4> 
  <div >
-
     <li>The<u>ADD Flight</u> button is hit on the main screen to create a new  blank row on the main flightlog screen.</li>
     <li>The new record is edited in the Detail Screen:  Glider, Member Charged and Instructor are added  to the record using the appropriate  dropdowns. The record is typically saved (updated) at this time.</li>
     <li >A PGC Flight Sheet record is considered 'official' by  the system when a Charged Member and/or Instructor is entered - and Takeoff and  Landing times are recorded.&nbsp; A record on  the main page that does not have a Member Charged or Instructor entry is not  considered a valid record for any billing or reporting process.</li>
-
  <ul >
      <li >If the PGC AOF Pilot is not a CFIG, put their name in the Member column. (Example - Bob Lacovara) </li>
      <li >If the PGC AOF Pilot is a CFIG, put their name in the Instructor Column - and put AOF in the member column. (Example - Jack Goritski)</li>
@@ -144,24 +211,177 @@ if (!empty($_SERVER['QUERY_STRING'])) {
   
 </div>
 </div>
-                                  
-                    
+
+<!-- ======================================================================================-->
+<div  class="popup-overlay"  id="detailPage" width="100%">
+<!--Creates the popup content-->
+    <table width="100%" height="100%" border="1" align="center" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">     
+      <tr>
+        <td height="373"><p align="center" class="fl_style37"  >PGC FLIGHT SHEET DETAIL SCREEN </p> 
+          <form method="post" name="flightForm">
+            <input type="hidden" id='id' name='id' value="">          	
+            <table align="center" cellpadding="3" cellspacing="3" bgcolor="#000066" class="style25">
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Glider:</div></td>
+                <td class="detail"><select name="Glider"  id="Glider" class="fl_detail_row" >
+                  <?php
+                       foreach($row_rsGliders as $glider ){
+                  				echo(' <option value="'.$glider.'" class="nofly">'.$glider.'</option>');                       
+                  		}        
+                 ?>
+                </select></td>
+              </tr>
+              <tr valign="baseline">
+                  <td class="detail"><div align="left">Flight Type:</div></td>
+                  <td class="detail">
+				  <select id="Flight_Type" name="Flight_Type" class="style25" select >
+				<?php
+                    foreach($ftype as $value  ){
+                    		echo(' <option value="'.$value->title.'" >'.$value->title.'</option>');    
+                    } 
+					?>
+                  </select></td>
+              </tr>
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Member:</div></td>
+                <td class="detail"><span >
+                  <select id="Pilot1"  name="Pilot1" class="style25" >                 
+                  		<option value="" >  </option>
+                        <?php                        
+                  			foreach($members as $pilot ){
+//                   					echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>'); 
+                  					echo(' <option value="'.$pilot->name.'" >'.$pilot->name.'</option>');                      
+                     
+                  			}                         
+						?>					  					  
+                  </select>
+                </span></td>
+              </tr>
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Instructor:</div></td>
+                <td class="detail"><span class="style17">
+                    <select id="Pilot2" name="Pilot2" class="style25">
+                     <option value="" > </option>
+                        <?php                        
+                  			foreach($row_Cfigpilots as $pilot ){
+                  					echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');                       
+                  			}                         
+						?>
+                    </select>
+                </span></td>
+              </tr>
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Takeoff:</div></td>
+                <td class="detail"><input name="Takeoff" id="Takeoff" type="text" class="style25" value="" size="8" maxlength="8"></td>
+              </tr>
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Landing:</div></td>
+                <td class="detail"><input id="Landing" name="Landing" type="text" class="style25" value="" size="8" maxlength="8"></td>
+              </tr>
+<!-- 
+              <tr valign="baseline">
+                  <td class="detail"><div align="left">Hours:  </div></td>
+                  <td class="detail"><input id="Time"  name="Time" type="text" class="style25" value="" size="6" maxlength="6" /></td>
+              </tr>
+ -->
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Tow Altitude:</div></td>
+                <td class="detail"><select id="Tow_Altitude" name="Tow_Altitude" class="style25">
+                    <?php
+                    foreach($fee_table as $key=>$value  ){
+                    		echo(' <option value="'.$key.'" >'.$key.'</option>');    
+                    } 
+					?>
+                </select></td>
+              </tr>
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Tow Plane:</div></td>
+                <td class="detail"><select id="Tow_Plane" name="Tow_Plane"  class="style25"><option value="" >  </option>
+                   <?php
+                       foreach($row_TowPlane as $tplane ){
+                  				echo(' <option value="'.$tplane.'" >'.$tplane.'</option>');                      
+                  		}        
+                 ?>
+                </select></td>
+              </tr>
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Tow Pilot:</div></td>
+                <td class="detail"><select id="Tow_Pilot" name="Tow_Pilot" class="style25">	<option value="" >  </option>
+                    <?php
+                    foreach($row_Towpilots as $pilot ){
+                     		echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
+                    } 
+					?>
+                </select></td>
+              </tr>
+<!-- 
+              <tr valign="baseline">
+                <td class="detail"><div align="left">Tow Charge:</div></td>                
+                   <td class="detail"><input id="towcharge" name="towcharge"  type="text" class="style25" value="" size="6" maxlength="6" readonly></td>             
+              </tr>
+ -->
+              <tr valign="baseline">
+                <td height="47" class="detail"><div align="left">Notes:</div></td>
+                <td class="detail"><textarea id="Notes" name="Notes"  cols="50" rows="5" class="style25"></textarea></td>
+              </tr>
+              <tr valign="baseline">
+                <td colspan="2" class="detail""><div align="center">
+                        <input name="submit" type="submit" class="style25" value="Update record" />
+                </div></td>
                 </tr>
             </table>
-            </div></td>
+          </form>
+      </tr>
+      <tr><td align="center"> <button class="close">Return to Flight Sheet</button></td>
+       </tr>
+    </table>  
+ 
+
+</div>
+<!-- ======================================================================================-->
+<dir id="flightPage">
+<table width:"100%" height:"100%" align="center" cellpadding="2" cellspacing="2" bordercolor="#000033" bgcolor="#666666"  >
+  <tr width="100%">
+        <th><div align="center">
+            <table width="100%">
+                <tr>   
+                	<td width="5%"> </td>                
+ 					<td width="8%" <?php if ( !$view_only ){ echo ' bgcolor="#FF9900"'; } ?> >
+ 						<div align="center">
+ 							<span class="fl_style25">
+							<?php if ( !$view_only ){ 					
+                 			    echo ('<button type="button"') ;
+                                echo ('id = "add_new_record" class="add_new" bgcolor="#1e90ff">Add Flight</button>'); 
+                 			} ?> 
+							</span>
+						</div>
+					</td>
+                    <td width="73%"><div align="center"><span class="fl_style1"> PGC DATA PORTAL - FLIGHT SHEET for <?php echo$pgc_flight_date ?></span></div></td>
+             		<?php if ( $view_only )  {     
+             			echo ('<td></td>');
+             		} else {
+             		//	echo ('<td width="8%" bgcolor="#006633"><div align="center"><a href="pgc_flightsheet_help.php" class="fl_style25">HELP</a></div></td> ' );
+             			echo ('<td width="8%" bgcolor="#006633"><div align="center"><button id="helpPage" class="open">Help</button></div></td> ' );
+             		}
+             		?>
+             	
+                    <td width="5%"class="fl_style1"><?php echo 'TDA: ' . $todaycount ?> </td>                                    
+</tr>
+</table>
+</div></td>
     </tr>
     <tr>
         <td height="481">
           <table width="100%" height="447" align="center" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">  
             <tr width="100%" >
                 <td height="373" colspan="5" valign="top">
-                   <table width="99%" align="center" cellpadding="2" cellspacing="2" bgcolor="#000066">
+                   <table width="99%" align="center" cellpadding="2" cellspacing="2" bgcolor="#000066" id="flightTable" ><thead>
                         <tr  width="100%" white-space: nowrap>
                             <td bgcolor="#66CCFF" class="fl_style1 fl_style24"><div align="center">Flight</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">GLDR</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Type</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"  ><div align="center">Member</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25" "><div align="center">Instructor</div></td>
+                            <td  class="fl_header"><div align="center">GLDR</div></td>
+                            <td  class="fl_header"><div align="center">Type</div></td>
+                            <td  class="fl_header"  ><div align="center">Member</div></td>
+                            <td  class="fl_header" "><div align="center">Instructor</div></td>
                             <?php if ( !$view_only )  {  
                             	echo ('<td width="1" bgcolor="#66CCFF" class="fl_style25"><div align="center"></div></td>');
                             } ?>
@@ -169,42 +389,41 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                             <?php if ( !$view_only )  {  
                             	echo ('<td width="1" bgcolor="#66CCFF" class="fl_style25"></td>');
                             } ?> 
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Landing</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Hours</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Tow </div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Tug</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Tow Pilot</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Charge</div></td>
-                            <td bgcolor="#66CCFF" class="fl_style25"><div align="center">Notes</div></td>
-                        </tr>
-<?php
-	foreach( $flight_log as $flight ){	
-	?>
-	                        <tr >
-                             <td bgcolor="#999999" class="fl_style25"><div align="center">  
-                             <?php if ( !$view_only )  {  ?>                                
-                       		    <form action="<?php echo admin_url('admin-post.php'); ?>" method="get">
-                         	    	<input type="hidden" name="action" value="pdp-flight-log-details">
-                         	    	<input type='hidden' name="id" value="<?php echo $flight->id; ?>" >	
-                         	    	<input type='hidden' name='source_page' value='<?php  the_permalink() ?>' >	 	 
-                         	    	<input type="submit" value="<?php echo $flight->yearkey; ?>">
-                      		    </form>
-                      		 <?php  } else{ 
+                            <td  class="fl_header"><div align="center">Landing</div></td>
+                            <td  class="fl_header"><div align="center">Hours</div></td>
+                            <td  class="fl_header"><div align="center">Tow </div></td>
+                            <td  class="fl_header"><div align="center">Tug</div></td>
+                            <td  class="fl_header"><div align="center">Tow Pilot</div></td>
+                            <td  class="fl_header"><div align="center">Charge</div></td>
+                            <td  class="fl_header"><div align="center">Notes</div></td>
+                        </tr></thead><tbody>
+							<?php
+							foreach( $flight_log as $flight ){	
+							?>
+	                        <tr class="flighRow">
+                             
+                             <?php 
+                             if ( !$view_only )  {  
+                             	echo ('<td class="hidden"  id="flight_id"><div align="center">' .$flight->id . '</td>');
+                             	echo ('<td bgcolor="#999999" class="fl_style25 flightdata"  > ');
+                             	echo ('<div align="center" class"flightdata">' . $flight->yearkey . '</div>' );
+							 } else{ 
+							 	echo ('<td bgcolor="#999999" class="fl_style25"  ><div align="center">  ');
                       		 	echo $flight->yearkey;
-                      		 	}
+                      		 }
                       		 ?>  
                              </div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25" align="center"><?php echo $flight->Glider; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Flight_Type; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->Pilot1; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->Pilot2; ?></td>
+                             <td  class="fl_flight_row" id="glider" align="center"><?php echo $flight->Glider; ?></td>
+                             <td  class="fl_flight_row" id="flight_type"><div align="center"><?php echo $flight->Flight_Type; ?></div></td>
+                             <td  class="fl_flight_row" id="pilot1"><?php echo $flight->Pilot1; ?></td>
+                             <td  class="fl_flight_row" id="pilot2"><?php echo $flight->Pilot2; ?></td>
                               <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
                                  echo ($flight->yearkey); 
                                  echo (' align="center" class="pdp_update_time button-flightlog button-start" value="'); 
                                  echo ($flight->id.'" data-start=1 ></button></td>');
                                                                 }; ?> 
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Takeoff; ?></div></td>
+                             <td bgcolor="#FFFFFF" class="fl_flight_row" id="takeoff"><div align="center"><?php echo $flight->Takeoff; ?></div></td>
 
                              <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
@@ -213,12 +432,12 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                                  echo ($flight->id.'" data-start="0"></button></td>');
 								}; ?> 
                           
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Landing; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->Time; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow_Altitude'}; ?></div></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><div align="center"><?php echo $flight->{'Tow_Plane'}; ?></div>                                    </td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow_Pilot'}; ?></td>
-                             <td bgcolor="#FFFFFF" class="fl_style25"><?php echo $flight->{'Tow_Charge'}; ?></td>
+                             <td  class="fl_flight_row" id="landing"><div align="center"><?php echo $flight->Landing; ?></div></td>
+                             <td  class="fl_flight_row" id="flighttime"><div align="center"><?php echo $flight->Time; ?></div></td>
+                             <td  class="fl_flight_row" id="towaltitude"><div align="center"><?php echo $flight->{'Tow_Altitude'}; ?></div></td>
+                             <td  class="fl_flight_row" id="towplane"><div align="center"><?php echo $flight->{'Tow_Plane'}; ?></div>                                    </td>
+                             <td  class="fl_flight_row" id="towpilot"><?php echo $flight->{'Tow_Pilot'}; ?></td>
+                             <td  class="fl_flight_row" id="towcharge"><?php echo $flight->{'Tow_Charge'}; ?></td>
 
                              <td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"><?php echo substr($flight->Notes,0,25); ?></td>
                          </tr>	
@@ -226,7 +445,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	}
 ?>
 
-
+					</tbody>
                      </table>
                     <p>
                     <table border="0" width="50%" align="center">
@@ -253,6 +472,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
         </table></td>
     </tr> 
 </table>
+</div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 </body>

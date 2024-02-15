@@ -150,16 +150,18 @@ class Rest extends \WP_REST_Controller {
 // 		}
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
-		$sql = $wpdb->prepare("SELECT MAX(yearkey) FROM {$flight_table} WHERE `flightyear`=%s",  date("Y"));	
-		$yearkey = $wpdb->get_var($sql)+1; 	
-// 		if (!isset($request['yearkey']) ){
-// 			return new \WP_Error( 'missing yearkey', esc_html__( 'missing yearkey.', 'my-text-domain' ), array( 'status' => 400 ) );
-// 		} 
-// 		$yearkey = $request['yearkey'];
- 
-// 		isset($request['id']) 			? $id=$request['id'] 					: $id=null;
+		$sql = $wpdb->prepare("SELECT MAX(yearkey) FROM {$flight_table} WHERE `flightyear`=%s",  date("Y"));			
+		if (is_null( $wpdb->get_var($sql))){
+				$yearkey = 1; 
+		} else {
+			$yearkey = $wpdb->get_var($sql)+1; 
+		}			
+		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
+		$p_tow = $wpdb->get_results($sql);  // $p_tow[0]->Tow_Plane, $p_tow[0]->Tow_Pilot,
+// 		var_dump($p_tow[0]->Tow_Plane);
+// 		die();
+		
 		isset($request['flightyear']) 	? $flightyear=$request['flightyear'] 	: $flightyear=date('Y');
-//   		isset($request['yearkey']) 		? $yearkey=$request['yearkey'] 			: $yearkey=null;
  		isset($request['Date']) 		? $date=$request['Date'] 				: $date=date('Y-m-d');
 		isset($request['Glider']) 		? $glider=$request['Glider'] 			: $glider=null;
 		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type=null;
@@ -169,15 +171,14 @@ class Rest extends \WP_REST_Controller {
 		isset($request['Landing']) 		? $landing=$request['Landing'] 			: $landing='00:00:00';
 		isset($request['Time']) 		? $time=$request['Time'] 				: $time='0.0';
 		isset($request['Tow_Altitude']) ? $tow_altitude=$request['Tow_Altitude'] :  $tow_altitude=null;
-		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=null;
-		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=null;
+		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=$p_tow[0]->Tow_Pilot;
+		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=$p_tow[0]->Tow_Plane;
 // 		isset($request['Tow_Charge']) 	? $tow_charge=$request['Tow_Charge'] 	: $tow_charge=null;
 		isset($request['Notes']) 		? $notes=$request['Notes'] 				: $notes=null;
 
 		$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s", $request['Tow_Altitude']);	
 		$charge = $wpdb->get_var($sql);
 		$charge == null ? $tow_charge=999 : $tow_charge = $charge; 
-
 
         $data = array( 'flightyear'=>$flightyear, 'yearkey'=>$yearkey, 'Date'=>$date, 'Glider'=> $glider, 'Flight_type'=>$flight_type, 
         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
@@ -192,10 +193,9 @@ class Rest extends \WP_REST_Controller {
 		}		
  		if($result == '1' ){
 			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
-			$record_id  = $wpdb->get_results($sql); 	
-			
-   			wp_send_json($record_id, 201);				
-//   			return new \WP_REST_Response ($record_id); 				
+			$record_id  = $wpdb->get_results($sql); 				
+//    			wp_send_json($record_id, 201);				
+  			return new \WP_REST_Response ($record_id); 				
  		} else {
  			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) ); 
  		}
@@ -213,17 +213,18 @@ class Rest extends \WP_REST_Controller {
 // 			$user_id = $wpdb->get_var( $sql);
 // 		}
 		
+
+		if (!isset($request['id']) ){
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
+		}
+		$id = $request['id'];
+		
 		if(isset( $request['Tow_Altitude'])){
 			$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s", $request['Tow_Altitude']);	
 			$charge = $wpdb->get_var($sql);
 			$charge == null ? $record['Tow_Charge']=999 : $record['Tow_Charge'] = $charge; 
 		}
 
-		if (!isset($request['id']) ){
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
-		}
- 		$id = stripslashes_deep($request['id']); //added stripslashes_deep which removes WP escaping.
-	
  		$fields = array('flightyear', 'yearkey', 'Date', 'Glider', 'Flight_Type', 'Pilot1', 
  			'Pilot2', 'Takeoff', 'Landing', 'Time', 'Tow_Altitude', 'Tow_Pilot', 'Tow_Plane', 
  			 'Notes' );
@@ -235,7 +236,8 @@ class Rest extends \WP_REST_Controller {
  			if( isset($request[$field]) ){
  				$record[$field]=$request[$field];		
  			}
- 		} 			 		 		
+ 		} 			
+ 			 		 		
  		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  	
  			
  		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);		
