@@ -164,7 +164,7 @@ class Rest extends \WP_REST_Controller {
 		isset($request['flightyear']) 	? $flightyear=$request['flightyear'] 	: $flightyear=date('Y');
  		isset($request['Date']) 		? $date=$request['Date'] 				: $date=date('Y-m-d');
 		isset($request['Glider']) 		? $glider=$request['Glider'] 			: $glider=null;
-		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type=null;
+		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type='null';
 		isset($request['Pilot1']) 		? $pilot1=$request['Pilot1'] 			: $pilot1=null;
 		isset($request['Pilot2']) 		? $pilot2=$request['Pilot2'] 			: $pilot2=null;
 		isset($request['Takeoff']) 		? $takeoff=$request['Takeoff'] 			: $takeoff='00:00:00';
@@ -224,6 +224,12 @@ class Rest extends \WP_REST_Controller {
 			$charge = $wpdb->get_var($sql);
 			$charge == null ? $record['Tow_Charge']=999 : $record['Tow_Charge'] = $charge; 
 		}
+//If it is an AOF do not charge the member. 
+		if(isset( $request['Flight_Type'])){
+			if ( $request['Flight_Type'] == 'AOF'){
+			 $record['Tow_Charge'] = 0;  
+			}
+		}		
 
  		$fields = array('flightyear', 'yearkey', 'Date', 'Glider', 'Flight_Type', 'Pilot1', 
  			'Pilot2', 'Takeoff', 'Landing', 'Time', 'Tow_Altitude', 'Tow_Pilot', 'Tow_Plane', 
@@ -236,7 +242,8 @@ class Rest extends \WP_REST_Controller {
  			if( isset($request[$field]) ){
  				$record[$field]=$request[$field];		
  			}
- 		} 			
+ 		} 
+ 					
  			 		 		
  		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  	
  			

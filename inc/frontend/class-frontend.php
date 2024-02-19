@@ -130,17 +130,13 @@ class Frontend {
 	}
 	public function flight_log( $atts = array() ) {
 		
-	wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'wp-api',  'backbone', 'underscore'
  				), $this->version, false );		
-//     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
-//     		'ajax_url' =>  admin_url('admin-ajax.php'),
-//     		'root' => esc_url_raw( rest_url() ),
-//      		'nonce' => wp_create_nonce( 'wp_rest' ),
-//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-//      		'current_user_id' => get_current_user_id()
-//     		)	
-//     	);	
+
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
+// 		'validation', 'pdp_templates', 'jquery-ui-datepicker'), $this->version, false );
+
+
   	$dateToBePassed = array(
      		'ajax_url' =>  admin_url('admin-ajax.php'),
      		'post_url' =>  admin_url('admin-post.php'),
