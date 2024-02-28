@@ -126,7 +126,7 @@
 // 			$('#Notes').val(thisRow.children('#note').text());			
 // 			$("#detailPage").addClass("active");
 		});
-		
+// populate the detail form with existing flight info. 		
 	function flightDetail(thisRow){			
 			$('#id').val(thisRow.children('#flight_id').text());
 // 			$('#flightyear').val(thisRow.children('#flightyear').text()).change();	
@@ -143,7 +143,7 @@
 			$('#Tow_Plane').val(thisRow.children('#towplane').text().trim()).change(); // why I need trim on this one I do not know!
 			$('#Tow_Altitude').val(thisRow.children('#towaltitude').text()).change();
 // 			$('#form_towcharge').val(thisRow.children('#towcharge').text());
-			$('#Notes').val(thisRow.children('#note').text());			
+			$('#Notes').val(thisRow.children('#notes').text());			
 			$("#detailPage").addClass("active");
 		}	
 				
@@ -160,6 +160,7 @@
 //		 	window.location.replace('./html_cb_pdpflightlog_update.php');		 
 		 });
 	});
+	// add new flight to list. 
 	$("#add_new_record").on('click', function(e){
 	    	e.preventDefault();	  
 				$.ajax({
@@ -194,20 +195,25 @@
   		e.preventDefault();
   		var formData = new FormData(flightForm);
   		var obj ={};
-    for(var pair of formData.entries()){  // NTFS: should be able to somehow send FormData directly, but I could not get it to work. So...
-//         console.log(pair[0], pair[1]);
-        obj[pair[0]] =  pair[1];
-    }
+    	for(var pair of formData.entries()){  // NTFS: should be able to somehow send FormData directly, but I could not get it to work. So...
+//  	       console.log(pair[0], pair[1]);
+    	    obj[pair[0]] =  pair[1];
+    	} 
+    	// make sure we have a member to charge. 
+    	if(formData.get('Pilot1') == "" || formData.get('Pilot1') == null){
+    		alert( "Member fiels cannot be blank.");
+    		return;
+    	}
 // calcuate flight time.     
-     	   	let splitStartTime =formData.get('Takeoff').split(':'); // split in to array
-    		let startDate = new Date(2020,1,1,splitStartTime[0],splitStartTime[1],splitStartTime[2]);	 // create starttime object, (date does not matter. )			
-    		let splitEndTime = formData.get('Landing').split(':'); // split in to array    
-        	let endDate = new Date(2020,1,1,splitEndTime[0],splitEndTime[1],splitEndTime[2]);		// create end time object, (date does not matter. )		    
-  			let difference = endDate - startDate;			// get the difference in milliseconds. 
-   			difference = difference / 1000; 
-   	  		let hourDifference = Math.round(difference / 36);   // get hours	
- 			let flightTime = hourDifference/100 ;	    
- 			obj["Time"] =  flightTime;  
+     	let splitStartTime =formData.get('Takeoff').split(':'); // split in to array
+    	let startDate = new Date(2020,1,1,splitStartTime[0],splitStartTime[1],splitStartTime[2]);	 // create starttime object, (date does not matter. )			
+    	let splitEndTime = formData.get('Landing').split(':'); // split in to array    
+        let endDate = new Date(2020,1,1,splitEndTime[0],splitEndTime[1],splitEndTime[2]);		// create end time object, (date does not matter. )		    
+  		let difference = endDate - startDate;			// get the difference in milliseconds. 
+   		difference = difference / 1000; 
+   	  	let hourDifference = Math.round(difference / 36);   // get hours	
+ 		let flightTime = hourDifference/100 ;	    
+ 		obj["Time"] =  flightTime;  
 		var params = {
 			type: "PUT",
 			url: passed_vars.root + 'cloud_base/v1/pdp_flightlog',
@@ -218,10 +224,6 @@
 				xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
 				},		
 			data: obj,
-//  			data: formData,
-//  			processData: false,
-//   			contentType: false,
-//   			dataType: "json",
             fail: function( response ) {
                  console.log( response );
                  },
@@ -255,28 +257,36 @@
 // Backbone upgrades start here. 
 	var AddForm = Backbone.View.extend({
 	    // add configuration, methods and behavior here
+	    render: function(){
+   		     var rawTemplate = $("#add-form-template").html();
+   		     var compiledTemplate = _.template(rawTemplate);
+   		     var renderedTemplate = compiledTemplate();
+   		     this.$el.html(renderedTemplate);
+   		     return this;
+   		 }
+	    
 	});
 	
 
 })( jQuery );
 
-function pdpJumpTo(year){
- 	oFormObj = document.forms['selectFlightYear'];
- 	oFormObj.elements["pgc_year"].value= year;
- // alert (year);
-  	 oFormObj.submit();
-}	
-function pdpDetails(pdp_type, pdp_id,year){
-	const detail_types = [ "Glider", "Pilot2", "Pilot1", "Tow Pilot", "Tow Plane",  "Flight_Type", "Date", "Tow Altitude", "Flight_Type" ]; 
- 	oFormObj = document.forms['selectMetricsDetails'];
- 	oFormObj.elements["pdp_type"].value= detail_types[pdp_type];
- 	oFormObj.elements["pdp_id"].value= pdp_id;	
- 	oFormObj.elements["req_year"].value= year;	
-// 	 alert (detail_types[pdp_type]);
-//  	 alert (pdp_id);	
-//  	 alert (year);	 
-  	 oFormObj.submit();
-}  
+// function pdpJumpTo(year){
+//  	oFormObj = document.forms['selectFlightYear'];
+//  	oFormObj.elements["pgc_year"].value= year;
+//  // alert (year);
+//   	 oFormObj.submit();
+// }	
+// function pdpDetails(pdp_type, pdp_id,year){
+// 	const detail_types = [ "Glider", "Pilot2", "Pilot1", "Tow Pilot", "Tow Plane",  "Flight_Type", "Date", "Tow Altitude", "Flight_Type" ]; 
+//  	oFormObj = document.forms['selectMetricsDetails'];
+//  	oFormObj.elements["pdp_type"].value= detail_types[pdp_type];
+//  	oFormObj.elements["pdp_id"].value= pdp_id;	
+//  	oFormObj.elements["req_year"].value= year;	
+// // 	 alert (detail_types[pdp_type]);
+// //  	 alert (pdp_id);	
+// //  	 alert (year);	 
+//   	 oFormObj.submit();
+// }  
 function pdpFlightString(result){  // build the new row to be inserted into the flight table. 
 	var row_string = `<tr class="flightrow"><td class="hidden"  id="flight_id"><div align="center">'` + result[0].id + `'</td>
         <td bgcolor="#999999" class="fl_style25 flightdata"  > 
@@ -297,8 +307,10 @@ function pdpFlightString(result){  // build the new row to be inserted into the 
         row_string += result[0].Tow_Plane;          	    	        	    	
         row_string += `</div>                                    </td>
              <td class="fl_flight_row">`                             
-        row_string += result[0].Tow_Pilot;          	    	        	    	
-        row_string += `</td> <td class="fl_flight_row">999.00</td><td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"></td></tr>`;        
+        row_string += result[0].Tow_Pilot; 
+        row_string += `</td> <td class="fl_flight_row">999.00</td></tr>`;        
+                                 	    	        	    	
+//         row_string += `</td> <td class="fl_flight_row">999.00</td><td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"></td></tr>`;        
         return(row_string);
 }	
 

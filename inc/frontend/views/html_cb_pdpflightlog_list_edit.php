@@ -223,9 +223,9 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 <!--Creates the popup content-->
     <table width="100%" height="100%" border="1" align="center" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">     
       <tr>
-        <td height="373"><p align="center" class="fl_style37"  >PGC FLIGHT SHEET DETAIL SCREEN </p> 
+        <td height="373"><p align="center" class="fl_style37"  >PGC FLIGHT SHEET DETAIL SCREEN </p>
           <form method="post" name="flightForm">
-            <input type="hidden" id='id' name='id' value="">          	
+            <input type="hidden" id='id' name='id' value="">    </input>      	
             <table align="center" cellpadding="3" cellspacing="3" bgcolor="#000066" class="style25">
               <tr valign="baseline">
                 <td class="detail"><label for="Glider" align="left">Glider:</label></td>
@@ -249,7 +249,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                   </select></td>
               </tr>
               <tr valign="baseline">
-                <td class="detail"><label for="Pilot1"  align="left">Member:</lable></td>
+                <td class="detail"><label for="Pilot1"  align="left">Member:</label></td>
                 <td class="detail"><span >
                   <select id="Pilot1"  name="Pilot1" class="style25" >                 
                   		<option value="" >  </option>
@@ -278,11 +278,11 @@ if (!empty($_SERVER['QUERY_STRING'])) {
               </tr>
               <tr valign="baseline">
                 <td class="detail"><label for="Takeoff" align="left">Takeoff:</label></td>
-                <td class="detail"><input name="Takeoff" id="Takeoff" type="text" class="style25" value="" size="8" maxlength="8"></td>
+                <td class="detail"><input name="Takeoff" id="Takeoff" type="text" class="style25" value="" size="8" maxlength="8"></input></td>
               </tr>
               <tr valign="baseline">
                 <td class="detail"><label for="Landing" align="left">Landing:</label></td>
-                <td class="detail"><input id="Landing" name="Landing" type="text" class="style25" value="" size="8" maxlength="8"></td>
+                <td class="detail"><input id="Landing" name="Landing" type="text" class="style25" value="" size="8" maxlength="8"></input></td>
               </tr>
 <!-- 
               <tr valign="baseline">
@@ -298,7 +298,8 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                     		echo(' <option value="'.$key.'" >'.$key.'</option>');    
                     } 
 					?>
-                </select></td>
+                </select>
+                </td>
               </tr>
               <tr valign="baseline">
                 <td class="detail"><label for="Tow_Plane" align="left">Tow Plane:</label></td>
@@ -336,7 +337,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                 </div></td>
                 </tr>
             </table>
-          </form>
+          </form></td>
       </tr>
       <tr><td align="center"> <button class="close">Return to Flight Sheet</button></td>
        </tr>
@@ -344,11 +345,11 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 
 </div>
 <!-- ======================================================================================-->
-<dir id="flightPage">
-<table width:"100%" height:"100%" align="center" cellpadding="2" cellspacing="2" bordercolor="#000033" bgcolor="#666666"  >
-  <tr width="100%">
+<div id="flightPage">
+	<table width:"100%" height:"100%" align="center" cellpadding="2" cellspacing="2" bordercolor="#000033" bgcolor="#666666"  >
+  	<tr width="100%">
         <th><div align="center">
-            <table width="100%">
+<!--             <table width="100%"> -->
                 <tr>   
                 	<td width="5%"> </td>                
  					<td width="8%" <?php if ( !$view_only ){ echo ' bgcolor="#FF9900"'; } ?> >
@@ -371,17 +372,25 @@ if (!empty($_SERVER['QUERY_STRING'])) {
              		?>
              	
                     <td width="5%"class="fl_style1"><?php echo 'TDA: ' . $todaycount ?> </td>                                    
-</tr>
+				</tr>
+<!-- 			</table> -->
+		</div></th>
+ 	</tr>
 </table>
-</div></td>
-    </tr>
-    <tr>
-        <td height="481">
-          <table width="100%" height="447" align="center" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">  
-            <tr width="100%" >
-                <td height="373" colspan="5" valign="top"> <!--  flight log table  -->
-                   <table width="99%" align="center" cellpadding="2" cellspacing="2" bgcolor="#000066" id="flightTable" class="flightTable"><thead>
-                        <tr  width="100%" white-space: nowrap>
+	</div>
+	<!-- 
+	</td>
+	    </tr>
+	 -->
+	    <tr>
+	        <td height="481">
+	          <table width="90%" height="447" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">  
+	            <tr >
+	                <td height="373" colspan="5" valign="top"> <!--  flight log table  -->
+	                   <table width="99%"  id="flightTable" class="flightTable" id="flightList">
+	                   <tbody width="100%" >
+	                      <thead>   				
+                        <tr  width="100%" white-space: nowrap alilgn="center">                      
                             <td bgcolor="#66CCFF" class="fl_style1 fl_style24"><div align="center">Flight</div></td>
                             <td  class="fl_header"><div align="center">GLDR</div></td>
                             <td  class="fl_header"><div align="center">Type</div></td>
@@ -400,13 +409,15 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                             <td  class="fl_header"><div align="center">Tug</div></td>
                             <td  class="fl_header"><div align="center">Tow Pilot</div></td>
                             <td  class="fl_header"><div align="center">Charge</div></td>
+<!-- 
                             <td  class="fl_header"><div align="center">Notes</div></td>
-                        </tr></thead><tbody>
+ -->
+                        </tr>
+                    </thead>
 							<?php
-				foreach( $flight_log as $flight ){	 // list all of today's flights. 
+							 foreach( $flight_log as $flight ){	 // list all of today's flights. 
 							?>
-	                        <tr class="flighRow">
-                             
+	                        <tr class="flighRow">                             
                              <?php 
                              if ( !$view_only )  {  
                              	echo ('<td class="hidden"  id="flight_id"><div align="center">' .$flight->id . '</td>');
@@ -446,43 +457,32 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                              <td  class="fl_flight_row" id="towpilot"><?php echo $flight->{'Tow_Pilot'}; ?></td>
                              <td  class="fl_flight_row" id="towcharge"><?php echo $flight->{'Tow_Charge'}; ?></td>
 
-                             <td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25" id="notes"><?php echo substr($flight->Notes,0,25); ?></td>
+                             <td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="hidden" id="notes"><?php echo $flight->Notes; ?></td>
                          </tr>	
-<?php	
-	}
-?>
-
-					</tbody>
-                     </table>
-                    <p>
-<!-- 
-                    <table border="0" width="50%" align="center">
-                        <tr>
-                            <td width="23%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog > 0) { // Show if not first page ?>
-                                        <span class="fl_style1"><strong><a href="<?php printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), 0); ?>" class="fl_style1">Top</a>
-                                        <?php } // Show if not first page ?></td>
-                            <td width="31%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog > 0) { // Show if not first page ?>
-                                        <a href="<?php printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), max(0, $pageNum_Flightlog - 1)); ?>" class="fl_style1">Previous</a>
-                                        <?php } // Show if not first page ?>                            </td>
-                            <td width="23%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog < $totalPages_Flightlog) { // Show if not last page ?>
-                                        <a href="<?php  printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), min($totalPages_Flightlog, $pageNum_Flightlog + 1)); ?>" class="fl_style1">Next</a>
-                                        <?php } // Show if not last page ?>                            </td>
-                            <td width="23%" align="center" class="fl_style27"><?php if ($pageNum_Flightlog < $totalPages_Flightlog) { // Show if not last page ?>
-                                        <a href="<?php  printf("%s?pageNum_Flightlog=%d", remove_query_arg("pageNum_Flightlog"), $totalPages_Flightlog); ?>" class="fl_style1">Bottom</a>
-                                        <?php } // Show if not last page ?>                            </td>
-                        </tr>
-                    </table>
- -->
-                    </p></td>
-            </tr>
-            <tr>
-                <td height="28"><div align="center"><strong class="fl_style3"><a class="fl_style16"></a></strong></div></td>
-            </tr>
-        </table></td>
-    </tr> 
-</table>
+						<?php	
+							}
+							?>
+	
+						</tbody>
+	                	</table>
+					</td>
+	            </tr>
+	            <tr>
+	                <td height="28"><div align="center"><strong class="fl_style3"><a class="fl_style16"></a></strong></div></td>
+	            </tr>
+	        </table></td>
+	    </tr> 
+	</table>
 </div>
+<!-- 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+ -->
 </body>
+<script id="add-form-template" type="text/html-template">
+
+
+
+
+</script>
 </html>

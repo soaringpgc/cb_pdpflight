@@ -164,7 +164,7 @@ class Rest extends \WP_REST_Controller {
 		isset($request['flightyear']) 	? $flightyear=$request['flightyear'] 	: $flightyear=date('Y');
  		isset($request['Date']) 		? $date=$request['Date'] 				: $date=date('Y-m-d');
 		isset($request['Glider']) 		? $glider=$request['Glider'] 			: $glider=null;
-		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type='null';
+		isset($request['Flight_Type']) 	? $flight_type=$request['Flight_Type'] 	: $flight_type='REG';
 		isset($request['Pilot1']) 		? $pilot1=$request['Pilot1'] 			: $pilot1=null;
 		isset($request['Pilot2']) 		? $pilot2=$request['Pilot2'] 			: $pilot2=null;
 		isset($request['Takeoff']) 		? $takeoff=$request['Takeoff'] 			: $takeoff='00:00:00';

@@ -462,13 +462,22 @@ td .detail {
 	background-color: #CCCCCC;
 }
 table .flightTable {
- overflow-y:scroll; 
-height:450px; 
-display:block;  
-border:1px solid red;  
-margin-top:50px;    
+	overflow-y:scroll; 
+	height:450px; 
+	display:block;  
+	border:1px solid red;  
+	margin-top:50px;  
+}  
+table { 
+    margin-left: auto;
+    margin-right: auto;
+}
+tbody > tr > td:last-of-type {
+  width: 60px;
+  text-align: center;
+}
 /* 
-}th{
+th{
 width:75px; 
  position:fixed; 
 background:white;    
