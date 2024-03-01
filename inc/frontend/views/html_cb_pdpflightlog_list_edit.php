@@ -223,34 +223,50 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 <!--Creates the popup content-->
     <table width="100%" height="100%" border="1" align="center" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">     
       <tr>
-        <td height="373"><p align="center" class="fl_style37"  >PGC FLIGHT SHEET DETAIL SCREEN </p>
+        <td height="373"><p align="center" class="fl_style37" id="yearkey" > </p>
           <form method="post" name="flightForm">
             <input type="hidden" id='id' name='id' value="">    </input>      	
             <table align="center" cellpadding="3" cellspacing="3" bgcolor="#000066" class="style25">
               <tr valign="baseline">
-                <td class="detail"><label for="Glider" align="left">Glider:</label></td>
-                <td class="detail"><select name="Glider"  id="Glider" class="fl_detail_row" >
+                <td class="label"><label for="Glider" align="left">Glider:</label></td>
+                <td class="detail"><select name="Glider"  id="Glider" class="style25" >
                   <?php
                        foreach($row_rsGliders as $glider ){
                   				echo(' <option value="'.$glider.'" class="nofly">'.$glider.'</option>');                       
                   		}        
                  ?>
                 </select></td>
+<!-- 
               </tr>
               <tr valign="baseline">
-                  <td class="detail"><label for="Flight_Type" align="left">Flight Type:</label></td>
+ -->
+                  <td class="label"><label for="Flight_Type" align="left">Flight Type:</label></td>
                   <td class="detail">
 				  <select id="Flight_Type" name="Flight_Type" class="style25" select >
+				   <option value="REG"  selected>REG</option>
 				<?php
                     foreach($ftype as $value  ){
                     		echo(' <option value="'.$value->title.'" >'.$value->title.'</option>');    
                     } 
 					?>
                   </select></td>
-              </tr>
+ <!-- 
+             </tr>
+             <tr valign="baseline">
+ 
+ -->               <td class="label"><label for="Tow_Altitude" align="left">Tow Altitude:</label></td>
+                <td class="detail"><select id="Tow_Altitude" name="Tow_Altitude" class="style25">
+                    <?php
+                    foreach($fee_table as $key=>$value  ){
+                    		echo(' <option value="'.$key.'" >'.$key.'</option>');    
+                    } 
+					?>
+                </select>
+                </td>
+              </tr>              
               <tr valign="baseline">
-                <td class="detail"><label for="Pilot1"  align="left">Member:</label></td>
-                <td class="detail"><span >
+                <td class="label" ><label for="Pilot1"  align="left">Member:</label></td>
+                <td class="detail" colspan="2"><span >
                   <select id="Pilot1"  name="Pilot1" class="style25" >                 
                   		<option value="" >  </option>
                         <?php                        
@@ -262,10 +278,12 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 						?>					  					  
                   </select>
                 </span></td>
+<!-- 
               </tr>
               <tr valign="baseline">
-                <td class="detail"><label for="Pilot2" align="left">Instructor:</label></td>
-                <td class="detail"><span class="style17">
+ -->
+                <td class="label"><label for="Pilot2" align="left">Instructor:</label></td>
+                <td class="detail" colspan="2"><span class="style17">
                     <select id="Pilot2" name="Pilot2" class="style25">
                      <option value="" > </option>
                         <?php                        
@@ -277,43 +295,31 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                 </span></td>
               </tr>
               <tr valign="baseline">
-                <td class="detail"><label for="Takeoff" align="left">Takeoff:</label></td>
-                <td class="detail"><input name="Takeoff" id="Takeoff" type="text" class="style25" value="" size="8" maxlength="8"></input></td>
-              </tr>
-              <tr valign="baseline">
-                <td class="detail"><label for="Landing" align="left">Landing:</label></td>
-                <td class="detail"><input id="Landing" name="Landing" type="text" class="style25" value="" size="8" maxlength="8"></input></td>
-              </tr>
+                <td class="label" ><label for="Takeoff" align="left">Takeoff:</label></td>
+                <td class="detail" colspan="2"><input name="Takeoff" id="Takeoff" type="text" class="style25" value="" maxlength="8"></input></td>
 <!-- 
-              <tr valign="baseline">
-                  <td class="detail"><div align="left">Hours:  </div></td>
-                  <td class="detail"><input id="Time"  name="Time" type="text" class="style25" value="" size="6" maxlength="6" /></td>
               </tr>
+              <tr valign="baseline">
  -->
-              <tr valign="baseline">
-                <td class="detail"><label for="Tow_Altitude" align="left">Tow Altitude:</label></td>
-                <td class="detail"><select id="Tow_Altitude" name="Tow_Altitude" class="style25">
-                    <?php
-                    foreach($fee_table as $key=>$value  ){
-                    		echo(' <option value="'.$key.'" >'.$key.'</option>');    
-                    } 
-					?>
-                </select>
-                </td>
+                <td class="label"><label for="Landing" align="left">Landing:</label></td>
+                <td class="detail" colspan="2"><input id="Landing" name="Landing" type="text" class="style25" value="" maxlength="8"></input></td>
               </tr>
+
               <tr valign="baseline">
-                <td class="detail"><label for="Tow_Plane" align="left">Tow Plane:</label></td>
-                <td class="detail"><select id="Tow_Plane" name="Tow_Plane"  class="style25"><option value="" >  </option>
+                <td class="label"><label for="Tow_Plane" align="left">Tow Plane:</label></td>
+                <td class="detail" colspan="2"><select id="Tow_Plane" name="Tow_Plane"  class="style25"><option value="" >  </option>
                    <?php
                        foreach($row_TowPlane as $tplane ){
                   				echo(' <option value="'.$tplane.'" >'.$tplane.'</option>');                      
                   		}        
                  ?>
                 </select></td>
+<!-- 
               </tr>
               <tr valign="baseline">
-                <td class="detail"><label for="Tow_Pilot" align="left">Tow Pilot:</label></td>
-                <td class="detail"><select id="Tow_Pilot" name="Tow_Pilot" class="style25">	<option value="" >  </option>
+ -->
+                <td class="label" ><label for="Tow_Pilot" align="left">Tow Pilot:</label></td>
+                <td class="detail" colspan="2"><select id="Tow_Pilot" name="Tow_Pilot" class="style25">	<option value="" >  </option>
                     <?php
                     foreach($row_Towpilots as $pilot ){
                      		echo(' <option value="'.$pilot.'" >'.$pilot.'</option>');    
@@ -321,32 +327,29 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 					?>
                 </select></td>
               </tr>
-<!-- 
               <tr valign="baseline">
-                <td class="detail"><div align="left">Tow Charge:</div></td>                
-                   <td class="detail"><input id="towcharge" name="towcharge"  type="text" class="style25" value="" size="6" maxlength="6" readonly></td>             
-              </tr>
- -->
-              <tr valign="baseline">
-                <td height="47" class="detail"><label for="Notes" align="left">Notes:</label></td>
-                <td class="detail"><textarea id="Notes" name="Notes"  cols="50" rows="5" class="style25"></textarea></td>
+                <td height="47" class="label" ><label for="Notes" align="left">Notes:</label></td>
+                <td class="detail" colspan="5"><textarea id="Notes" name="Notes"  cols="50" rows="4" class="style25"></textarea></td>
               </tr>
               <tr valign="baseline">
-                <td colspan="2" class="detail""><div align="center">
-                        <input name="submit" type="submit" class="style25" value="Update record" />
+                <td class="detail"><div align="center">
+                        <input name="submit" type="submit" class="style25" value="Update" />
                 </div></td>
+                <td class="detail" colspan="5"> <button class="style25 close">Return to Flight Sheet</button></td>
                 </tr>
             </table>
           </form></td>
       </tr>
+<!-- 
       <tr><td align="center"> <button class="close">Return to Flight Sheet</button></td>
        </tr>
+ -->
     </table>  
 
 </div>
 <!-- ======================================================================================-->
 <div id="flightPage">
-	<table width:"100%" height:"100%" align="center" cellpadding="2" cellspacing="2" bordercolor="#000033" bgcolor="#666666"  >
+	<table width:"100%" height:"100%" align="center" cellpadding="2" cellspacing="2" bordercolor="#000033" bgcolor="#666666" class="flightlog" >
   	<tr width="100%">
         <th><div align="center">
 <!--             <table width="100%"> -->
@@ -420,9 +423,9 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	                        <tr class="flighRow">                             
                              <?php 
                              if ( !$view_only )  {  
-                             	echo ('<td class="hidden"  id="flight_id"><div align="center">' .$flight->id . '</td>');
-                             	echo ('<td bgcolor="#999999" class="fl_style25 flightdata"  > ');
-                             	echo ('<div align="center" class"flightdata">' . $flight->yearkey . '</div>' );
+                             	echo ('<td class="hidden"  id="flight_id"><div>' .$flight->id . '</td>');
+                             	echo ('<td bgcolor="#999999" class="fl_style25 flightdata"  id="yearkey"> ');
+                             	echo ('<div align="center" class"flightdata" >' . $flight->yearkey . '</div>' );
 							 } else{ 
 							 	echo ('<td bgcolor="#999999" class="fl_style25"  ><div align="center">  ');
                       		 	echo $flight->yearkey;

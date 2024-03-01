@@ -129,8 +129,7 @@
 // populate the detail form with existing flight info. 		
 	function flightDetail(thisRow){			
 			$('#id').val(thisRow.children('#flight_id').text());
-// 			$('#flightyear').val(thisRow.children('#flightyear').text()).change();	
-// 			$('#yearkey').val(thisRow.children('#yearkey').text()).change();	
+			$('#yearkey').text("PGC FLIGHT SHEET DETAIL SCREEN for flight: " + thisRow.children( '#yearkey').text());	
 // 			$('#Date').val(thisRow.children('#Date').text()).change();				
 			$('#glider').val(thisRow.children('#glider').text()).change();	
 			$('#Flight_Type').val(thisRow.children('#flight_type').text()).change();	
@@ -201,7 +200,7 @@
     	} 
     	// make sure we have a member to charge. 
     	if(formData.get('Pilot1') == "" || formData.get('Pilot1') == null){
-    		alert( "Member fiels cannot be blank.");
+    		alert( "Member field cannot be blank.");
     		return;
     	}
 // calcuate flight time.     
