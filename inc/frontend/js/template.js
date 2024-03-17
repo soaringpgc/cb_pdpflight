@@ -26,3 +26,18 @@ var flighttemplate_pdp = _.template(`
      <label class="hidden"><%= Notes %></label>   			
 `);
 
+var tow_plane_log_template = _.template(`
+     <div class="hidden"><%= id %></div>
+     <label class="hidden"><%=  tow_plane%></label>
+     <label class="fl_Cell0a"><%=  flight_type %></label>
+     <label class="fl_Cell"> <%= Pilot1 %></label>   
+     <label class="fl_Cell"> <%= Pilot2 %></label>     	  	 
+     <label class="fl_Cell"> <%=  hobbs %> </label >
+     <label class="fl_Cell"> <%=  hours %> </label >
+     <label class="fl_Cell0"><%= tows %></label>   
+     <label class="fl_Cell"> <%=  time_oil %> </label >
+     <label class="fl_Cell"> <%=  time_100 %> </label >		
+`);
+
+
+

@@ -32,7 +32,8 @@
 	 */
 	 $(function() {
 	 
-	 	 $(document).on('click', '.pdp_update_time' , function(e){
+// 	 	 $(document).on('click', '.pdp_update_time' , function(e){
+	 	 $('.pdp_update_time').on('click', function(e){
 	 
 //     	 $(".pdp_update_time").on('click', function(e){
     		e.preventDefault();
@@ -178,7 +179,9 @@
 // 					},
 					success : function (response){
 // 						console.log(response);
-						$('#flightTable').prepend(pdpFlightString(response));
+  						response.forEach(pdpFlightString);
+// 						pdpFlightString(response);
+// 						$('#flightTable').prepend(pdpFlightString(response));
 // 						console.log (passed_vars.post_url + ' ?action="pdp-flight-log-details"&id='+response[0].id);
 						// once we have inserted the new record open up he edit page. 
 //  						window.location.assign(passed_vars.post_url+'?action=pdp-flight-log-details&id='+response[0].id);	
@@ -266,52 +269,106 @@
 	    
 	});
 	
+	// this is working,but will need to modify the "view Only" mode for that to work. 
+// 	 	 $(document).ready(function(){
+// 	 	 
+// 	 	     	let startDate = new Date().toISOString().substring(0,10);	 		
+// 				$.ajax({
+// 					type: "GET",
+// 					url: passed_vars.root + 'cloud_base/v1/pdp_flightlog',
+// 					async: true,
+// 				   cache: false,
+// 				   timeout: 30000,
+// 					beforeSend: function (xhr){
+// 						xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+// 					},
+// 					data:{
+// 						start: startDate,
+// 					},
+// 					success : function (response){
+//  					  console.log(response);	
+// 					  response.forEach(pdpFlightString);
+// 					},
+// 					error: function(XMLHttpRequest, textStatus, errorThrown) { 
+//         					alert("Status: " + textStatus); 
+//         					alert("Error: " + errorThrown); 
+//    					} 
+// 				});	 		  	 	 
+// 	 	 });	
 
 })( jQuery );
 
-// function pdpJumpTo(year){
-//  	oFormObj = document.forms['selectFlightYear'];
-//  	oFormObj.elements["pgc_year"].value= year;
-//  // alert (year);
-//   	 oFormObj.submit();
-// }	
-// function pdpDetails(pdp_type, pdp_id,year){
-// 	const detail_types = [ "Glider", "Pilot2", "Pilot1", "Tow Pilot", "Tow Plane",  "Flight_Type", "Date", "Tow Altitude", "Flight_Type" ]; 
-//  	oFormObj = document.forms['selectMetricsDetails'];
-//  	oFormObj.elements["pdp_type"].value= detail_types[pdp_type];
-//  	oFormObj.elements["pdp_id"].value= pdp_id;	
-//  	oFormObj.elements["req_year"].value= year;	
-// // 	 alert (detail_types[pdp_type]);
-// //  	 alert (pdp_id);	
-// //  	 alert (year);	 
-//   	 oFormObj.submit();
-// }  
-function pdpFlightString(result){  // build the new row to be inserted into the flight table. 
-	var row_string = `<tr class="flightrow"><td class="hidden"  id="flight_id"><div align="center">'` + result[0].id + `'</td>
-        <td bgcolor="#999999" class="fl_style25 flightdata"  > 
-        <div align="center" class"flightdata">` + result[0].yearkey + `</div>`;
-        row_string +=`<td  class="fl_flight_row" align="center" id="glider"></td>
-             <td  class="fl_flight_row" id="flight_type"><div align="center">`;
-        row_string += result[0].Flight_Type;          	    	        	    	
-        row_string += `</div></td>
-             <td  class="fl_flight_row" id="pilot1"></td>
-             <td  class="fl_flight_row" id="pilot2"></td>
-             <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-start" data-start="1"></button></td> 
-             <td class="fl_flight_row"><div align="center">00:00:00</div></td>
-             <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-stop" data-start="0"></button></td>              
-             <td  class="fl_flight_row" id="flighttime"><div align="center">00:00:00</div></td>
-             <td  class="fl_flight_row" id="towaltitude"><div align="center">0.00</div></td>
-             <td  class="fl_flight_row" id="towplane"><div align="center"></div></td>
-             <td  class="fl_flight_row" id="towpilot"><div align="center">`
-        row_string += result[0].Tow_Plane;          	    	        	    	
-        row_string += `</div>                                    </td>
-             <td class="fl_flight_row">`                             
-        row_string += result[0].Tow_Pilot; 
-        row_string += `</td> <td class="fl_flight_row">999.00</td></tr>`;        
-                                 	    	        	    	
-//         row_string += `</td> <td class="fl_flight_row">999.00</td><td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"></td></tr>`;        
-        return(row_string);
+function pdpJumpTo(year){
+ 	oFormObj = document.forms['selectFlightYear'];
+ 	oFormObj.elements["pgc_year"].value= year;
+ // alert (year);
+  	 oFormObj.submit();
 }	
+function pdpDetails(pdp_type, pdp_id,year){
+	const detail_types = [ "Glider", "Pilot2", "Pilot1", "Tow Pilot", "Tow Plane",  "Flight_Type", "Date", "Tow Altitude", "Flight_Type" ]; 
+ 	oFormObj = document.forms['selectMetricsDetails'];
+ 	oFormObj.elements["pdp_type"].value= detail_types[pdp_type];
+ 	oFormObj.elements["pdp_id"].value= pdp_id;	
+ 	oFormObj.elements["req_year"].value= year;	
+// 	 alert (detail_types[pdp_type]);
+//  	 alert (pdp_id);	
+//  	 alert (year);	 
+  	 oFormObj.submit();
+}  
+// function pdpFlightString_old(result){  // build the new row to be inserted into the flight table. 
+// 	var row_string = `<tr class="flightrow"><td class="hidden"  id="flight_id"><div align="center">'` + result[0].id + `'</td>
+//         <td bgcolor="#999999" class="fl_style25 flightdata"  > 
+//         <div align="center" class"flightdata">` + result[0].yearkey + `</div>`;
+//         row_string +=`<td  class="fl_flight_row" align="center" id="glider"></td>
+//              <td  class="fl_flight_row" id="flight_type"><div align="center">`;
+//         row_string += result[0].Flight_Type;          	    	        	    	
+//         row_string += `</div></td>
+//              <td  class="fl_flight_row" id="pilot1"></td>
+//              <td  class="fl_flight_row" id="pilot2"></td>
+//              <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-start" data-start="1"></button></td> 
+//              <td class="fl_flight_row"><div align="center">00:00:00</div></td>
+//              <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-stop" data-start="0"></button></td>              
+//              <td  class="fl_flight_row" id="flighttime"><div align="center">00:00:00</div></td>
+//              <td  class="fl_flight_row" id="towaltitude"><div align="center">0.00</div></td>
+//              <td  class="fl_flight_row" id="towplane"><div align="center"></div></td>
+//              <td  class="fl_flight_row" id="towpilot"><div align="center">`
+//         row_string += result[0].Tow_Plane;          	    	        	    	
+//         row_string += `</div>                                    </td>
+//              <td class="fl_flight_row">`                             
+//         row_string += result[0].Tow_Pilot; 
+//         row_string += `</td> <td class="fl_flight_row">999.00</td></tr>`;        
+//         jQuery('#flightTable').prepend(row_string);
+//                         	    	        	    	
+// //         row_string += `</td> <td class="fl_flight_row">999.00</td><td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"></td></tr>`;        
+//         return;
+// }	
+function pdpFlightString(result){  // build the new row to be inserted into the flight table. 
+	var row_string = `<tr class="flightrow"><td class="hidden"  id="flight_id"><div align="center">'` + result.id + `'</td>
+        <td bgcolor="#999999" class="fl_style25 flightdata"  > 
+        <div align="center" class"flightdata">` + result.yearkey + `</div>`;
+        row_string +=`<td  class="fl_flight_row" align="center" id="glider">` + (result.Glider != null ? result.Glider : "" )+ `</td>
+             <td  class="fl_flight_row" id="flight_type"><div align="center">`;
+        row_string += result.Flight_Type;          	    	        	    	
+        row_string += `</div></td>
+             <td  class="fl_flight_row" id="pilot1">` +(result.Pilot1 != null ? result.Pilot1 : "" )+ `</td>
+             <td  class="fl_flight_row" id="pilot2">` +(result.Pilot2 != null ? result.Pilot2 : "" )+ `</td>
 
+             <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-start" data-start="1"></button></td> 
+             <td class="fl_flight_row"><div align="center">` + (result.Takeoff != null ? result.Takeoff : "00:00:00" )+ `</div></td>
+
+             <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-stop" data-start="0"></button></td>              
+             <td class="fl_flight_row"><div align="center">` + (result.Landing != null ? result.Landing : "00:00:00" )+ `</div></td>
+
+             <td  class="fl_flight_row" id="flighttime"><div align="center">` + (result.Hours != null ? result.Hours : "0.0" )+ `</div></td>
+             <td  class="fl_flight_row" id="towaltitude"><div align="center">` +(result.Tow_Altitude != null ? result.Tow_Altitude : "" )+ `</div></td>
+             <td  class="fl_flight_row" id="towplane"><div align="center">` +(result.Tow_Plane != null ? result.Tow_Plane : "" )+ `</div></td>
+             <td  class="fl_flight_row" id="towpilot"><div align="center">` +(result.Tow_Pilot != null ? result.Tow_Pilot : "" )+ `</div></td>`;
+         	    	        	    	
+        row_string += `</td> <td class="fl_flight_row">999.00</td></tr>`;        
+        jQuery('#flightTable').prepend(row_string);
+                        	    	        	    	
+//         row_string += `</td> <td class="fl_flight_row">999.00</td><td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"></td></tr>`;        
+        return;
+}	
 
 
