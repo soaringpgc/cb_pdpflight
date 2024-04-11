@@ -30,11 +30,15 @@
          * 
          * The file is enqueued from inc/frontend/class-frontend.php.
 	 */
+	 var working_count =0;
 	 $(function() {
+	
 	 
 // 	 	 $(document).on('click', '.pdp_update_time' , function(e){
-	 	 $('.pdp_update_time').on('click', function(e){
-	 
+	 	 $('.pdp_update_time').on('click', function(e){	 
+  	 		working_count++;
+	    	$('#action_status').text("working: " +  working_count);	    	
+
 //     	 $(".pdp_update_time").on('click', function(e){
     		e.preventDefault();
     		var thistime = new Date();
@@ -79,9 +83,12 @@
                 fail: function( response ) {
                     console.log( response );
                     alert('fail');
+                    $('#action_status').text("error-T");	
                     },
                 success: function( response ) {
     				target.removeClass('clicked'); 
+    				working_count--;
+	    			$('#action_status').text("idle: " +  working_count);	    	
 //     				   console.log(target);
                 	}	                        			
 			}
@@ -162,7 +169,9 @@
 	});
 	// add new flight to list. 
 	$("#add_new_record").on('click', function(e){
-	    	e.preventDefault();	  
+	    	e.preventDefault();	  	
+    	 	working_count++;
+	    	$('#action_status').text("working: " +  working_count);	    	
 				$.ajax({
 					type: "POST",
 					url: passed_vars.root + 'cloud_base/v1/pdp_flightlog',
@@ -180,6 +189,8 @@
 					success : function (response){
 // 						console.log(response);
   						response.forEach(pdpFlightString);
+  						working_count--;
+  						$('#action_status').text('Idle');	    
 // 						pdpFlightString(response);
 // 						$('#flightTable').prepend(pdpFlightString(response));
 // 						console.log (passed_vars.post_url + ' ?action="pdp-flight-log-details"&id='+response[0].id);
@@ -190,11 +201,15 @@
 					error: function(XMLHttpRequest, textStatus, errorThrown) { 
         					alert("Status: " + textStatus); 
         					alert("Error: " + errorThrown); 
+        					$('#action_status').text('Error');	  
    					} 
 				});	 		  
 	}) ;
 	flightForm.onsubmit = async (e) => {
   		e.preventDefault();
+		working_count++;
+  	    $('#action_status').text("idle: " +  working_count);	
+
   		var formData = new FormData(flightForm);
   		var obj ={};
     	for(var pair of formData.entries()){  // NTFS: should be able to somehow send FormData directly, but I could not get it to work. So...
@@ -228,9 +243,12 @@
 			data: obj,
             fail: function( response ) {
                  console.log( response );
+                     $('#action_status').text("idle: " +  working_count);	
                  },
             success: function( response ) {
 //     			 console.log( response );
+				working_count--;
+    			$('#action_status').text("idle: " +  working_count);	
     			 currentRow.find('#towcharge').text(response[0].Tow_Charge);
     			 currentRow.find('#flighttime').text(response[0].Time);			
              	}	                        			

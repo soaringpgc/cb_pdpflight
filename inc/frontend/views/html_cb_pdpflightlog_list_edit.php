@@ -408,7 +408,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                             } ?> 
                             <td  class="fl_header"><div align="center">Landing</div></td>
                             <td  class="fl_header"><div align="center">Hours</div></td>
-                            <td  class="fl_header"><div align="center">Tow </div></td>
+                            <td  class="fl_header"><div align="center">Altitude </div></td>
                             <td  class="fl_header"><div align="center">Tug</div></td>
                             <td  class="fl_header"><div align="center">Tow Pilot</div></td>
                             <td  class="fl_header"><div align="center">Charge</div></td>
@@ -476,7 +476,12 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	        </table></td>
 	    </tr> 
 	</table>
+	<div class="float-container">
+		<div class="float-child"> Status:</div>
+		<div class="float-child" id="action_status">Idle</div>
+	</div>
 </div>
+
 <!-- 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
