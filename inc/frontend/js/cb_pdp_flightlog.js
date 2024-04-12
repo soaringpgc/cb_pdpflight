@@ -350,8 +350,6 @@
        			wait: true,
       			success: function(model, resp, opt) {
       			$body.removeClass("loading");
-//         			console.log(model);
-//       			console.log(resp);
 //       			console.log(opt);
 //       				alert('success');
       			},

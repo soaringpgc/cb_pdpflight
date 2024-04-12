@@ -107,16 +107,30 @@ class Frontend {
 //NOTE :NTFS!!!!  enqueue_scripts and add_inline script moved to the shortcode callback so 
 // it is not call when NOT needed.!
 
-//        wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
+//         wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
 //    	wp_register_script( 'Flight_log_app',  plugins_url('/cb-pdpflightlog/inc/frontend/js/flight_log_app.js'));
 // 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery', 'backbone',
 // 			'underscore', 'Flight_log_app', 'Flight_log_templates'), $this->version, false );		
 
 	}
 	public function flight_log( $atts = array() ) {
-		
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'wp-api',  'backbone', 'underscore'
+
+    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	    $flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
+
+ 		if (isset( $flight_atts['new'] )) {
+ 			$new_log = $flight_atts['new']==='true' ? true : false ;
+ 		}
+
+		if ($new_log  === true  ){ 		
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'wp-api',  'backbone', 'underscore'
  				), $this->version, false );		
+		} else {
+		
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-traditional.js', array( 'wp-api',  'backbone', 'underscore'
+ 				), $this->version, false );						
+		}
+
   		$dateToBePassed = array(
      		'ajax_url' =>  admin_url('admin-ajax.php'),
      		'post_url' =>  admin_url('admin-post.php'),
@@ -130,33 +144,16 @@ class Frontend {
     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
     	); 		
 
-    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
-// 			$new_log = false;
-
-
-$traditional = false; 
-if (isset( $flight_atts['traditional'] )) {
-	$traditional = $flight_atts['traditional']==='true' ? true : false ;
-}
-
-	
 		ob_start();
-				
- 			if (isset( $flight_atts['new'] )) {
- 				$new_log = $flight_atts['new']==='true' ? true : false ;
- 			}
  			if ($new_log){
- 				include ('views/html_cb_pdpflightlog.php');		
+ 				include ('views/html_cb_pdpflightlog_list_edit.php');	
  					
- 			} else {				
-				include ('views/html_cb_pdpflightlog_list_edit.php');	
+ 			} else {								
+				include ('views/html_traditional_flight_log.php');		
 			}
 			
 		$output = ob_get_contents();
-
 		ob_end_clean();
-
 		return $output;
 
 	} // flight_log()	
@@ -204,15 +201,6 @@ if (isset( $flight_atts['traditional'] )) {
 // 
 // 	} // flight_log_new()	
 		
-// 	public function pdp_flight_log(){ 
-//      	if (isset($_GET['pgc_year'])) {
-//      		wp_redirect($_GET['source_page'].'?pgc_year='.$_GET['pgc_year']);
-//      	}elseif (isset($_GET['flight_date']) ) {
-//      		wp_redirect($_GET['source_page'].'?flight_date='.$_GET['flight_date']);
-//      	} else {
-//      		wp_redirect($_GET['source_page']);
-//      	}
-//      }
 			
 	public function flight_metrics( $atts = array() ) {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
@@ -253,23 +241,6 @@ if (isset( $flight_atts['traditional'] )) {
   		$request = new \WP_REST_Request('POST', '/cloud_base/v1/pdp_flightlog');
   		$response = rest_do_request($request);
 
-			// get the last Tow Plane, Tow Pilot and flight year from the database. 
-// 		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot, flightyear, yearkey FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
-// 		$result = $wpdb->get_results($sql);
-// 			// check to see if we are in a new year. 			
-// 			if( $result[0]->flightyear != date('Y') ){
-//        	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
-//        	 			( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
-//        	 			VALUES ( %s, %s, %s, %d, %d, %d)",  date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, 1, date('Y'));
-// 			} else {
-//        	 		$sql = $wpdb->prepare("INSERT INTO {$flight_table} 
-//        	 		( Date, Tow_Plane, Tow_Pilot, Time, yearkey, flightyear) 
-//        	 		VALUES ( %s, %s, %s, %d, (SELECT * FROM ( SELECT MAX(yearkey)+1 FROM {$flight_table} WHERE flightyear = %d ) as m), %d)", 
-//        	 			 date('Y-m-d'), $result[0]->Tow_Plane, $result[0]->Tow_Pilot, 0.0, date('Y') , date('Y'));
-// 		}
-// 		var_dump($sql);
-// 		die();		
-// 		$wpdb->query($sql);
       	wp_redirect($_GET['source_page']);
      	exit();
      }	// pdp_flight_log_add()
@@ -391,14 +362,13 @@ if (isset( $flight_atts['traditional'] )) {
 		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
 					date("Y"));				
 		$last_yearkey = $wpdb->get_var($sql); 	
-
-    	wp_register_script( 'pdp_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
+    	wp_register_script( 'flight_log_templates',  plugins_url('/cb_pdpflightlog/inc/frontend/js/template.js'));
+    	
 //     	wp_register_script('dualStorage','https://cdnjs.cloudflare.com/ajax/libs/Backbone.dualStorage/1.4.1/backbone.dualstorage.min.js');
-
 // 	    wp_register_script( 'validation',  plugins_url('/cloudbase/includes/backbone-validation-min.js'));	
 	    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
-		'validation', 'pdp_templates', 'jquery-ui-datepicker'), $this->version, false );
+		'validation', 'flight_log_templates', 'jquery-ui-datepicker'), $this->version, false );
 
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),

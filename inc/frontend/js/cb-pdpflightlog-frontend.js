@@ -209,7 +209,6 @@
   		e.preventDefault();
 		working_count++;
   	    $('#action_status').text("idle: " +  working_count);	
-
   		var formData = new FormData(flightForm);
   		var obj ={};
     	for(var pair of formData.entries()){  // NTFS: should be able to somehow send FormData directly, but I could not get it to work. So...
@@ -231,6 +230,7 @@
    	  	let hourDifference = Math.round(difference / 36);   // get hours	
  		let flightTime = hourDifference/100 ;	    
  		obj["Time"] =  flightTime;  
+ 		    	console.log(obj);
 		var params = {
 			type: "PUT",
 			url: passed_vars.root + 'cloud_base/v1/pdp_flightlog',
