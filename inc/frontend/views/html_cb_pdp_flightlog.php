@@ -123,26 +123,13 @@
      		}
          };     
         echo ( '</select>  </div> <div class="form-row">   
-        <label for="pilots">Pilot:  </label>
+        <label for="pilot1">Pilot:  </label>
         <select name="Pilot1" id="Pilot1" form="addFlight">
         <option value=" " selected>Select Member</option>');
-//   		echo('<optgroup label="Members" class="nofly" >');               
-//          		foreach($member_pilots as $pilot ){
-//          			echo(' <option value="'. $pilot->name .'">'.$pilot->name.'</option>');                     
-//          		}                       			
-// 			echo('	</optgroup>
-// 				<optgroup label="Possible No Fly" class="nofly" >');                   
-//               		foreach($no_fly_pilots as $pilot ){
-//               			echo(' <option value="'. $pilot->name .'" >'. $pilot->name . '</option>');                       
-//               		}                         									  
-// 		  echo('</optgroup> </select></div>');
-//          		foreach($member_pilots as $pilot ){
-//          			echo(' <option value="'. $pilot->name .'">'.$pilot->name.'</option>');                     
-//          		}                       			
          foreach($members as $pilot ){
-         	echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');                      
+         	echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');                      
          }                       			
-          echo ( '<div class="form-row">    
+         echo ( '</select>  </div><div class="form-row">    
         <label for="Pilot2">Instructor: </label>
         <select name="Pilot2" id="Pilot2" form="addFlight">
         <option value=" " selected>None</option>');       

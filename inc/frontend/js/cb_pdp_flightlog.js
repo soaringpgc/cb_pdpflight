@@ -343,8 +343,8 @@
    				formData['Time'] = ' ';	 		
    			}
       		formData['Date'] = app.working_date;
- 			$body.addClass("loading");      
- 			 	      		
+      		formData['pilot_is_number'] = 1; 	 
+ 			$body.addClass("loading");       			 	      		
       		this.collection.create( formData, 
       			{
        			wait: true,
@@ -355,7 +355,7 @@
       			},
       			error: function(model, resp, opt) {
       				$body.removeClass("loading");
-      			},  	  	
+      			},   	
       		});     	
  		$('#flightCount').text('Flights: ' +this.collection.length);
  // clean out the form:		
@@ -415,6 +415,7 @@
    		} else {
    			formData['Time'] = '00:00:00';	 		
    		}
+   		console.log(formData);
         updateModel.save(formData, {wait: false,
         	error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	

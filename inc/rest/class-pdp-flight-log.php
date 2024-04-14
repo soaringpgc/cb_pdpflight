@@ -21,7 +21,7 @@ namespace CB_PdpFlightlog\Inc\Rest;
  * @author     Your Name <email@example.com>
  */
  
-class Rest extends \WP_REST_Controller {
+class PDP_flight_log extends \Cloud_Base_Rest {
 	/**
 	 * The ID of this plugin.
 	 *
@@ -61,32 +61,7 @@ class Rest extends \WP_REST_Controller {
 
 		$this->namespace = $this->plugin_name. '/v' .  $this->rest_version; 			
 	}
- 
- 	public function cloud_base_admin_access_check(){
-	// put your access requirements here. You might have different requirements for each
-	// access method. I'm showing only one here. 
-    	if ( !(current_user_can( 'edit_users' ))) {
-     	   return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
-    	}
-    	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
-    	return true;	
-	}
-	public function cloud_base_members_access_check(){
-	// put your access requirements here. You might have different requirements for each access method. 
-	// can read, at least a subscriber. 	
-    	if (  current_user_can( 'read' )) {
-    	    return true;
-     	}
-    	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	
-    	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
-	} 
-	public function cloud_base_dummy_access_check(){
-	// put your access requirements here. You might have different requirements for each
-	// access method. I'm showing only one here. 
-	// do not use this in production!!!!
-	
-     	return true;	
-	} 	
+
 	public function register_routes() {
 
   	$version = '1';
@@ -111,7 +86,7 @@ class Rest extends \WP_REST_Controller {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'put_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::DELETABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
@@ -202,6 +177,7 @@ class Rest extends \WP_REST_Controller {
 	}		
 //  update pdp flight sheet. 	?yearkey=193&flightyear=2023
 	public function put_flight_data( \WP_REST_Request $request) {
+				
 		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
@@ -212,13 +188,11 @@ class Rest extends \WP_REST_Controller {
 // 			$sql = $wpdb->prepare(  "Select f.user_id from $wpdb->usermeta f INNER JOIN $wpdb->usermeta l on f.user_id = l.user_id  WHERE f.meta_key = 'first_name' AND f.meta_value = %s AND l.meta_key = 'last_name' AND l.meta_value = %s", $first_name,  $last_name);
 // 			$user_id = $wpdb->get_var( $sql);
 // 		}
-		
-
 		if (!isset($request['id']) ){
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 		}
 		$id = $request['id'];
-		
+	
 		if(isset( $request['Tow_Altitude'])){
 			$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s", $request['Tow_Altitude']);	
 			$charge = $wpdb->get_var($sql);
