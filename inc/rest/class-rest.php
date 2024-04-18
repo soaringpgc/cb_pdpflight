@@ -20,9 +20,14 @@ namespace CB_PdpFlightlog\Inc\Rest;
  * @subpackage Cloud_Base/public
  * @author     Your Name <email@example.com>
  */
+ 
+// The following should be:
+// class Rest extends \Cloud_Base_Rest { 
+// and I would not have to duplicate the permissions and other other subroutines from 
+// cloud-base, but I get an error when loggin in/out so I have other fish to fry right now
+// will visit this "some other time"  --dsj 18 April 2024 
 
-// class PDP_flight_log extends   WP_REST_Controller {
-class PDP_flight_log extends \Cloud_Base_Rest {
+class Rest extends \WP_REST_Controller {
 	/**
 	 * The ID of this plugin.
 	 *
@@ -30,39 +35,64 @@ class PDP_flight_log extends \Cloud_Base_Rest {
 	 * @access   private
 	 * @var      string    $cloud_base    The ID of this plugin.
 	 */
-// 	private $plugin_name;
-// 
-// 	/**
-// 	 * The version of this plugin.
-// 	 *
-// 	 * @since    1.0.0
-// 	 * @access   private
-// 	 * @var      string    $version    The current version of this plugin.
-// 	 */
-// 	private $version;
-// 
-// 	/**
-// 	 * The text domain of this plugin.
-// 	 *
-// 	 * @since    1.0.0
-// 	 * @access   private
-// 	 * @var      string    $plugin_text_domain    The text domain of this plugin.
-// 	 */
-// 	private $plugin_text_domain;
-// 
-// 	public function __construct( $plugin_name, $version) {
-// 
-// 		$this->plugin_name = 'cb-pdpflightlog';
-// 		if ( defined ( 'PLUGIN_REST_VERSION')){
-// 			$this->rest_version = PLUGIN_REST_VERSION;
-// 		} else {
-// 			$this->rest_version = '1';
-// 		}	
-// 		// you may want base path name to be different from plugin name. 	
-// 
-// 		$this->namespace = $this->plugin_name. '/v' .  $this->rest_version; 			
-// 	}
+	private $plugin_name;
 
+	/**
+	 * The version of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $version    The current version of this plugin.
+	 */
+	private $version;
+
+	/**
+	 * The text domain of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $plugin_text_domain    The text domain of this plugin.
+	 */
+	private $plugin_text_domain;
+
+	public function __construct( $plugin_name, $version) {
+
+		$this->plugin_name = 'cb-pdpflightlog';
+		if ( defined ( 'PLUGIN_REST_VERSION')){
+			$this->rest_version = PLUGIN_REST_VERSION;
+		} else {
+			$this->rest_version = '1';
+		}	
+		// you may want base path name to be different from plugin name. 	
+
+		$this->namespace = $this->plugin_name. '/v' .  $this->rest_version; 			
+	}
+ 
+ 	public function cloud_base_admin_access_check(){
+	// put your access requirements here. You might have different requirements for each
+	// access method. I'm showing only one here. 
+    	if ( !(current_user_can( 'edit_users' ))) {
+     	   return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
+    	}
+    	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
+    	return true;	
+	}
+	public function cloud_base_members_access_check(){
+	// put your access requirements here. You might have different requirements for each access method. 
+	// can read, at least a subscriber. 	
+    	if (  current_user_can( 'read' )) {
+    	    return true;
+     	}
+    	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	
+    	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
+	} 
+	public function cloud_base_dummy_access_check(){
+	// put your access requirements here. You might have different requirements for each
+	// access method. I'm showing only one here. 
+	// do not use this in production!!!!
+	
+     	return true;	
+	} 	
 	public function register_routes() {
 
   	$version = '1';
@@ -87,7 +117,7 @@ class PDP_flight_log extends \Cloud_Base_Rest {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'put_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::DELETABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
@@ -244,7 +274,7 @@ class PDP_flight_log extends \Cloud_Base_Rest {
 			}
 		}		 		 		
  		return new \WP_REST_Response ($results); 		
-	}				
+	}					
 //  delete flilght log. 	
 	public function delete_flight_data( \WP_REST_Request $request) {
 	// not implmemented. 
@@ -256,5 +286,24 @@ class PDP_flight_log extends \Cloud_Base_Rest {
 // 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
 // 		}	
 // 		$wpdb->delete($table_name , array('id'=> $request['id']));			
+	}	
+	public function cb_member_info($id){
+		if($id != 0 && !is_null($id)){
+			$member_data  = get_userdata( $id);
+			$oBj = (object)[ "name"=>$member_name =  $member_data->first_name .' '.  $member_data->last_name ,
+			       "email"=> $member_data->user_email,
+			       "weight"=> $member_data->weight,
+			       "last_name"=>  $member_data->last_name,
+			       "first_name"=>  $member_data->first_name 					       
+			        ];
+		} else {
+			$oBj = (object)[  "name"=>"none",
+			       "email"=> "",
+			       "weight"=> 0 ,
+			       "last_name"=> "",
+			       "first_name"=> "" 	
+			        ];
+		}
+		return $oBj;
 	}	
 }
