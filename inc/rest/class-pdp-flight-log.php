@@ -20,7 +20,8 @@ namespace CB_PdpFlightlog\Inc\Rest;
  * @subpackage Cloud_Base/public
  * @author     Your Name <email@example.com>
  */
- 
+
+// class PDP_flight_log extends   WP_REST_Controller {
 class PDP_flight_log extends \Cloud_Base_Rest {
 	/**
 	 * The ID of this plugin.
@@ -29,38 +30,38 @@ class PDP_flight_log extends \Cloud_Base_Rest {
 	 * @access   private
 	 * @var      string    $cloud_base    The ID of this plugin.
 	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * The text domain of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_text_domain    The text domain of this plugin.
-	 */
-	private $plugin_text_domain;
-
-	public function __construct( $plugin_name, $version) {
-
-		$this->plugin_name = 'cb-pdpflightlog';
-		if ( defined ( 'PLUGIN_REST_VERSION')){
-			$this->rest_version = PLUGIN_REST_VERSION;
-		} else {
-			$this->rest_version = '1';
-		}	
-		// you may want base path name to be different from plugin name. 	
-
-		$this->namespace = $this->plugin_name. '/v' .  $this->rest_version; 			
-	}
+// 	private $plugin_name;
+// 
+// 	/**
+// 	 * The version of this plugin.
+// 	 *
+// 	 * @since    1.0.0
+// 	 * @access   private
+// 	 * @var      string    $version    The current version of this plugin.
+// 	 */
+// 	private $version;
+// 
+// 	/**
+// 	 * The text domain of this plugin.
+// 	 *
+// 	 * @since    1.0.0
+// 	 * @access   private
+// 	 * @var      string    $plugin_text_domain    The text domain of this plugin.
+// 	 */
+// 	private $plugin_text_domain;
+// 
+// 	public function __construct( $plugin_name, $version) {
+// 
+// 		$this->plugin_name = 'cb-pdpflightlog';
+// 		if ( defined ( 'PLUGIN_REST_VERSION')){
+// 			$this->rest_version = PLUGIN_REST_VERSION;
+// 		} else {
+// 			$this->rest_version = '1';
+// 		}	
+// 		// you may want base path name to be different from plugin name. 	
+// 
+// 		$this->namespace = $this->plugin_name. '/v' .  $this->rest_version; 			
+// 	}
 
 	public function register_routes() {
 

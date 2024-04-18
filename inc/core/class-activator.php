@@ -75,61 +75,61 @@ function create_fl_database(){
 // 	update_option("flight_log_db_version", $db_version);
 	}
 
-function copy_pdp_flights(){
-   	global $wpdb;
-   	global $PGCi;  // database handle for PDP external db
-	$wp_pdp_flight_log = $wpdb->prefix . "cloud_base_pdp_flight_sheet";
-
-	$flight_years = array( '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'); 
-	foreach($flight_years as $year){
-		$sql = "SELECT * from pgc_flightsheet_" . $year; 
-		$flights =  mysqli_query($PGCi, $sql );
-		foreach($flights as $flight ) {
-			$data= array( 
-				'flightyear'   => $year,
-				'yearkey'      => $flight['Key'],
-				'Date' 		   => $flight['Date'],
-				'Glider' 	   => $flight['Glider'],
-				'Flight_Type'  => $flight['Flight_Type'],
-				'Pilot1'   	   => $flight['Pilot1'],
-				'Pilot2' 	   => $flight['Pilot2'],
-				'Takeoff' 	   => $flight['Takeoff'],
-				'Landing' 	   => $flight['Landing'],
-				'Time' 		   => $flight['Time'],
-				'Tow_Altitude' => $flight['Tow Altitude'],
-				'Tow_Plane'    => $flight['Tow Plane'],
-				'Tow_Pilot'    => $flight['Tow Pilot'],
-				'Tow_Charge'   => $flight['Tow Charge'],
-				'Notes' 	   => $flight['Notes'],
-				'ip' 		   => $flight['ip'],
-				'email' 	   => $flight['email'],
-				'mail_count'   => $flight['mail_count']	
-			); 						
-			$wpdb->insert($wp_pdp_flight_log , $data );		
-		}	
-		$sql = "SELECT * from pgc_flightsheet"; // current year 2023
-		$flights =  mysqli_query($PGCi, $sql );
-			$data= array( 
-				'flightyear'   => '2023',
-				'yearkey'      => $flight['Key'],
-				'Date' 		   => $flight['Date'],
-				'Glider' 	   => $flight['Glider'],
-				'Flight_Type'  => $flight['Flight_Type'],
-				'Pilot1'   	   => $flight['Pilot1'],
-				'Pilot2' 	   => $flight['Pilot2'],
-				'Takeoff' 	   => $flight['Takeoff'],
-				'Landing' 	   => $flight['Landing'],
-				'Time' 		   => $flight['Time'],
-				'Tow_Altitude' => $flight['Tow Altitude'],
-				'Tow_Plane'    => $flight['Tow Plane'],
-				'Tow_Pilot'    => $flight['Tow Pilot'],
-				'Tow_Charge'   => $flight['Tow Charge'],
-				'Notes' 	   => $flight['Notes'],
-				'ip' 		   => $flight['ip'],
-				'email' 	   => $flight['email'],
-				'mail_count'   => $flight['mail_count']	
-			); 						
-			$wpdb->insert($wp_pdp_flight_log , $data );			
-	}
-}
+// function copy_pdp_flights(){
+//    	global $wpdb;
+//    	global $PGCi;  // database handle for PDP external db
+// 	$wp_pdp_flight_log = $wpdb->prefix . "cloud_base_pdp_flight_sheet";
+// 
+// 	$flight_years = array( '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'); 
+// 	foreach($flight_years as $year){
+// 		$sql = "SELECT * from pgc_flightsheet_" . $year; 
+// 		$flights =  mysqli_query($PGCi, $sql );
+// 		foreach($flights as $flight ) {
+// 			$data= array( 
+// 				'flightyear'   => $year,
+// 				'yearkey'      => $flight['Key'],
+// 				'Date' 		   => $flight['Date'],
+// 				'Glider' 	   => $flight['Glider'],
+// 				'Flight_Type'  => $flight['Flight_Type'],
+// 				'Pilot1'   	   => $flight['Pilot1'],
+// 				'Pilot2' 	   => $flight['Pilot2'],
+// 				'Takeoff' 	   => $flight['Takeoff'],
+// 				'Landing' 	   => $flight['Landing'],
+// 				'Time' 		   => $flight['Time'],
+// 				'Tow_Altitude' => $flight['Tow Altitude'],
+// 				'Tow_Plane'    => $flight['Tow Plane'],
+// 				'Tow_Pilot'    => $flight['Tow Pilot'],
+// 				'Tow_Charge'   => $flight['Tow Charge'],
+// 				'Notes' 	   => $flight['Notes'],
+// 				'ip' 		   => $flight['ip'],
+// 				'email' 	   => $flight['email'],
+// 				'mail_count'   => $flight['mail_count']	
+// 			); 						
+// 			$wpdb->insert($wp_pdp_flight_log , $data );		
+// 		}	
+// 		$sql = "SELECT * from pgc_flightsheet"; // current year 2023
+// 		$flights =  mysqli_query($PGCi, $sql );
+// 			$data= array( 
+// 				'flightyear'   => '2023',
+// 				'yearkey'      => $flight['Key'],
+// 				'Date' 		   => $flight['Date'],
+// 				'Glider' 	   => $flight['Glider'],
+// 				'Flight_Type'  => $flight['Flight_Type'],
+// 				'Pilot1'   	   => $flight['Pilot1'],
+// 				'Pilot2' 	   => $flight['Pilot2'],
+// 				'Takeoff' 	   => $flight['Takeoff'],
+// 				'Landing' 	   => $flight['Landing'],
+// 				'Time' 		   => $flight['Time'],
+// 				'Tow_Altitude' => $flight['Tow Altitude'],
+// 				'Tow_Plane'    => $flight['Tow Plane'],
+// 				'Tow_Pilot'    => $flight['Tow Pilot'],
+// 				'Tow_Charge'   => $flight['Tow Charge'],
+// 				'Notes' 	   => $flight['Notes'],
+// 				'ip' 		   => $flight['ip'],
+// 				'email' 	   => $flight['email'],
+// 				'mail_count'   => $flight['mail_count']	
+// 			); 						
+// 			$wpdb->insert($wp_pdp_flight_log , $data );			
+// 	}
+// }
 
