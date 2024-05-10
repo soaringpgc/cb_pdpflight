@@ -32,14 +32,10 @@
 	 */
 	 var working_count =0;
 	 $(function() {
-	
-	 
-// 	 	 $(document).on('click', '.pdp_update_time' , function(e){
 	 	 $('.pdp_update_time').on('click', function(e){	 
   	 		working_count++;
 	    	$('#action_status').text("working: " +  working_count);	    	
 
-//     	 $(".pdp_update_time").on('click', function(e){
     		e.preventDefault();
     		var thistime = new Date();
     		var	localtime = thistime.toLocaleTimeString([], { hour12: false });	
@@ -81,7 +77,7 @@
 					},		
  				data:{  id:  id  },
                 fail: function( response ) {
-                    console.log( response );
+//                     console.log( response );
                     alert('fail');
                     $('#action_status').text("error-T");	
                     },
@@ -104,7 +100,7 @@
     	
     							
     	 });   	 
-		    	 //appends an "active" class to .popup and .popup-content when the "Open" button is clicked
+		//appends an "active" class to .popup and .popup-content when the "Open" button is clicked
 		$(".open").on("click", function() {
 			var id = $(this).attr('id');
 			$("#"+id).addClass("active");
@@ -181,22 +177,11 @@
 					beforeSend: function (xhr){
 						xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
 					},
-// 					data:{
-// 						date: startdate,
-// 						trade_id : "1",
-// 						member_id: passed_vars.current_user_id
-// 					},
 					success : function (response){
-// 						console.log(response);
-  						response.forEach(pdpFlightString);
+//  						console.log(response);
+ 						$('#id').val(thisRow.children('#flight_id').text(response));
   						working_count--;
-  						$('#action_status').text('Idle');	    
-// 						pdpFlightString(response);
-// 						$('#flightTable').prepend(pdpFlightString(response));
-// 						console.log (passed_vars.post_url + ' ?action="pdp-flight-log-details"&id='+response[0].id);
-						// once we have inserted the new record open up he edit page. 
-//  						window.location.assign(passed_vars.post_url+'?action=pdp-flight-log-details&id='+response[0].id);	
-								
+  						$('#action_status').text('Idle');	    		
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown) { 
         					alert("Status: " + textStatus); 
@@ -230,7 +215,6 @@
    	  	let hourDifference = Math.round(difference / 36);   // get hours	
  		let flightTime = hourDifference/100 ;	    
  		obj["Time"] =  flightTime;  
- 		    	console.log(obj);
 		var params = {
 			type: "PUT",
 			url: passed_vars.root + 'cloud_base/v1/pdp_flightlog',
@@ -242,18 +226,19 @@
 				},		
 			data: obj,
             fail: function( response ) {
-                 console.log( response );
+//                  console.log( response );
+                 alert("failed");
                      $('#action_status').text("idle: " +  working_count);	
                  },
             success: function( response ) {
-//     			 console.log( response );
+//              alert("success");
+//      			 console.log( response );
 				working_count--;
     			$('#action_status').text("idle: " +  working_count);	
     			 currentRow.find('#towcharge').text(response[0].Tow_Charge);
     			 currentRow.find('#flighttime').text(response[0].Time);			
              	}	                        			
 		}
-  
     	  $.ajax(params);
 		  $(".popup-overlay, .popup-content").removeClass("active");
 		  $("#flightPage").removeClass("popup-overlay");
@@ -333,33 +318,6 @@ function pdpDetails(pdp_type, pdp_id,year){
 //  	 alert (year);	 
   	 oFormObj.submit();
 }  
-// function pdpFlightString_old(result){  // build the new row to be inserted into the flight table. 
-// 	var row_string = `<tr class="flightrow"><td class="hidden"  id="flight_id"><div align="center">'` + result[0].id + `'</td>
-//         <td bgcolor="#999999" class="fl_style25 flightdata"  > 
-//         <div align="center" class"flightdata">` + result[0].yearkey + `</div>`;
-//         row_string +=`<td  class="fl_flight_row" align="center" id="glider"></td>
-//              <td  class="fl_flight_row" id="flight_type"><div align="center">`;
-//         row_string += result[0].Flight_Type;          	    	        	    	
-//         row_string += `</div></td>
-//              <td  class="fl_flight_row" id="pilot1"></td>
-//              <td  class="fl_flight_row" id="pilot2"></td>
-//              <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-start" data-start="1"></button></td> 
-//              <td class="fl_flight_row"><div align="center">00:00:00</div></td>
-//              <td bgcolor="#FFFFFF"><button type="button" align="center" class="pdp_update_time button-flightlog button-stop" data-start="0"></button></td>              
-//              <td  class="fl_flight_row" id="flighttime"><div align="center">00:00:00</div></td>
-//              <td  class="fl_flight_row" id="towaltitude"><div align="center">0.00</div></td>
-//              <td  class="fl_flight_row" id="towplane"><div align="center"></div></td>
-//              <td  class="fl_flight_row" id="towpilot"><div align="center">`
-//         row_string += result[0].Tow_Plane;          	    	        	    	
-//         row_string += `</div>                                    </td>
-//              <td class="fl_flight_row">`                             
-//         row_string += result[0].Tow_Pilot; 
-//         row_string += `</td> <td class="fl_flight_row">999.00</td></tr>`;        
-//         jQuery('#flightTable').prepend(row_string);
-//                         	    	        	    	
-// //         row_string += `</td> <td class="fl_flight_row">999.00</td><td width="20" nowrap="nowrap" bgcolor="#FFFFFF" class="fl_style25"></td></tr>`;        
-//         return;
-// }	
 function pdpFlightString(result){  // build the new row to be inserted into the flight table. 
 	var row_string = `<tr class="flightrow"><td class="hidden"  id="flight_id"><div align="center">'` + result.id + `'</td>
         <td bgcolor="#999999" class="fl_style25 flightdata"  > 

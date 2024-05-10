@@ -190,21 +190,12 @@ class Rest extends \WP_REST_Controller {
         	'Pilot1'=>$pilot1, 'Pilot2'=>$pilot2, 'Takeoff'=>$takeoff, 'Landing'=>$landing, 'Time'=>$time, 'Tow_Altitude'=>$tow_altitude, 
         	'Tow_Plane'=>$tow_plane, 'tow_pilot'=>$tow_pilot, 'Tow_Charge'=>$tow_charge, 'Notes'=>$notes ) ;        	
 
-		$sql = $wpdb->prepare("SELECT id FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
-		$old_id  = $wpdb->get_var($sql ); 			
-		if ( $old_id != null ){
-			$result = $wpdb->update($flight_table, $data, array('id' =>$old_id ));	// update existing.  			
-		} else {	
-        	$result = $wpdb->insert($flight_table, $data); 		
-		}		
- 		if($result == '1' ){
-			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `yearkey`=%s AND `flightyear`=%s", $yearkey, $flightyear);	
-			$record_id  = $wpdb->get_results($sql); 				
-//    			wp_send_json($record_id, 201);				
-  			return new \WP_REST_Response ($record_id); 				
- 		} else {
- 			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) ); 
- 		}
+		$result = $wpdb->insert($flight_table, $data); 	
+		if($result === false ){
+			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) );   				
+		}else {
+			return new \WP_REST_Response ($wpdb->insert_id); 	
+		}	
 	}		
 //  update pdp flight sheet. 	?yearkey=193&flightyear=2023
 	public function put_flight_data( \WP_REST_Request $request) {
@@ -213,14 +204,9 @@ class Rest extends \WP_REST_Controller {
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
  		$record = [];
-// 		if(isset($request['Pilot1'])){
-// 		// get user id from user name. 	
-// 			[$last_name, $first_name] = explode(', ', $request['Pilot1']);
-// 			$sql = $wpdb->prepare(  "Select f.user_id from $wpdb->usermeta f INNER JOIN $wpdb->usermeta l on f.user_id = l.user_id  WHERE f.meta_key = 'first_name' AND f.meta_value = %s AND l.meta_key = 'last_name' AND l.meta_value = %s", $first_name,  $last_name);
-// 			$user_id = $wpdb->get_var( $sql);
-// 		}
+
 		if (!isset($request['id']) ){
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
+			return new \WP_Error( ' Missing Parameter', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 		}
 		$id = $request['id'];
 	
@@ -229,7 +215,7 @@ class Rest extends \WP_REST_Controller {
 			$charge = $wpdb->get_var($sql);
 			$charge == null ? $record['Tow_Charge']=999 : $record['Tow_Charge'] = $charge; 
 		}
-//If it is an AOF do not charge the member. 
+		//If it is an AOF do not charge the member. 
 		if(isset( $request['Flight_Type'])){
 			if ( $request['Flight_Type'] == 'AOF'){
 			 $record['Tow_Charge'] = 0;  
@@ -239,22 +225,22 @@ class Rest extends \WP_REST_Controller {
  		$fields = array('flightyear', 'yearkey', 'Date', 'Glider', 'Flight_Type', 'Pilot1', 
  			'Pilot2', 'Takeoff', 'Landing', 'Time', 'Tow_Altitude', 'Tow_Pilot', 'Tow_Plane', 
  			 'Notes' );
-									
-		global $wpdb; 
+									 
  		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
-
  		foreach( $fields as $field) {
  			if( isset($request[$field]) ){
  				$record[$field]=$request[$field];		
  			}
  		} 
- 					
- 			 		 		
+ 					 			 		 		
  		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  	
+		if (!result){
+			return new \WP_Error( ' Update failed', esc_html__( 'Update Falied', 'my-text-domain' ), array( 'status' => 400) );	 
+		}
  			
- 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);		
- 		 			
+ 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);		 		 			
 		$results  = $wpdb->get_results($sql); 	
+				
 		// send member notification of new flight. 
 		if($results[0]->mail_count==0 && $results[0]->Takeoff != "00:00:00" && $results[0]->Landing != "00:00:00" && $results[0]->Tow_Altitude != '' ){
 
@@ -275,7 +261,7 @@ class Rest extends \WP_REST_Controller {
 		}		 		 		
  		return new \WP_REST_Response ($results); 		
 	}					
-//  delete flilght log. 	
+ 	
 	public function delete_flight_data( \WP_REST_Request $request) {
 	// not implmemented. 
 // 

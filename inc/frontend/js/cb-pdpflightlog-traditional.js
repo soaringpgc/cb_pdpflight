@@ -53,7 +53,7 @@
                       window.location.reload();
                 },
                 fail : function( response ) {
-                    console.log( response );
+//                     console.log( response );
                     alert( passed_vars.failure );
                 }		
     		});		

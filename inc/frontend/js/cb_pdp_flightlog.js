@@ -313,11 +313,6 @@
       	} else {
       		var max_key =  Number(cloud_base_public_vars.last_yearkey );
       	} 
-
-//       	if(formData['Flight_Type'] == ' ') {
-//       		alert('Type can not be blank');
-//       		return;
-//       	} 
       	if(formData['Pilot1'] == ' ') {
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
@@ -345,21 +340,24 @@
       		formData['Date'] = app.working_date;
       		formData['pilot_is_number'] = 1; 	 
  			$body.addClass("loading");       			 	      		
-      		this.collection.create( formData, 
+      		var new_model = this.collection.create( formData, 
       			{
        			wait: true,
       			success: function(model, resp, opt) {
-      			$body.removeClass("loading");
-//       			console.log(opt);
-//       				alert('success');
+      			$body.removeClass("loading");     			
+     				new_model.id = resp;
+//      				console.log(new_model);
+//      				alert('success');
       			},
       			error: function(model, resp, opt) {
+      				alert('Add new record failed.');
       				$body.removeClass("loading");
       			},   	
       		});     	
  		$('#flightCount').text('Flights: ' +this.collection.length);
  // clean out the form:		
 		this.cancelItem(e);
+		return new_model; //??? 
 		}
       },
       updateItem: function(e){     	
@@ -415,8 +413,10 @@
    		} else {
    			formData['Time'] = '00:00:00';	 		
    		}
-   		console.log(formData);
-        updateModel.save(formData, {wait: false,
+//     		console.log(formData);
+        updateModel.save(formData, {
+        	wait: false,
+        	patch:true,
         	error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"])},

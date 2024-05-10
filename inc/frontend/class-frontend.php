@@ -157,50 +157,6 @@ class Frontend {
 		return $output;
 
 	} // flight_log()	
-	
-// 	public function flight_log_new( $atts = array() ) {
-// 	
-// 	
-// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
-//  				), $this->version, false );		
-// //     	wp_localize_script( $this->plugin_name, 'passed_vars', array(
-// //     		'ajax_url' =>  admin_url('admin-ajax.php'),
-// //     		'root' => esc_url_raw( rest_url() ),
-// //      		'nonce' => wp_create_nonce( 'wp_rest' ),
-// //      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-// //      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-// //      		'current_user_id' => get_current_user_id()
-// //     		)	
-// //     	);	
-//   	$dateToBePassed = array(
-//      		'ajax_url' =>  admin_url('admin-ajax.php'),
-//     		'root' => esc_url_raw( rest_url() ),
-//      		'nonce' => wp_create_nonce( 'wp_rest' ),
-//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-//      		'current_user_id' => get_current_user_id()
-//  
-//     		);   	
-//     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-//     	); 		
-// 	
-// 		ob_start();
-// 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true", 'new'=>"false"), $atts);
-// 			$new_log = false;
-// 			
-//  			
-// 				include ('views/html_cb_flight_log_new.php');	
-// 		display_flight_log_new();
-// 			
-// 		$output = ob_get_contents();
-// 
-// 		ob_end_clean();
-// 
-// 		return $output;
-// 
-// 	} // flight_log_new()	
-		
 			
 	public function flight_metrics( $atts = array() ) {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
@@ -271,13 +227,6 @@ class Frontend {
      		if($_POST['start'] == '1'){
  				$wpdb->update($flight_table, array('Takeoff'=> $_POST['thetime']), array('id'=> $key)); 
      		} else {
-//      			$sql = $PGCwp->prepare( "SELECT `Takeoff` FROM  pgc_flightsheet WHERE `Key` = %d", $key);
-//      			$start_time = \DateTime::createFromFormat('H:i:s', $PGCwp->get_var($sql));			
-//      			$landing_time =\DateTime::createFromFormat('H:i:s', $_POST['thetime']);
-//      			$delta = $landing_time->diff($start_time);
-//      			$dec_delta = round($delta->h + $delta->i/60, 2, PHP_ROUND_HALF_UP); 		
-//      			$PGCwp->update('pgc_flightsheet', array('Landing'=> $_POST['thetime'], 'Time'=>$dec_delta), array('Key'=> $key)); 
-
      			$sql = $wpdb->prepare( "SELECT `Takeoff` FROM  {$flight_table} WHERE `id` = %d", $key);
      			$start_time = \DateTime::createFromFormat('H:i:s', $wpdb->get_var($sql));			
      			$landing_time =\DateTime::createFromFormat('H:i:s', $_POST['thetime']);
@@ -399,7 +348,6 @@ class Frontend {
 
 		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
 		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
-// 		add_shortcode( 'cb_pgc_flight_log_new', array( $this, 'flight_log_new' ) );
 		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
 		add_shortcode( 'personal_log', array( $this, 'personal_log' ) );
 
@@ -411,22 +359,4 @@ class Frontend {
      public function pdp_no_login(){
      	wp_redirect(home_url());
      } //
-     public function cleanData(&$str)
-     {
-        // escape tab characters
-        $str = preg_replace("/\t/", "\\t", $str);
-        // escape new lines
-        $str = preg_replace("/\r?\n/", "\\n", $str);
-        // convert 't' and 'f' to boolean values
-        if($str == 't') $str = 'TRUE';
-        if($str == 'f') $str = 'FALSE';
-    
-        // force certain number/date formats to be imported as strings
-        if(preg_match("/^0/", $str) || preg_match("/^\+?\d{8,}$/", $str) || preg_match("/^\d{4}.\d{1,2}.\d{1,2}/", $str)) {
-          $str = "'$str";
-        }
-    
-        // escape fields that include double quotes
-        if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
-     }     
 }

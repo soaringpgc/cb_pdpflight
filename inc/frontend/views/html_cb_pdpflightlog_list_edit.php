@@ -376,15 +376,11 @@ if (!empty($_SERVER['QUERY_STRING'])) {
              	
                     <td width="5%"class="fl_style1"><?php echo 'TDA: ' . $todaycount ?> </td>                                    
 				</tr>
-<!-- 			</table> -->
+
 		</div></th>
  	</tr>
 </table>
 	</div>
-	<!-- 
-	</td>
-	    </tr>
-	 -->
 	    <tr>
 	        <td height="481">
 	          <table width="90%" height="447" cellpadding="2" cellspacing="2" bordercolor="#005B5B" bgcolor="#4F5359">  
@@ -437,11 +433,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
                              <td  class="fl_flight_row" id="pilot1"><?php echo $flight->Pilot1; ?></td>
                              <td  class="fl_flight_row" id="pilot2"><?php echo $flight->Pilot2; ?></td>
                               <?php if ( !$view_only )  {  
-//                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
-//                                  echo ($flight->yearkey); 
-//                                  echo (' align="center" class="pdp_update_time button-flightlog button-start" value="'); 
-//                                  echo ($flight->id.'" data-start=1 ></button></td>');
-
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
                                  echo (' align="center" class="pdp_update_time button-flightlog button-start" data-start=1 ></button></td>');
                                }; ?> 
@@ -449,7 +440,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 
                              <?php if ( !$view_only )  {  
                                  echo ('<td bgcolor="#FFFFFF" ><button type="button"') ;
-//                                  echo ($flight->yearkey); 
                                  echo (' align="center" class="pdp_update_time button-flightlog button-stop" data-start="0"></button></td>');
 								}; ?> 
                           
@@ -482,10 +472,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	</div>
 </div>
 
-<!-- 
-<p>&nbsp;</p>
-<p>&nbsp;</p>
- -->
 </body>
 <script id="add-form-template" type="text/html-template">
 
