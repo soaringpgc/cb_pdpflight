@@ -306,7 +306,11 @@ h3 {
 	align-content: center;
 }
 #flight_table{
-	display: table; 
+	display: table; 	
+	width=99%;
+	text-align=center;
+	padding=2;
+	border-spacing=2; 	
 }
 .table{
 	display: table; 

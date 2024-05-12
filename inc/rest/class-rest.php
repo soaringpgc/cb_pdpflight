@@ -211,7 +211,7 @@ class Rest extends \WP_REST_Controller {
 		$id = $request['id'];
 	
 		if(isset( $request['Tow_Altitude'])){
-			$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s", $request['Tow_Altitude']);	
+			$sql = $wpdb->prepare("SELECT charge FROM {$fee_table} WHERE `altitude`=%s AND valid_until is NULL ", $request['Tow_Altitude']);	
 			$charge = $wpdb->get_var($sql);
 			$charge == null ? $record['Tow_Charge']=999 : $record['Tow_Charge'] = $charge; 
 		}

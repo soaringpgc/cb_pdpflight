@@ -181,3 +181,16 @@ body {
 	font-weight: bold; 
 	color: #000000; 
 }
+#flight_table{
+	width: 99%; 
+	margin: auto auto;
+}
+
+/* 
+.Heading{
+	background-color: #999999;
+	align-content: center;
+	width 100%;
+	display: table-row;
+}
+ */

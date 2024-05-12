@@ -23,6 +23,7 @@ var flighttemplate_pdp = _.template(`
      <label class="fl_Cell0"><%= Tow_Altitude %></label>   
      <label class="hidden"><%= Tow_Pilot %></label>   				
      <label class="fl_Cell0a"><%=  Tow_Plane %></label>   
+     <label class="fl_Cell0a"><%=  Tow_Charge  %></label>   
      <label class="hidden"><%= Notes %></label>   			
 `);
 

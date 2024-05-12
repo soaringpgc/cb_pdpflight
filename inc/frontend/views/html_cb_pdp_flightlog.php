@@ -189,14 +189,13 @@
          </textarea></div></div>
 	</form>
             
-              <div id="flight_table" class="Title flightlist">
-                   <div class="Heading flightlist"> <button  id="flight_button"  class="view">ADD FLight</button><div id="flightCount">Count</div>');
+    <div id="flight_table" class="Title ">
+        <div class="Heading " > <button  id="flight_button"  class="view">ADD FLight</button><div id="flightCount">Count</div>');
 // not quite ready for prime time.                    
              if( current_user_can( 'cb_edit_flight' ) ) {	        
              		echo ( 'Select Date to Edit:<input type="text" id="datepicker" > 
                    <form class="hidden" id="changedate" action="#" ><button  id="select_date"  class="view">Select Date</button></form>');            
-             }
-                   
+             }                   
             echo ( '<div id="editDate"> Today\'s Flights ' . $active_date . '</div></div>
              </div>
              <div class="Heading">
@@ -227,8 +226,11 @@
                  <div class="fl_Cell0">
                      <p>Tug</p>
                  </div>  
+                 <div class="fl_Cell0">
+                     <p>Charge</p>
+                 </div>  
               </div> 
-              </div>     
+         </div>     
           ' );
 
      } else {
