@@ -178,8 +178,8 @@
 						xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
 					},
 					success : function (response){
-//  						console.log(response);
- 						$('#id').val(thisRow.children('#flight_id').text(response));
+//   						console.log(response);
+//  						$('#id').val(thisRow.children('#flight_id').text(response));
   						working_count--;
   						$('#action_status').text('Idle');	    		
 					},

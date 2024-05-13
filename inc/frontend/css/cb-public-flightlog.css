@@ -155,7 +155,7 @@ body {
 	text-align=center;
 	padding=2;
 	border-spacing=2; 
-	background-color:#000066;	
+	background-color:#000666;	
 }
 .flight_row{
 	width=100%;
@@ -185,7 +185,19 @@ body {
 	width: 99%; 
 	margin: auto auto;
 }
-
+.container {
+    width:100%;
+    margin:2 auto;
+}
+.float-container {
+	border: 3px solid #fff;
+	padding: 10px;
+}
+eflights{
+	width: 90%; 
+	margin: auto auto;
+	background-color: #444444;
+}
 /* 
 .Heading{
 	background-color: #999999;

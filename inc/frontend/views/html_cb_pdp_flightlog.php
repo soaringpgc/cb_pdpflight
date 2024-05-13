@@ -19,7 +19,7 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div>
-   <div id="eflights" style="width: 90%; margin: auto auto;" >
+   <div id="eflights"  >
     <?php 	
    		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
@@ -86,15 +86,6 @@
       echo ('<form id="addFlight" action="#" class="hidden">
 
       	<div class="container">
-      	<div id="addorupdate" >
-      		<div class="div-left" > 
-       	 		<button  id="add"  class="view" style="background-color:red; color:black; font-size:14px">ADD</button>
-       	 		<button  id="update"  class="edit" style="background-color:orange; color:black;  font-size:14px";">Update</button>
-       	 	</div>
-       	 	<div class="div-right">
-       	 		<button  id="cancel" style="background-color:yellow; color:black;  font-size:14px"" >Cancel</button>
-       	 	</div>
-		</div>
   	    <input type = "hidden"
           id = "id"
           size = "8"
@@ -186,7 +177,17 @@
          echo ( '</select></div>         
          <div class="form-row"><label for="Notes">Notes: </label>
           <textarea  form="addFlight" id="Notes" name="Notes"  rows=3 cols=35">
-         </textarea></div></div>
+         </textarea></div>
+      	<div id="addorupdate" >
+      		<div class="div-left" > 
+       	 		<button  id="add"  class="view" style="background-color:red; color:black; font-size:14px">ADD</button>
+       	 		<button  id="update"  class="edit" style="background-color:orange; color:black;  font-size:14px";">Update</button>
+       	 	</div>
+       	 	<div class="div-right">
+       	 		<button  id="cancel" style="background-color:yellow; color:black;  font-size:14px"" >Cancel</button>
+       	 	</div>
+		</div>         
+        </div>
 	</form>
             
     <div id="flight_table" class="Title ">
@@ -202,7 +203,7 @@
                  <div class="fl_Cell0">
                      <p>Flight</p>
                  </div>
-                 <div class="fl_Cell0">
+                 <div class="fl_Cell0a">
                      <p>Type</p>
                  </div>
                 <div class="fl_Cell0">
@@ -211,22 +212,22 @@
                  <div class="fl_Cell">
                      <p>Pilot</p>
                  </div>
-                 <div class="fl_Cell">
+                 <div class="fl_Cella">
                      <p>Instructor</p>
                  </div>
-                 <div class="fl_Cell0">
+                 <div class="fl_Cell0a">
                      <p>Action</p>
                  </div>
                  <div class="fl_Cell0">
                      <p>Time</p>
                  </div>
-                  <div class="fl_Cell0">
+                  <div class="fl_Cell0a">
                      <p>Altitude</p>
                  </div>
                  <div class="fl_Cell0">
                      <p>Tug</p>
                  </div>  
-                 <div class="fl_Cell0">
+                 <div class="fl_Cell0a">
                      <p>Charge</p>
                  </div>  
               </div> 

@@ -345,7 +345,7 @@
        			wait: true,
       			success: function(model, resp, opt) {
       			$body.removeClass("loading");     			
-     				new_model.id = resp;
+//      				new_model.id = resp;
 //      				console.log(new_model);
 //      				alert('success');
       			},

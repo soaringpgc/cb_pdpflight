@@ -163,7 +163,7 @@ class Rest extends \WP_REST_Controller {
 			$yearkey = $wpdb->get_var($sql)+1; 
 		}			
 		$sql = $wpdb->prepare(" SELECT Tow_Plane, Tow_Pilot FROM {$flight_table} ORDER BY id DESC LIMIT %d", 1);
-		$p_tow = $wpdb->get_results($sql);  // $p_tow[0]->Tow_Plane, $p_tow[0]->Tow_Pilot,
+		$p_tow = $wpdb->get_row($sql);  
 // 		var_dump($p_tow[0]->Tow_Plane);
 // 		die();
 		
@@ -177,8 +177,8 @@ class Rest extends \WP_REST_Controller {
 		isset($request['Landing']) 		? $landing=$request['Landing'] 			: $landing='00:00:00';
 		isset($request['Time']) 		? $time=$request['Time'] 				: $time='0.0';
 		isset($request['Tow_Altitude']) ? $tow_altitude=$request['Tow_Altitude'] :  $tow_altitude=null;
-		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=$p_tow[0]->Tow_Pilot;
-		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=$p_tow[0]->Tow_Plane;
+		isset($request['Tow_Pilot']) 	? $tow_pilot=$request['Tow_Pilot'] 		: $tow_pilot=$p_tow->Tow_Pilot;
+		isset($request['Tow_Plane']) 	? $tow_plane=$request['Tow_Plane'] 		: $tow_plane=$p_tow->Tow_Plane;
 // 		isset($request['Tow_Charge']) 	? $tow_charge=$request['Tow_Charge'] 	: $tow_charge=null;
 		isset($request['Notes']) 		? $notes=$request['Notes'] 				: $notes=null;
 
@@ -194,7 +194,9 @@ class Rest extends \WP_REST_Controller {
 		if($result === false ){
 			return new \WP_Error( 'Insert Failed', esc_html__( 'Insert failed. ', 'my-text-domain' ), array( 'status' => 500 ) );   				
 		}else {
-			return new \WP_REST_Response ($wpdb->insert_id); 	
+//  			return new \WP_REST_Response ($wpdb->insert_id); 	
+			$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%s", $wpdb->insert_id);			
+ 			return new \WP_REST_Response ($wpdb->get_row($sql)); 	
 		}	
 	}		
 //  update pdp flight sheet. 	?yearkey=193&flightyear=2023
@@ -239,12 +241,12 @@ class Rest extends \WP_REST_Controller {
 		}
  			
  		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);		 		 			
-		$results  = $wpdb->get_results($sql); 	
+		$results  = $wpdb->get_row($sql); 	
 				
 		// send member notification of new flight. 
-		if($results[0]->mail_count==0 && $results[0]->Takeoff != "00:00:00" && $results[0]->Landing != "00:00:00" && $results[0]->Tow_Altitude != '' ){
+		if($results->mail_count==0 && $results->Takeoff != "00:00:00" && $results->Landing != "00:00:00" && $results->Tow_Altitude != '' ){
 
-			[ $last_name, $first_name] = explode(', ', $results[0]->Pilot1);
+			[ $last_name, $first_name] = explode(', ', $results->Pilot1);
 			$sql = $wpdb->prepare(  "Select f.user_id from $wpdb->usermeta f INNER JOIN $wpdb->usermeta l on f.user_id = l.user_id  WHERE f.meta_key = 'first_name' AND f.meta_value = %s AND l.meta_key = 'last_name' AND l.meta_value = %s", $first_name,  $last_name);
 			$user_id = $wpdb->get_var( $sql);
 	
