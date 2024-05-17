@@ -36,8 +36,7 @@
 	 		$("#Tow_Pilot").val(' ');	
 	 		$("#Tow_Plane").val(' ');	  	 	
 	 	}
-	 });
-	 
+	 });	 
 	 $("#Flight_Type").on('blur', function(){
 	 	if($("#Flight_Type").val() == 'AOF' ){
 	 		$("#Tow_Altitude").val('0');	
@@ -51,16 +50,17 @@
 	 	}
 	 });	 
 	 
- 	 var $body = $("body");
-// 	 $(document).on({
-//    		 ajaxSend: function() { $body.addClass("loading");    },
-//      	 ajaxComplete: function() { $body.removeClass("loading"); }    
-// 	});
-	
+ 	var $body = $("body");
 	var app = app || {};
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
 
-	const dateObj = new Date() // Gets the current date and time as an object
+ 	if (sessionStorage['working_Date']){
+ 		var dateObj = new Date(sessionStorage.getItem('working_Date')+'T00:00:00');
+ 	}  else {
+		var dateObj = new Date() // Gets the current date and time as an object
+	}
+		console.log(sessionStorage.getItem('working_Date'));
+	console.log(dateObj);
 	const formattingOptions = {  // format string for Intl.DateTimeFormat
  		 day: 'numeric',
  		 month: 'numeric', 
@@ -86,16 +86,13 @@
     			} ));	
     		},	
 		initialize: function(){
+	
+//      		this.on('change:Takeoff', function(){
+//      			console.log(this);
+//      		});		
 
 		},
-// 		validation:{
-// 			Glider:{
-// 				required: true,
-// 			},
-// 			Pilot1:{
-// 				required: true,
-// 			},	
-// 		},
+
 		defaults: {	
 			Flight_Type	: "REG",
 			flightyear: new Date({timeZone:"America/NEW_YORK"}).getFullYear(),			
@@ -126,11 +123,13 @@
    	 
 // Define model view	
 	app.FlightView = Backbone.View.extend({
-	 	template: flighttemplate_pdp,    
+	 	template: flighttemplate_pdp,   
+	 	initialize: function(){
+	 		this.listenTo(this.model, 'change', this.render);
+	 	}, 
 		tagName: 'div',
         className: 'Row',
-		render: function(){
-	
+		render: function(){	
 			this.$el.html( this.template(this.model.toJSON() ) );
 			if (this.model.get('Landing') == '00:00:00' ){
  				this.$el.removeClass('landed'); 
@@ -191,19 +190,21 @@
 			var launch = new Date();
 // 			this.model.set({'Takeoff': launch.toLocaleTimeString('en-US',  {hour12:false})});								
 			this.$el.addClass('inflight'); 	
-			this.model.set({Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})})	;		
+// 			this.model.set({Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})})	;		
 			this.model.save(
-//  				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
+ 				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
 				{
  				patch:true,
 			    success: function(model, resp, opt) {
-//  			       alert('updated takeoff'); 
+//   			       alert('updated takeoff'); 
 			    }, 
 			    error: function(model, error){
 			    	alert('Error: ' + error);
 // 			    	console.log(error);
-			    }			
+			    },
+			    id: this.model.id			
 			});
+
 		},
 		landing_time: function(){
 			var landing = new Date(); 
@@ -249,17 +250,15 @@
          	onSelect: function (dateText, inst) {
 				$('.Row').remove();
          		app.working_date= dateText;
+         		sessionStorage.setItem('working_Date', app.working_date);
 //          		self.collection.reset(); 	
          		self.collection.fetch({ wait: true, reset:true, data: $.param({start: app.working_date })});
 //           		self.collection.reset(results); 				
          		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "yellow");
          	}         
          });    
-// //         this.collection.comparator = Collection.comparators['landed', 'yearkey'];
-// //         this.collection.sort();
 //         this.render();
       },
-
       render: function(){
 //       alert(this.collection.length);
       	this.collection.each(function(item){	
@@ -317,12 +316,12 @@
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
       		formData['yearkey'] = max_key+1;     		
-      		if(typeof formData['Takeoff'] === 'undefined' )  	{
-   				formData['Takeoff'] = '00:00:00';	
-   			}
-  			if(typeof formData['Landing'] === 'undefined' )  	{
-   				formData['Landing'] = '00:00:00';	
-   			}
+//       		if(typeof formData['Takeoff'] === 'undefined' )  	{
+//    				formData['Takeoff'] = '00:00:00';	
+//    			}
+//   			if(typeof formData['Landing'] === 'undefined' )  	{
+//    				formData['Landing'] = '00:00:00';	
+//    			}
    			if ( (formData['Takeoff'] != '00:00:00' )  &&  ( formData['Landing'] != '00:00:00') ){
 				var now = new Date();
 				var dd = String(now.getDate()).padStart(2, '0');
@@ -357,7 +356,7 @@
  		$('#flightCount').text('Flights: ' +this.collection.length);
  // clean out the form:		
 		this.cancelItem(e);
-		return new_model; //??? 
+// 		return new_model; //??? 
 		}
       },
       updateItem: function(e){     	
@@ -393,12 +392,12 @@
       	}
 //      	var old_takeoff = updateModel.get('Takeoff');
 //    		var old_landing = updateModel.get('Landing');  	
-   		if(typeof formData['Takeoff'] === 'undefined' )  	{
-   			formData['Takeoff'] = '00:00:00';	
-   		}
-  		if(typeof formData['Landing'] === 'undefined' )  	{
-   			formData['Landing'] = '00:00:00';	
-   		}
+//    		if(typeof formData['Takeoff'] === 'undefined' )  	{
+//    			formData['Takeoff'] = '00:00:00';	
+//    		}
+//   		if(typeof formData['Landing'] === 'undefined' )  	{
+//    			formData['Landing'] = '00:00:00';	
+//    		}
    		if ( (formData['Takeoff'] != '00:00:00' )  &&  ( formData['Landing'] != '00:00:00') ){
 			var now = new Date();
 			var dd = String(now.getDate()).padStart(2, '0');
@@ -459,18 +458,18 @@
       		$('#Takeoff').val(null);
       	},
       renderItem: function(item){    
- 		if( item.get('Takeoff') != '00:00:00' &&  item.get('Takeoff') != null  ){
-//  			if( (typeof item.get('Takeoff') !== 'undefined' ) && isNaN(item.get('Takeoff'))){
-      		var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
-				// adding 'inflight' class to the row. used below.... 
-         	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
-      	} 
- 		if(  item.get('Landing') !=  '00:00:00'  &&  item.get('Landing') !=  null){ 			
-//  			if( (typeof item.get('Landing') !== 'undefined' ) && isNaN(item.get('Landing')) && (item.get('Landing') !=  '00:00:00') ){
-      		var landing =  new Date(item.get('Landing'));
-      		// add 'landed' class to this row... used below. 
-      		var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});      			
-      	} 
+//  		if( item.get('Takeoff') != '00:00:00' &&  item.get('Takeoff') != null  ){
+// //  			if( (typeof item.get('Takeoff') !== 'undefined' ) && isNaN(item.get('Takeoff'))){
+//       		var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
+// 				// adding 'inflight' class to the row. used below.... 
+//          	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
+//       	} 
+//  		if(  item.get('Landing') !=  '00:00:00'  &&  item.get('Landing') !=  null){ 			
+// //  			if( (typeof item.get('Landing') !== 'undefined' ) && isNaN(item.get('Landing')) && (item.get('Landing') !=  '00:00:00') ){
+//       		var landing =  new Date(item.get('Landing'));
+//       		// add 'landed' class to this row... used below. 
+//       		var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});      			
+//       	} 
 		if(expandedView === undefined ){
         	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
         }
@@ -481,17 +480,4 @@
         }
 	});
 	new app.EditView();
-//    $(function(){
-//   
-//    if (typeof cb_admin_tab !== 'undefined' ){
-//    		switch(cb_admin_tab){
-//    			case "flights" : 
-// //    				new app.FlightsView();
-//       			new app.EditView();
-//    			break;
-//    		}
-//    	} else {
-// 
-//    	}
-//    });
 })( jQuery );

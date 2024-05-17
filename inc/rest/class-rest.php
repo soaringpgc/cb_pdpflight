@@ -257,9 +257,11 @@ class Rest extends \WP_REST_Controller {
 			$to = $user_info->user_email;
 			$subject = "PGC Flightlog - New Flight ";
 			$headers = array( 'FROM: soaringpgc@gmail.com; Content-type: text/html; ');
-			if($_SERVER["SERVER_NAME"] != 'localhost'){
+			if($_SERVER["SERVER_NAME"] != 'pgctest.local:'){
 	  			$sent = wp_mail($to, $subject, $intro, $headers);	
 			}
+			$mail_update['mail_count'] = 1;  
+			$result = $wpdb->update($flight_table, $mail_update, array('id' =>$id ));
 		}		 		 		
  		return new \WP_REST_Response ($results); 		
 	}					

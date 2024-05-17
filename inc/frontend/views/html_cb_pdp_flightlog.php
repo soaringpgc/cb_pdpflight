@@ -233,7 +233,6 @@
               </div> 
          </div>     
           ' );
-
      } else {
      	Echo 'Please log in. ';
      }
