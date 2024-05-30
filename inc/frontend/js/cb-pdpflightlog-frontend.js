@@ -112,23 +112,6 @@
 		$(document).on('click', '.flightdata' , function(){
 			var thisRow = $(this).parent();		
 			flightDetail(thisRow);
-// 			$('#id').val(thisRow.children('#flight_id').text());
-// // 			$('#flightyear').val(thisRow.children('#flightyear').text()).change();	
-// // 			$('#yearkey').val(thisRow.children('#yearkey').text()).change();	
-// // 			$('#Date').val(thisRow.children('#Date').text()).change();				
-// 			$('#glider').val(thisRow.children('#glider').text()).change();	
-// 			$('#Flight_Type').val(thisRow.children('#flight_type').text()).change();	
-// 			$('#Pilot1').val(thisRow.children('#pilot1').text()).change();		
-// 			$('#Pilot2').val(thisRow.children('#pilot2').text()).change();					
-// 			$('#Takeoff').val(thisRow.children('#takeoff').text());	
-// 			$('#Landing').val(thisRow.children('#landing').text());	
-// // 			$('#Time').val(thisRow.children('#flighttime').text());	
-// 			$('#Tow_Pilot').val(thisRow.children('#towpilot').text()).change();
-// 			$('#Tow_Plane').val(thisRow.children('#towplane').text().trim()).change(); // why I need trim on this one I do not know!
-// 			$('#Tow_Altitude').val(thisRow.children('#towaltitude').text()).change();
-// // 			$('#form_towcharge').val(thisRow.children('#towcharge').text());
-// 			$('#Notes').val(thisRow.children('#note').text());			
-// 			$("#detailPage").addClass("active");
 		});
 // populate the detail form with existing flight info. 		
 	function flightDetail(thisRow){			

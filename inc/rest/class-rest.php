@@ -207,7 +207,7 @@ class Rest extends \WP_REST_Controller {
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
  		$record = [];
 
-		if (!isset($request['id']) ){
+		if (!isset($request['id']) ){	
 			return new \WP_Error( ' Missing Parameter', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 		}
 		$id = $request['id'];

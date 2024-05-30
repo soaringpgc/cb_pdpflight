@@ -59,8 +59,8 @@
  	}  else {
 		var dateObj = new Date() // Gets the current date and time as an object
 	}
-		console.log(sessionStorage.getItem('working_Date'));
-	console.log(dateObj);
+// 		console.log(sessionStorage.getItem('working_Date'));
+// 	console.log(dateObj);
 	const formattingOptions = {  // format string for Intl.DateTimeFormat
  		 day: 'numeric',
  		 month: 'numeric', 
@@ -72,11 +72,10 @@
 	// get a New date object with the previously generated date pattern
 	// and spit it out as yyyy-mm-dd. Just to fix javascript from jumping ahead
 	// at 8:00PM (EDT) -- this is nuts. 
-	app.working_date = (new Date(pgc_date)).toISOString().split('T')[0];
-		
+	app.working_date = (new Date(pgc_date)).toISOString().split('T')[0];		
 	$('#editDate').text('Flight Log for: ' +app.working_date);
 // Define Flight Model and how to get it. 
-	app.Flight = Backbone.Model.extend({
+	app.Flight = Backbone.GSModel.extend({
 //  		url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
 		sync: function( method, model, options ){
     		return Backbone.sync(method, this, jQuery.extend( options, {
@@ -90,7 +89,33 @@
 //      		this.on('change:Takeoff', function(){
 //      			console.log(this);
 //      		});		
+		},
+// 		getters: {
+// 			Takeoff : function () {
 
+//  		},
+		setters: {
+// 			Takeoff : function(t) {
+// 				return t;
+// 			},
+			FlightEnd : function(t) {		
+			 var landing = new Date(); 
+			// recreate take off time.
+			  var now = new Date();
+			  var dd = String(now.getDate()).padStart(2, '0');
+			  var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
+			  var yyyy = now.getFullYear();			
+		      var today = yyyy + '-' + mm + '-' + dd; 													
+			  var launch =  new Date(today+'T'+(this.get('Takeoff')).replace(/-/g,"/"));
+			  var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
+			  var hours = Math.round(temptime *100) / 100 ;			
+// 			  this.$el.addClass('landed'); 
+			  this.set({ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours});																
+			  return landing.toLocaleTimeString('en-US',  {hour12:false});
+			},
+			Time : function(t){
+				return t
+			}
 		},
 
 		defaults: {	
@@ -111,7 +136,6 @@
 		},
 		wait: true
 	});
-
 // Define Flight list collection. 
     app.FlightList= Backbone.Collection.extend({
     	model: app.Flight,
@@ -128,19 +152,25 @@
 	 		this.listenTo(this.model, 'change', this.render);
 	 	}, 
 		tagName: 'div',
+		localDivTag: 'div',
         className: 'Row',
 		render: function(){	
 			this.$el.html( this.template(this.model.toJSON() ) );
-			if (this.model.get('Landing') == '00:00:00' ){
- 				this.$el.removeClass('landed'); 
- 				this.$el.addClass('inflight'); 				
- 			}
- 			if (this.model.get('Takeoff') == '00:00:00' ){
- 				this.$el.removeClass('inflight'); 
- 				this.$el.removeClass('landed'); 					
- 			}
+			this.renderTime();
 			this.$input = this.$('.edit');
  			return this;
+		},
+		renderTime: function(){
+			if ((this.model.get('Takeoff') !== '00:00:00' ) && (this.model.get('Landing') === '00:00:00' )){
+ 				this.$el.addClass('inflight');
+ 				this.$el.removeClass('landed');  	
+ 			} else if ((this.model.get('Takeoff') !== '00:00:00' ) && (this.model.get('Landing') !== '00:00:00' )){
+ 				this.$el.removeClass('inflight'); 
+ 				this.$el.addClass('landed'); 	 				 									
+ 			} else {
+				this.$el.removeClass('inflight'); 
+ 				this.$el.removeClass('landed'); 		 			
+ 			}
 		},
 		initialize: function(){
         		this.model.on('change', this.render, this); 	
@@ -150,8 +180,9 @@
 			'click label' : 'update',
 			'click .buttonlaunch' : 'launch_time',
 			'click .buttonlanding' : 'landing_time',
+			"#flights li a": "setSelectedItem"
 		},
-   		update: function(){
+   		update: function(){   		   			
 			var localmodel = this.model;
 
  			$("#addorupdate").addClass('editing'); 	
@@ -162,7 +193,7 @@
 
  		 	$('.Title').toggleClass('editing'); 	
  		    $('.Heading').toggleClass('editing'); 	
-					
+		// populate the form with existing datat from the model. 			
              // NTFS this requires the form id's to be the same as the model id's.
              // we are looping over the form, picking up the id's and then getting the 
              // value of the same id in the model and then loading it back into the form
@@ -188,11 +219,11 @@
 		},  
 		launch_time: function(){ 
 			var launch = new Date();
-// 			this.model.set({'Takeoff': launch.toLocaleTimeString('en-US',  {hour12:false})});								
-			this.$el.addClass('inflight'); 	
+			this.model.set({Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})})	;		
+// 			this.$el.addClass('inflight'); 	
 // 			this.model.set({Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})})	;		
 			this.model.save(
- 				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
+//  				{ Takeoff:  launch.toLocaleTimeString('en-US',  {hour12:false})},
 				{
  				patch:true,
 			    success: function(model, resp, opt) {
@@ -207,36 +238,43 @@
 
 		},
 		landing_time: function(){
-			var landing = new Date(); 
-			// recreate take off time.
-			  var now = new Date();
-			  var dd = String(now.getDate()).padStart(2, '0');
-			  var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
-			  var yyyy = now.getFullYear();			
-		      var today = yyyy + '-' + mm + '-' + dd; 													
-			var launch =  new Date(today+'T'+(this.model.get('Takeoff')).replace(/-/g,"/"));
-			var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
-			var hours = Math.round(temptime *100) / 100 ;			
-			this.$el.addClass('landed'); 
-			this.model.set({ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours});
+ 			var landing = new Date(); 
+// 			// recreate take off time.
+// 			  var now = new Date();
+// 			  var dd = String(now.getDate()).padStart(2, '0');
+// 			  var mm = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
+// 			  var yyyy = now.getFullYear();			
+// 		      var today = yyyy + '-' + mm + '-' + dd; 													
+// 			var launch =  new Date(today+'T'+(this.model.get('Takeoff')).replace(/-/g,"/"));
+// 			var temptime = Math.abs(landing.getTime()-launch.getTime())/3.6e6; 
+// 			var hours = Math.round(temptime *100) / 100 ;		
+
+			this.model.set({ FlightEnd:  landing.toLocaleTimeString('en-US',  {hour12:false})});	
+ 			this.$el.addClass('landed'); 
+// 			this.model.set({ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours});
 			this.model.save(
-//  				{ Landing:  landing.toLocaleTimeString('en-US',  {hour12:false}), Time: hours},
 				{
  				patch:true,
 			    success: function(model, resp, opt) {
-//   			       alert('updated landing'); 
+//    			       alert('updated landing'); 
 			    }, 
 			    error: function(model, error){
 // 			    	alert('Error: ' + error);
 // 			    	console.log(error);
 			    }			
 			});	
+ 		},
+ 		setSelectedFlight: function(){
+ 		//extract the model ID from the event.currentTarget
+ 			var selectedFlight = $(event.currentTarget);
+ 		 	this.selectedFlightId =selectedFlight[0].childNodes[1].innerText;		
+        	return false;
  		}
 	});
-	app.EditView =  Backbone.View.extend({ 
+	app.FlightLogView =  Backbone.View.extend({ 
 		el: '#eflights', 
-		localDivTag: '#addFlight div',
-		localRowTag: '#flight_table div',	 		 	 	        
+		localDivTag: 'div',
+// 		localRowTag: '#flight_table div',	 		 	 	        
       	initialize: function(){
       	 var self=this;
          this.collection = new app.FlightList();
@@ -260,9 +298,9 @@
 //         this.render();
       },
       render: function(){
-//       alert(this.collection.length);
-      	this.collection.each(function(item){	
-  			this.renderItem(item);    	
+
+      	this.collection.each(function(item){	      	
+	 		this.renderItem(item);    	
       	}, this );
       	 $('#flightCount').text('Flights: ' +this.collection.length);
       },
@@ -316,12 +354,12 @@
       		alert('Pilot 1 can not be blank');
       	} else {    	      	   	
       		formData['yearkey'] = max_key+1;     		
-//       		if(typeof formData['Takeoff'] === 'undefined' )  	{
-//    				formData['Takeoff'] = '00:00:00';	
-//    			}
-//   			if(typeof formData['Landing'] === 'undefined' )  	{
-//    				formData['Landing'] = '00:00:00';	
-//    			}
+      		if(typeof formData['Takeoff'] === 'undefined' )  	{
+   				formData['Takeoff'] = '00:00:00';	
+   			}
+  			if(typeof formData['Landing'] === 'undefined' )  	{
+   				formData['Landing'] = '00:00:00';	
+   			}
    			if ( (formData['Takeoff'] != '00:00:00' )  &&  ( formData['Landing'] != '00:00:00') ){
 				var now = new Date();
 				var dd = String(now.getDate()).padStart(2, '0');
@@ -356,7 +394,7 @@
  		$('#flightCount').text('Flights: ' +this.collection.length);
  // clean out the form:		
 		this.cancelItem(e);
-// 		return new_model; //??? 
+		return new_model; //??? 
 		}
       },
       updateItem: function(e){     	
@@ -390,14 +428,14 @@
       	} else {
       		var updateModel = this.collection.get(formData.id);  
       	}
-//      	var old_takeoff = updateModel.get('Takeoff');
-//    		var old_landing = updateModel.get('Landing');  	
-//    		if(typeof formData['Takeoff'] === 'undefined' )  	{
-//    			formData['Takeoff'] = '00:00:00';	
-//    		}
-//   		if(typeof formData['Landing'] === 'undefined' )  	{
-//    			formData['Landing'] = '00:00:00';	
-//    		}
+     	var old_takeoff = updateModel.get('Takeoff');
+   		var old_landing = updateModel.get('Landing');  	
+   		if(typeof formData['Takeoff'] === 'undefined' )  	{
+   			formData['Takeoff'] = '00:00:00';	
+   		}
+  		if(typeof formData['Landing'] === 'undefined' )  	{
+   			formData['Landing'] = '00:00:00';	
+   		}
    		if ( (formData['Takeoff'] != '00:00:00' )  &&  ( formData['Landing'] != '00:00:00') ){
 			var now = new Date();
 			var dd = String(now.getDate()).padStart(2, '0');
@@ -412,7 +450,7 @@
    		} else {
    			formData['Time'] = '00:00:00';	 		
    		}
-//     		console.log(formData);
+
         updateModel.save(formData, {
         	wait: false,
         	patch:true,
@@ -452,32 +490,17 @@
  		 $('.Heading').toggleClass('editing'); 	 		         		    	
       },
       resetLanding : function(e){
-     	 	$('#Landing').val(null);	
+     	 	$('#Landing').val(null);
+     	 	$('#Time').val(null);	
       	},
       resetTakeoff: function(e){
       		$('#Takeoff').val(null);
+      		$('#Time').val(null);	
       	},
       renderItem: function(item){    
-//  		if( item.get('Takeoff') != '00:00:00' &&  item.get('Takeoff') != null  ){
-// //  			if( (typeof item.get('Takeoff') !== 'undefined' ) && isNaN(item.get('Takeoff'))){
-//       		var launch =  new Date((item.get('Takeoff')).replace(/-/g,"/"));
-// 				// adding 'inflight' class to the row. used below.... 
-//          	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row inflight'});      			
-//       	} 
-//  		if(  item.get('Landing') !=  '00:00:00'  &&  item.get('Landing') !=  null){ 			
-// //  			if( (typeof item.get('Landing') !== 'undefined' ) && isNaN(item.get('Landing')) && (item.get('Landing') !=  '00:00:00') ){
-//       		var landing =  new Date(item.get('Landing'));
-//       		// add 'landed' class to this row... used below. 
-//       		var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row landed'});      			
-//       	} 
-		if(expandedView === undefined ){
-        	var expandedView = app.FlightView.extend({ localDivTag:this.localDivTag, className: 'Row'});
-        }
-        var itemView = new expandedView({
-      		model: item
-      	})
-      	this.$el.append( itemView.render().el);   
-        }
+       	    var itemView = new app.FlightView({ model: item});
+      		this.$el.append( itemView.render().el);     	
+         }
 	});
-	new app.EditView();
+	new app.FlightLogView();
 })( jQuery );

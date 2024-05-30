@@ -312,12 +312,17 @@ class Frontend {
 					date("Y"));				
 		$last_yearkey = $wpdb->get_var($sql); 	
     	wp_register_script( 'flight_log_templates',  plugins_url('/cb_pdpflightlog/inc/frontend/js/template.js'));
+    	wp_register_script( 'backbone_getters',  plugins_url('/cb_pdpflightlog/inc/libraries/backbone.getters.setters.js'));
     	
 //     	wp_register_script('dualStorage','https://cdnjs.cloudflare.com/ajax/libs/Backbone.dualStorage/1.4.1/backbone.dualstorage.min.js');
 // 	    wp_register_script( 'validation',  plugins_url('/cloudbase/includes/backbone-validation-min.js'));	
 	    
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 'backbone_getters',
 		'validation', 'flight_log_templates', 'jquery-ui-datepicker'), $this->version, false );
+
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/flight_log.js', array( 'wp-api',  'backbone', 'underscore', 
+// 		'validation', 'flight_log_templates', 'jquery-ui-datepicker'), $this->version, false );
+
 
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),

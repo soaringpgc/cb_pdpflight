@@ -3,7 +3,7 @@
 //
 
 var flighttemplate_pdp = _.template(`
-     <div class="hidden"><%= id %></div>
+     <div class="hidden" id="id" ><%= id %></div>
      <label class="fl_Cell0"> <%=  yearkey %></label>
      <label class="fl_Cell0a"><%=  Flight_Type %></label>
      <label class="fl_Cell0">  <%=  Glider %></label>
@@ -26,8 +26,21 @@ var flighttemplate_pdp = _.template(`
      <label class="hidden"><%= Notes %></label>   			
 `);
 
+var launch_landing_pdp = _.template(`
+     <div class="hidden" id="id" ><%= id %></div>
+     <div class="fl_Cell0a" id="button"> 
+     	 <button id="launch"  class="viewstart buttonlaunch "></button>
+  		 <button id="landing" class="viewstop  buttonlanding"></button>
+     </div  >
+     <div class="fl_Cell0" >
+     <label class="viewstop"> <%=  Takeoff %> </label >
+     <label class="hidden"> <%=  Landing %> </label >
+     <label class="time"> <%=  Time %> </label >
+     </div>			
+`);
+
 var tow_plane_log_template = _.template(`
-     <div class="hidden"><%= id %></div>
+     <div id="id" class="hidden"><%= id %></div>
      <label class="hidden"><%=  tow_plane%></label>
      <label class="fl_Cell0a"><%=  flight_type %></label>
      <label class="fl_Cell"> <%= Pilot1 %></label>   

@@ -144,7 +144,7 @@
 		<div class="form-row"> 
         	<label for="landing">Landing:</label>
 			<input type="time" id="Landing" name="Landing">
-			<button id="reset_time_landing" type="button">Reset</button>
+ 			<button id="reset_time_landing" type="button">Reset</button>
 		</div> 
 		
         <div class="form-row"> 
