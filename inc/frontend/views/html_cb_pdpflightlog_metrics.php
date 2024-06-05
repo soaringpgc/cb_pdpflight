@@ -41,8 +41,22 @@ if (strlen($pgc_table)> 16){
 } else {
 	$pgcyear = date('Y');
 }
+$aircraftTable =  $wpdb->prefix . "cloud_base_aircraft";	
+
+$sql = "SELECT * " . $aircraftTable .  " WHERE valid_until is NULL AND aircraft_type between 0 and 4"; 
+$aircraft = $wpdb->get_results($sql); 
  
-$sql= "SELECT Glider, Count(Glider) as gcount, Sum(`Time`) as gtime FROM " .$flight_table. " WHERE  Glider <> '' AND flightyear = " . $pgcyear ." AND Time <> 0 GROUP BY Glider";
+// $sql= "SELECT Glider, Count(Glider) as gcount, Sum(`Time`) as gtime FROM " .$flight_table. " WHERE  Glider <> '' AND flightyear = " . $pgcyear ." AND Time <> 0 GROUP BY Glider";
+// $gliders = $wpdb->get_results($sql); 
+
+// modifited to caculate hours since last 100 hour inspection 
+$sql= "SELECT f.Glider,
+	SUM(CASE WHEN f.Glider <> '' AND f.flightyear = " . $pgcyear ." AND f.Time <> 0 AND a.valid_until is null THEN f.Time  ELSE 0 END) as gtime,
+	SUM(CASE WHEN f.Glider <> '' AND f.flightyear = " . $pgcyear ." AND f.Time <> 0 AND a.valid_until is null THEN 1  ELSE 0 END) as gcount,
+	SUM(CASE When f.Glider <> '' AND f.DATE > a.last_100_date AND Time <> 0 THEN f.Time ELSE 0 END) as fr100hr,
+	SUM(CASE When f.Glider <> '' AND f.DATE > a.last_100_date AND Time <> 0 THEN 1 ELSE 0 END) as countfr100hr  	  	
+	FROM " .$flight_table ." f  JOIN " . $aircraftTable . " a WHERE f.Glider = a.compitition_id GROUP BY f.Glider";
+ 	
 $gliders = $wpdb->get_results($sql); 
 
 $sql= "SELECT Count(Glider) as gcount, Sum(`Time`) as gtime FROM " .$flight_table. " WHERE (Pilot1 <> '' OR Pilot2 <> '') AND Glider <> '' AND flightyear = " . $pgcyear ." AND Time <> 0";
@@ -69,17 +83,7 @@ $members = $wpdb->get_results($sql);
 $sql= "SELECT Count(Pilot1) as gcount, Sum(`Time`) as gtime FROM " .$flight_table. " WHERE  Pilot1 <> '' AND Glider <> '' AND flightyear = " . $pgcyear ." AND Time <> 0";
 $total_members = $wpdb->get_results($sql); 
 
-// $query_Table_Date = "SELECT date_format(`Date`,'%Y') as flight_year FROM " . $pgc_table . " Where `Date` <> '' LIMIT 1";
-// $Table_Date = mysqli_query($PGCi, $query_Table_Date )  or die(mysqli_error($PGCi));
-// 
-// $row_Table_Date =mysqli_fetch_assoc($Table_Date);
-// $flight_year = $row_Table_Date['flight_year'];
 $flight_year  = $pgcyear;
-
-// $query_Recordset2 = "SELECT date_format(`Date`,'%Y') as Mstart FROM pgc_flightsheet ";
-// $Recordset2 = mysqli_query($PGCi, $query_Recordset2 )  or die(mysqli_error($PGCi));
-// $row_Recordset2 =mysqli_fetch_assoc($Recordset2);
-//$totalRows_Recordset2 = mysqli_num_rows($Recordset2);
 
 $_SESSION['$Logdate'] = date("Y-m-d"); 
 ?>
@@ -209,20 +213,22 @@ tr:nth-child(odd) {background-color: #ffffff;}
                <td ><div align="center" ><a href="#" onClick="pdpDetails('8', 'AOF','<?php echo $flight_year; ?>')"> AOF FLIGHTS </a></div></td>       
             <td width="150" ><div align="center"><strong><?php echo  $total_AOF[0]->gcount ; ?></strong></div>
                   <div align="center"></div></td>
-            <td ><div align="center" ><strong><?php echo $total_AOF[0]->gtime; ?></strong></div></td>
+            <td ><div align="center" ><strong><?php echo $total_AOF[0]->gtime; ?></strong></div></td><td></td>
         </tr>
                      
             <tr class="fl_style34hd">
                <td width="250" ><div align="center" >PGC GLIDER </div></td>
                <td width="150" ><div align="center" >FLIGHTS</div></td>
                <td ><div align="center" >TOTAL HOURS </div></td>
+               <td ><div align="center" >HOURS since 100</div></td>
             </tr>
             <?php 
             foreach($gliders as $glider){
             	echo('<tr class="fl_style34"> ');
-            	echo('<td ><div align="center" ><a href="#" onClick="pdpDetails(`0`, `' .$glider->Glider. '`,`'. $flight_year. '`)">  ' .$glider->Glider. '</a></div></td>');
+            	echo('<td ><div align="center" ><a href="#" onClick="pdpDetails(`0`, `' . $glider->Glider. '`,`'. $flight_year. '`)">  ' .$glider->Glider. '</a></div></td>');
             	echo('<td ><div align="center" >' . $glider->gcount. '</div></td>');
             	echo('<td ><div align="center" >' . $glider->gtime .'</div></td>');
+            	echo('<td ><div align="center" >' . $glider->fr100hr .'</div></td>');
             	echo('</tr>');
             }   
             	echo('<tr class="fl_style34" ><td><div align="center" >Totals</div></td>')    ;     
