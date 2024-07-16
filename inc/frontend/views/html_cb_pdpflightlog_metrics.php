@@ -5,7 +5,6 @@ $flight_table =  $wpdb->prefix . "cloud_base_pdp_flight_sheet";
 //	    echo  $metrcis_atts['title'];
 ?>
 <?php
-
 error_reporting(E_ALL);
 ////ini_set('display_errors', 'On');
 // require_once('pgc_check_login.php'); 
@@ -43,19 +42,13 @@ if (strlen($pgc_table)> 16){
 }
 $aircraftTable =  $wpdb->prefix . "cloud_base_aircraft";	
 
-$sql = "SELECT * " . $aircraftTable .  " WHERE valid_until is NULL AND aircraft_type between 0 and 4"; 
-$aircraft = $wpdb->get_results($sql); 
- 
-// $sql= "SELECT Glider, Count(Glider) as gcount, Sum(`Time`) as gtime FROM " .$flight_table. " WHERE  Glider <> '' AND flightyear = " . $pgcyear ." AND Time <> 0 GROUP BY Glider";
-// $gliders = $wpdb->get_results($sql); 
-
 // modifited to caculate hours since last 100 hour inspection 
-$sql= "SELECT f.Glider,
+$sql= "SELECT f.Glider, 
 	SUM(CASE WHEN f.Glider <> '' AND f.flightyear = " . $pgcyear ." AND f.Time <> 0 AND a.valid_until is null THEN f.Time  ELSE 0 END) as gtime,
 	SUM(CASE WHEN f.Glider <> '' AND f.flightyear = " . $pgcyear ." AND f.Time <> 0 AND a.valid_until is null THEN 1  ELSE 0 END) as gcount,
-	SUM(CASE When f.Glider <> '' AND f.DATE > a.last_100_date AND Time <> 0 THEN f.Time ELSE 0 END) as fr100hr,
-	SUM(CASE When f.Glider <> '' AND f.DATE > a.last_100_date AND Time <> 0 THEN 1 ELSE 0 END) as countfr100hr  	  	
-	FROM " .$flight_table ." f  JOIN " . $aircraftTable . " a WHERE f.Glider = a.compitition_id GROUP BY f.Glider";
+	SUM(CASE When f.Glider <> '' AND f.DATE > a.last_100_date AND Time <> 0 AND a.valid_until is null THEN f.Time ELSE 0 END) as fr100hr,
+	SUM(CASE When f.Glider <> '' AND f.DATE > a.last_100_date AND Time <> 0 AND a.valid_until is null THEN 1 ELSE 0 END) as countfr100hr  	  	
+	FROM " .$flight_table ." f  JOIN " . $aircraftTable . " a WHERE f.Glider = a.compitition_id GROUP BY f.Glider";	
  	
 $gliders = $wpdb->get_results($sql); 
 
