@@ -56,7 +56,7 @@ $Result1 = $wpdb->update($flight_table, array('Glider'=>$_POST['Glider'], 'Fligh
 	$wpdb->query($sql );
  
  /*== Send Email if we have a takeoff and a landing time ====*/
-	 if ($_POST['Landing'] <> '' AND $_POST['Takeoff'] <> '') {
+	 if (($_POST['Landing'] <> ''|| $_POST['Landing'] <> '00:00:00' ) AND ($_POST['Takeoff'] <> ''  || $_POST['Takeoff'] <> '00:00:00'  )) {
 	
 	// 	$row_Flightlog= $PGCwp->get_row($PGCwp->prepare("SELECT * from pgc_flightsheet WHERE `Key` = %d", $_POST['recordID']), $output='ARRAY_A') ;
 	
@@ -94,7 +94,7 @@ $colname_Flightlog = "-1";
 if (isset($_GET['id'])) {
   $colname_Flightlog = $_GET['id'];
 }
-
+$strict_no_fly = get_option("glider_club_strict_no_fly") === 'y' ? true : false ;
 $row_Flightlog= $wpdb->get_row($wpdb->prepare("SELECT * from {$flight_table} WHERE `id` = %d", $colname_Flightlog), $output='ARRAY_A') ;
 
 $request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
@@ -278,16 +278,17 @@ body,td,th {
 //                   				}                   
 //                   			}                       
 						?>
-<!-- 
-					</optgroup>
-					  <optgroup label="Possible No Fly" class="nofly" >
- -->
+
                         <?php                        
                   			foreach($members as $pilot ){
                   			    if ( $pilot->name == $row_Flightlog['Pilot1'] ) { 
                   			    	echo(' <option value="'.$pilot->pilot_id.'" selected>'.$pilot->name.'</option>');  
                   			    } else {
-                  					echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');    
+                   			    	if($strict_no_fly ){
+                   			    		echo(' <option value="'.$pilot->pilot_id.'" '.   $pilot->name. ($pilot->nofly? ' disabled' : ' ')         . ">".$pilot->name.'</option>');  
+                   			    	} else {
+                   						echo(' <option value="'.$pilot->pilot_id.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');  
+                  					}  
                   				}                   
                   			}                         
 						?>					  					  

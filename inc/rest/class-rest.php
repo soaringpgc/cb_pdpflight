@@ -111,13 +111,13 @@ class Rest extends \WP_REST_Controller {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'post_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::EDITABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'put_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::DELETABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
@@ -200,8 +200,7 @@ class Rest extends \WP_REST_Controller {
 		}	
 	}		
 //  update pdp flight sheet. 	?yearkey=193&flightyear=2023
-	public function put_flight_data( \WP_REST_Request $request) {
-				
+	public function put_flight_data( \WP_REST_Request $request) {	
 		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
@@ -234,17 +233,16 @@ class Rest extends \WP_REST_Controller {
  				$record[$field]=$request[$field];		
  			}
  		} 
- 					 			 		 		
- 		$result = $wpdb->update($flight_table, $record, array('id' =>$id ));	// update existing.  	
-		if (!result){
-			return new \WP_Error( ' Update failed', esc_html__( 'Update Falied', 'my-text-domain' ), array( 'status' => 400) );	 
+			 			 		 			 			
+ 		if ($wpdb->update($flight_table, $record, array('id' =>$id )) === FALSE ){
+ 			return new \WP_Error( ' Update failed', esc_html__( 'Update Falied', 'my-text-domain' ), array( 'status' => 400) );	 
 		}
- 			
- 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);		 		 			
+ 	 			
+ 		$sql = $wpdb->prepare("SELECT * FROM {$flight_table} WHERE `id`=%d", $id);				 		 			
 		$results  = $wpdb->get_row($sql); 	
-				
+  					
 		// send member notification of new flight. 
-		if($results->mail_count==0 && $results->Takeoff != "00:00:00" && $results->Landing != "00:00:00" && $results->Tow_Altitude != '' ){
+	if($results->mail_count==0 && $results->Takeoff != "00:00:00" && $results->Landing != "00:00:00" && $results->Tow_Altitude != '' ){
 
 			[ $last_name, $first_name] = explode(', ', $results->Pilot1);
 			$sql = $wpdb->prepare(  "Select f.user_id from $wpdb->usermeta f INNER JOIN $wpdb->usermeta l on f.user_id = l.user_id  WHERE f.meta_key = 'first_name' AND f.meta_value = %s AND l.meta_key = 'last_name' AND l.meta_value = %s", $first_name,  $last_name);
@@ -262,7 +260,7 @@ class Rest extends \WP_REST_Controller {
 			}
 			$mail_update['mail_count'] = 1;  
 			$result = $wpdb->update($flight_table, $mail_update, array('id' =>$id ));
-		}		 		 		
+		}	*/	 		 		
  		return new \WP_REST_Response ($results); 		
 	}					
  	

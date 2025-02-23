@@ -32,6 +32,7 @@
 		$fees_table =  $wpdb->prefix . 'cloud_base_relay_fees';	
 		$type_table = $wpdb->prefix . "cloud_base_aircraft_type";		
 		$active_date = date("Y-m-d");
+		$strict_no_fly = get_option("glider_club_strict_no_fly" === 'y' ? true : false ;
 
 		$flight_types = $wpdb->get_results('SELECT * FROM ' . $flight_type .' ORDER BY description ASC ');	
 		$aircraft = $wpdb->get_results('SELECT *, t.title as type FROM ' . $aircraft_table .' s inner join '. $type_table  .' t on s.aircraft_type=t.id WHERE s.valid_until is NULL  ORDER BY s.aircraft_type DESC, s.registration ASC');		
@@ -118,7 +119,11 @@
         <select name="Pilot1" id="Pilot1" form="addFlight">
         <option value=" " selected>Select Member</option>');
          foreach($members as $pilot ){
-         	echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');                      
+         	if ($strict_no_fly){ 
+         		echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' --NF disabled' : ' ') .'</option>');   
+         	}else{
+         		echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');   
+         	}                 
          }                       			
          echo ( '</select>  </div><div class="form-row">    
         <label for="Pilot2">Instructor: </label>
