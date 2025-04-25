@@ -1,0 +1,266 @@
+/*
+	Style sheet for flight log. 
+
+*/ 
+.flightLog{
+	 display: inline-block;
+}
+.flightLog.edit{
+	 display: none;
+}
+.editForm.edit{
+	display: inline-block;
+}
+.editForm {
+	 display: none;
+}
+.buttonlaunch {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 12px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  width: 5px;
+  border-radius: 50%;
+}
+.buttonlaunch .inflight {
+  background-color: red; /* Green */
+  border: none;
+  color: white;
+  padding: 12px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  width: 5px;
+  border-radius: 25%;
+}
+.buttonlaunch .landed {
+ 	display: none;
+}
+.buttonlanding {
+  background-color: red; /* red */
+  border: none;
+  color: white;
+  padding: 12px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  width: 5px;
+  border-radius: 25%;
+}
+
+.hidden {
+	display: none;
+} 
+body {
+	background-color: #eee;
+	 line-height: 1.0;
+}
+
+.fl_container {
+    width:100%;
+    margin:2 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    height: 80%;
+}
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 5px;
+    font-size: 18px;
+}
+.timefield{
+    padding: 5px;
+    font-size: 18px;
+}
+.fhcontainer {
+  font-size: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  height: 250px%;
+  border: 1px solid black;
+}
+.fhcontainer .product {
+  flex: 1 0 20%;
+  height: 30px;
+  color: white;
+}
+.fhcontainer .button {
+  flex: 1 0 20%;
+  height: 30px;
+  color: white;
+  display: inline-flex;
+  align-items: center; 
+}
+.fhcontainer .active {
+  flex: 1 0 10%;
+  height: 30px;
+  color: white;
+}
+.fhcontainer .online {
+  flex: 1 0 10%;
+  height: 30px;
+  text-align: center;
+  color: white;
+}
+
+.edit{
+	display: none;
+}
+.viewstop{
+	display: none;
+}
+.viewstart{
+	display: inline;
+}
+.inflight .viewstart {
+	display: none;
+}
+.inflight .viewstop {
+	display: inline;
+}
+.landed .viewstart  {
+	display: none;
+}
+.landed .viewstop  {
+	display: none;
+}
+.landed .time  {
+	display: inline;
+}
+.time{
+	display: none;
+}
+
+.view{
+	display: inline;
+}
+.editing .edit {
+	display: inline;
+}
+.editing .view {
+	display: none;
+}
+
+
+
+textarea { vertical-align: top; }
+form {
+  margin: 0 auto;
+}
+#addFlight{
+  width: 100%;
+  margin: 0 auto;
+}
+
+.form-row {
+/*     line-height:20pt; */
+    border: solid 1px black;
+    padding: 0.2 em;
+}
+.form-row-fl{
+	display: flex;
+	justify-content: flex-end;
+    border: solid 1px black;
+    padding: 0.2 em;
+}
+.form-row-fl  label {
+	flex: 1;
+	width: 240px;
+}
+.form-row-fl  input {
+	flex: 2;
+}
+
+.form-row-fl:nth-child(odd) {
+    background: #e0e0e0;
+}
+.form-row-fl:nth-child(even) {
+    background: #fefefe;
+}
+
+#flight_button    {
+    width: 150px;
+    background: red;
+    float: left;
+}
+#editDate  {
+    width: 815px;
+    float: center;
+    color: black;
+}
+#flightCount  {
+    background: green;
+}
+#activeCount  {
+    background: red;
+}
+/* 
+#activeLabel  {
+    background: red;
+}
+ */
+.Row .editing{
+	display: none;
+}
+#reload  {
+    background: gray;
+}
+#connectstatus  {
+    background: blue;
+}
+#connectstatusoffline  {
+    background: yellow;
+}
+ */
+/* 
+#flight_table{
+/* 	display: table; 	 
+	width=99%;
+	text-align=center;
+	padding=2;
+	border-spacing=2; 	
+}
+ */
+.fl_Heading{
+	background-color: #999999;
+	width 100%;
+
+}
+.fl_Heading .editing{
+	display: none;
+}
+.div-left{
+    float:left;
+    padding-left:10px;
+    width: 120px;
+}
+.div-right{
+    float:right;
+    padding-right:10px;
+    width: 120px;
+}
+.div-center{
+    margin:0;
+/*     width:1000px;     */
+}
+.fl-colum-ht{
+	height: 530px;
+}
+.fl-colum-tp{
+	height: 55px;
+}
+th,td {
+	border: 1px solid #999;
+	padding: 0.5rem;
+	text-align: center;
+};

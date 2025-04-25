@@ -78,7 +78,7 @@ class Frontend {
 		 * class.
 		 */
   		wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/themes/base/jquery-ui.css');
-    	wp_enqueue_style('jquery-ui');
+		wp_enqueue_style( $this->plugin_name  . 'cb_flightlog', plugin_dir_url( __FILE__ ) . 'css/cb_flightlog.css', array(), $this->version, 'all' );
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdpflightlog-frontend.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . 'flightlog', plugin_dir_url( __FILE__ ) . 'css/cb-public-flightlog.css', array(), $this->version, 'all' );
@@ -313,17 +313,9 @@ class Frontend {
 		$last_yearkey = $wpdb->get_var($sql); 	
     	wp_register_script( 'flight_log_templates',  plugins_url('/cb_pdpflightlog/inc/frontend/js/template.js'));
     	wp_register_script( 'backbone_getters',  plugins_url('/cb_pdpflightlog/inc/libraries/backbone.getters.setters.js'));
-    	
-//     	wp_register_script('dualStorage','https://cdnjs.cloudflare.com/ajax/libs/Backbone.dualStorage/1.4.1/backbone.dualstorage.min.js');
-// 	    wp_register_script( 'validation',  plugins_url('/cloudbase/includes/backbone-validation-min.js'));	
-	    
+    		    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 'backbone_getters',
 		'validation', 'flight_log_templates', 'jquery-ui-datepicker'), $this->version, false );
-
-// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/flight_log.js', array( 'wp-api',  'backbone', 'underscore', 
-// 		'validation', 'flight_log_templates', 'jquery-ui-datepicker'), $this->version, false );
-
-
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),
  				'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -332,13 +324,34 @@ class Frontend {
  				'current_user_id' => get_current_user_id(),
  				'last_yearkey' =>  $last_yearkey	    	
      		);   	
-     		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-     		);
-
-
+     		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before');		
 		include_once 'views/html_cb_pdp_flightlog.php';
-//		return display_flights();
+
 	}   // pdp_flight_log
+	public function cb_flight_log($atts = array() ){
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+ 		global $wpdb; 
+		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
+		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
+					date("Y"));				
+		$last_yearkey = $wpdb->get_var($sql); 	
+    	wp_register_script( 'flight_templates',  plugins_url('/cb_pdpflightlog/inc/frontend/js/cb_templates.js'));    	
+    	wp_register_script('dualStorage','https://cdnjs.cloudflare.com/ajax/libs/Backbone.dualStorage/1.4.1/backbone.dualstorage.min.js');
+	    
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
+		'dualStorage', 'flight_templates', 'jquery-ui-datepicker'), $this->version, false );
+    		$dateToBePassed = array(
+ 				'root' => esc_url_raw( rest_url() ),
+ 				'nonce' => wp_create_nonce( 'wp_rest' ),
+ 				'success' => __( 'Data Has been updated!', 'your-text-domain' ),
+ 				'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+ 				'current_user_id' => get_current_user_id(),
+ 				'last_yearkey' =>  $last_yearkey	    	
+     		);   	
+     		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before');		
+		include_once 'views/html_flightlog.php';
+	}   // cb_flight_log	
+		
 	public function personal_log($atts = array() ){
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 		include_once 'views/html_cb_personal_log.php';
@@ -350,12 +363,11 @@ class Frontend {
 	 * @return [type] [description]
 	 */
 	public function register_shortcodes() {
-
 		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
 		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
 		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
 		add_shortcode( 'personal_log', array( $this, 'personal_log' ) );
-
+		add_shortcode( 'cb_flight_log', array( $this, 'cb_flight_log' ) );
 	} // register_shortcodes()
 	/**
 	 * This function redirects to the longin page if the user is not logged in.

@@ -267,7 +267,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
               <tr valign="baseline">
                 <td class="label" ><label for="Pilot1"  align="left">Member:</label></td>
                 <td class="detail" colspan="2"><span >
-                  <select id="Pilot1"  name="Pilot1" class="style25" >                 
+                  <select required id="Pilot1"  name="Pilot1" class="style25"  >                 
                   		<option value="" >  </option>
                         <?php                        
                   			foreach($members as $pilot ){

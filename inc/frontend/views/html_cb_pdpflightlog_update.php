@@ -266,7 +266,7 @@ body,td,th {
               <tr valign="baseline">
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Member:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
-                  <select name="Pilot1" class="style25" id="Pilot1" >                 
+                  <select required name="Pilot1" class="style25" id="Pilot1" >                 
                   		<option value="" >  </option>
 <!--   						<optgroup label="Members" class="nofly" >   --> 
                         <?php                  
@@ -296,6 +296,10 @@ body,td,th {
                   </select>
                 </span></td>
               </tr>
+              <tr valign="baseline">
+                <td colspan="2" height="47" align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">If a name is un-selectable they are on the NO FLY List.</div></td>
+              </tr>
+
               <tr valign="baseline">
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Instructor:</div></td>
                 <td bgcolor="#CCCCCC"><span class="style17">
@@ -371,6 +375,7 @@ body,td,th {
                 <td align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Tow Charge:</div></td>                
                    <td bgcolor="#CCCCCC"><input name="Tow_Charge" type="text" class="style25" value="<?php echo $row_Flightlog['Tow_Charge']; ?>" size="6" maxlength="6" readonly></td>             
               </tr>
+
               <tr valign="baseline">
                 <td height="47" align="right" valign="middle" nowrap bgcolor="#CCCCCC" class="style25"><div align="left">Notes:</div></td>
                 <td bgcolor="#CCCCCC"><textarea name="Notes" cols="50" rows="5" class="style25"><?php echo $row_Flightlog['Notes']; ?></textarea></td>

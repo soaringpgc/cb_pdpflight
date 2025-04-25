@@ -292,7 +292,7 @@
 //          		self.collection.reset(); 	
          		self.collection.fetch({ wait: true, reset:true, data: $.param({start: app.working_date })});
 //           		self.collection.reset(results); 				
-         		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "yellow");
+         		$('#editDate').text('Edit Flight Log for: ' +app.working_date).css("color", "red");
          	}         
          });    
 //         this.render();

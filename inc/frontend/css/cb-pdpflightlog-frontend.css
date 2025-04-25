@@ -242,7 +242,7 @@ form {
   margin: 0 auto;
 }
 #addFlight{
-  width: 50%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -286,7 +286,7 @@ h3 {
 	align-content: center;
 }
 #flight_button    {
-    width: 100px;
+    width: 150px;
     background: red;
     float: left;
 }
@@ -401,14 +401,7 @@ H3{
     padding-right: 5px;
     width: 240px;
 }
-.div-left{
-    float:left;
-    padding-left:10px;
-}
-.div-right{
-    float:right;
-    padding-right:10px;
-}
+
 table.logbook, th.logbook, td.logbook{
   border: 1px solid black;
   margin: 0 0 0.5em;

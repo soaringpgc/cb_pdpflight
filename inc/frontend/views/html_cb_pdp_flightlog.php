@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Provide a public-facing view for the plugin
  *
@@ -20,7 +19,7 @@
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div>
    <div id="eflights"  >
-    <?php 	
+    <?php 	 
    		global $wpdb; 
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';		
 		$flight_type =  $wpdb->prefix . 'cloud_base_flight_type';
@@ -83,7 +82,7 @@
 		$current_tow = $wpdb->get_results($sql);
         		
       if( current_user_can( 'read' ) ) {	
-      
+    
       echo ('<form id="addFlight" action="#" class="hidden">
 
       	<div class="container">
