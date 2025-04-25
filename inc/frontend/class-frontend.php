@@ -82,9 +82,7 @@ class Frontend {
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdpflightlog-frontend.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . 'flightlog', plugin_dir_url( __FILE__ ) . 'css/cb-public-flightlog.css', array(), $this->version, 'all' );
-
 	}
-
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
 	 *
@@ -92,25 +90,8 @@ class Frontend {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 //NOTE :NTFS!!!!  enqueue_scripts and add_inline script moved to the shortcode callback so 
 // it is not call when NOT needed.!
-
-//         wp_register_script( 'Flight_log_templates',  plugins_url('/cb-pdpflightlog/inc/frontend/js/template.js'));
-//    	wp_register_script( 'Flight_log_app',  plugins_url('/cb-pdpflightlog/inc/frontend/js/flight_log_app.js'));
-// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'jquery', 'backbone',
-// 			'underscore', 'Flight_log_app', 'Flight_log_templates'), $this->version, false );		
 
 	}
 	public function flight_log( $atts = array() ) {
@@ -122,14 +103,14 @@ class Frontend {
  			$new_log = $flight_atts['new']==='true' ? true : false ;
  		}
 
-		if ($new_log  === true  ){ 		
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'wp-api',  'backbone', 'underscore'
- 				), $this->version, false );		
-		} else {
+// 		if ($new_log  === true  ){ 		
+// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'wp-api',  'backbone', 'underscore'
+//  				), $this->version, false );		
+// 		} else {
 		
 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-traditional.js', array( 'wp-api',  'backbone', 'underscore'
  				), $this->version, false );						
-		}
+// 		}
 
   		$dateToBePassed = array(
      		'ajax_url' =>  admin_url('admin-ajax.php'),
@@ -145,12 +126,12 @@ class Frontend {
     	); 		
 
 		ob_start();
- 			if ($new_log){
- 				include ('views/html_cb_pdpflightlog_list_edit.php');	
- 					
- 			} else {								
+//  			if ($new_log){
+//  				include ('views/html_cb_pdpflightlog_list_edit.php');	
+//  					
+//  			} else {								
 				include ('views/html_traditional_flight_log.php');		
-			}
+// 			}
 			
 		$output = ob_get_contents();
 		ob_end_clean();
@@ -304,30 +285,7 @@ class Frontend {
          }        
         
     } //pdp_export_data()
-	public function pdp_flight_log($atts = array() ){
-		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
- 		global $wpdb; 
-		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
-		$sql = $wpdb->prepare("SELECT yearkey FROM {$flight_table} WHERE `flightyear`=%s ORDER BY yearkey DESC LIMIT 1",  
-					date("Y"));				
-		$last_yearkey = $wpdb->get_var($sql); 	
-    	wp_register_script( 'flight_log_templates',  plugins_url('/cb_pdpflightlog/inc/frontend/js/template.js'));
-    	wp_register_script( 'backbone_getters',  plugins_url('/cb_pdpflightlog/inc/libraries/backbone.getters.setters.js'));
-    		    
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 'backbone_getters',
-		'validation', 'flight_log_templates', 'jquery-ui-datepicker'), $this->version, false );
-    		$dateToBePassed = array(
- 				'root' => esc_url_raw( rest_url() ),
- 				'nonce' => wp_create_nonce( 'wp_rest' ),
- 				'success' => __( 'Data Has been updated!', 'your-text-domain' ),
- 				'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
- 				'current_user_id' => get_current_user_id(),
- 				'last_yearkey' =>  $last_yearkey	    	
-     		);   	
-     		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before');		
-		include_once 'views/html_cb_pdp_flightlog.php';
 
-	}   // pdp_flight_log
 	public function cb_flight_log($atts = array() ){
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
  		global $wpdb; 
@@ -337,9 +295,15 @@ class Frontend {
 		$last_yearkey = $wpdb->get_var($sql); 	
     	wp_register_script( 'flight_templates',  plugins_url('/cb_pdpflightlog/inc/frontend/js/cb_templates.js'));    	
     	wp_register_script('dualStorage','https://cdnjs.cloudflare.com/ajax/libs/Backbone.dualStorage/1.4.1/backbone.dualstorage.min.js');
+
+//      I'd like to use the dualStorage module. However when in use and I lose ethernet connection it locks up and 
+//      need to delete local stoarge before it will work again. will visit later. 
+//
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
+// 		'dualStorage', 'flight_templates', 'jquery-ui-datepicker'), $this->version, false );
 	    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
-		'dualStorage', 'flight_templates', 'jquery-ui-datepicker'), $this->version, false );
+		'flight_templates', 'jquery-ui-datepicker'), $this->version, false );
     		$dateToBePassed = array(
  				'root' => esc_url_raw( rest_url() ),
  				'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -363,11 +327,11 @@ class Frontend {
 	 * @return [type] [description]
 	 */
 	public function register_shortcodes() {
-		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );
-		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );
-		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
-		add_shortcode( 'personal_log', array( $this, 'personal_log' ) );
-		add_shortcode( 'cb_flight_log', array( $this, 'cb_flight_log' ) );
+		add_shortcode( 'cb_pgc_flight_log', array( $this, 'flight_log' ) );				// traditional flight log 
+		add_shortcode( 'cb_pgc_flight_metrics', array( $this, 'flight_metrics' ) );  // metrics
+// 		add_shortcode( 'pdp_flight_log', array( $this, 'pdp_flight_log' ) );
+		add_shortcode( 'personal_log', array( $this, 'personal_log' ) );			// personal flight log
+		add_shortcode( 'cb_flight_log', array( $this, 'cb_flight_log' ) );          // single page appliction (javascrdipt) flight log
 	} // register_shortcodes()
 	/**
 	 * This function redirects to the longin page if the user is not logged in.

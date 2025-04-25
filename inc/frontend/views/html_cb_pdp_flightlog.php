@@ -1,3 +1,4 @@
+<!-- 
 <?php
 /**
  * Provide a public-facing view for the plugin
@@ -16,7 +17,7 @@
 </script>
 
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<!~~ This file should primarily consist of HTML with a little bit of PHP. ~~>
 <div>
    <div id="eflights"  >
     <?php 	 
@@ -119,9 +120,9 @@
         <option value=" " selected>Select Member</option>');
          foreach($members as $pilot ){
          	if ($strict_no_fly){ 
-         		echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' --NF disabled' : ' ') .'</option>');   
+         		echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' ~~NF disabled' : ' ') .'</option>');   
          	}else{
-         		echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' --NF' : ' ') .'</option>');   
+         		echo(' <option value="'.$pilot->name.'" >'.$pilot->name. ($pilot->nofly? ' ~~NF' : ' ') .'</option>');   
          	}                 
          }                       			
          echo ( '</select>  </div><div class="form-row">    
@@ -242,3 +243,4 @@
      }
 ?>
 <div class="modal"></div>
+ -->
