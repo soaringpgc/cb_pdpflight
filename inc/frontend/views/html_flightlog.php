@@ -13,7 +13,8 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<?php     
+<?php    
+global $wpdb; 
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
@@ -50,61 +51,33 @@ function sort_members($a, $b) {
 } 
 usort($members, 'sort_members'); 
 
-$ch_1 = curl_init('https://pgctest.local:8890/wp-json/cloud_base/v1/flight_types');
-curl_setopt($ch_1, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch_1, CURLOPT_SSL_VERIFYPEER, false);
+$request = new WP_REST_Request('GET', '/cloud_base/v1/flight_types');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$flight_types = $server->response_to_data( $response, false );
 
-$ch_2 = curl_init('https://pgctest.local:8890/wp-json/cloud_base/v1/aircraft?aircraft_type=1');
-curl_setopt($ch_2, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch_2, CURLOPT_SSL_VERIFYPEER, false);
+$request = new WP_REST_Request('GET', '/cloud_base/v1/fees');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$fees = $server->response_to_data( $response, false );
 
-// $ch_3 = curl_init('https://pgctest.local:8890/wp-json/cloud_base/v1/pilots');
-// curl_setopt($ch_3, CURLOPT_RETURNTRANSFER, true);
-// curl_setopt($ch_3, CURLOPT_SSL_VERIFYPEER, false);
+$request = new WP_REST_Request('GET', '/cloud_base/v1/aircraft');
+$request->set_param('aircraft_type', '1');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$aircraft = $server->response_to_data( $response, false );
 
-$ch_4 = curl_init('https://pgctest.local:8890/wp-json/cloud_base/v1/pilots?role=cfi_g');
-curl_setopt($ch_4, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch_4, CURLOPT_SSL_VERIFYPEER, false);
+$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
+$request->set_param('role', 'cfi_g');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$instructors = $server->response_to_data( $response, false );
 
-$ch_5 = curl_init('https://pgctest.local:8890/wp-json/cloud_base/v1/pilots?role=tow_pilot');
-curl_setopt($ch_5, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch_5, CURLOPT_SSL_VERIFYPEER, false);
-
-$ch_6 = curl_init('https://pgctest.local:8890/wp-json/cloud_base/v1/fees');
-curl_setopt($ch_6, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch_6, CURLOPT_SSL_VERIFYPEER, false);
-
-
-$mh = curl_multi_init();
-curl_multi_add_handle($mh, $ch_1);
-curl_multi_add_handle($mh, $ch_2);
-// curl_multi_add_handle($mh, $ch_3);
-curl_multi_add_handle($mh, $ch_4);
-curl_multi_add_handle($mh, $ch_5);
-curl_multi_add_handle($mh, $ch_6);
-
-  $running = null;
-  do {
-    curl_multi_exec($mh, $running);
-  } while ($running);
-
-//close the handles
-curl_multi_remove_handle($mh, $ch_1);
-curl_multi_remove_handle($mh, $ch_2);
-// curl_multi_remove_handle($mh, $ch_3);
-curl_multi_remove_handle($mh, $ch_4);
-curl_multi_remove_handle($mh, $ch_5);
-curl_multi_remove_handle($mh, $ch_6);
-
-curl_multi_close($mh);
-  
-// all of our requests are done, we can now access the results
-$flight_types = json_decode(curl_multi_getcontent($ch_1));
-$aircraft = json_decode(curl_multi_getcontent($ch_2));
-// $members = json_decode(curl_multi_getcontent($ch_3));
-$instructors = json_decode(curl_multi_getcontent($ch_4));
-$towpiltos = json_decode(curl_multi_getcontent($ch_5));
-$fees = json_decode(curl_multi_getcontent($ch_6));
+$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
+$request->set_param('role', 'tow_pilot');
+$response = rest_do_request($request);
+$server = rest_get_server();
+$towpiltos = $server->response_to_data( $response, false );
 
 if( current_user_can( 'read' ) ) {	
 // echo ('    <div id="content" class="outercontainer">');
