@@ -52,8 +52,7 @@
 	 		$("#Pilot2").removeClass('hidden');	
 	 		$("#Tow_Altitude").removeClass('hidden');	
 	 	}
-	 });	
-	 
+	 });		 
 // 	_.extend($('#addFlight'), Backbone.Events);	
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
 
@@ -79,13 +78,13 @@
 	 app.Flight = Backbone.Model.extend({
 //  		url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
 // // 		url: 'https://pgctest.local:8890/wp-json/cloud_base/v1/pdp_flightlog',
-// 		sync: function( method, model, options ){
-//     		return Backbone.sync(method, this, jQuery.extend( options, {
-//       			beforeSend: function (xhr) {
-//         		xhr.setRequestHeader( 'X-WP-NONCE', cloud_base_public_vars.nonce );
-//       			},
-//     		} ));	
-//       	},	
+ 		sync: function( method, model, options ){
+    		return Backbone.sync(method, this, jQuery.extend( options, {
+      			beforeSend: function (xhr) {
+        		xhr.setRequestHeader( 'X-WP-NONCE', cloud_base_public_vars.nonce );
+      			},
+    		} ));	
+      	},	
 //       	default: {
 //       		Time: "0",
 //       	},
@@ -178,9 +177,11 @@
 				{
  				patch:true,
 			    success: function(model, resp, options) {
+			    	off_line(options);  		
 //   			       alert('updated takeoff'); 
 			    }, 
 			    error: function(model, error){
+			    	off_line(options);  		
 			    	alert('Error: ' + error);
 // 			    	console.log(error);
 			    },
@@ -207,9 +208,11 @@
 				{
  				patch:true,
 			    success: function(model, resp, options) {
+			    	off_line(options);  		
 //    			       alert('updated landing'); 
 			    }, 
 			    error: function(model, error){
+			    	off_line(options);  		
 // 			    	alert('Error: ' + error);
 // 			    	console.log(error);
 			    }			
@@ -326,6 +329,7 @@ var onDataHandler = function(collection, response, options) {
         		wait: true,
         		patch:false,    // < dual storage does not wort with this true 
         		error: function(model, response, error){	
+        				off_line(options);  		
       					var mresult= JSON.parse(response.responseText);  	
       					alert(mresult["message"])},
       			success: function(model, resp, options){

@@ -92,7 +92,19 @@ class Rest extends \WP_REST_Controller {
 	// do not use this in production!!!!
 	
      	return true;	
-	} 	
+	} 
+	public function cloud_base_flight_editor_access_check(){
+
+	// put your access requirements here. You might have different requirements for each access method. 
+	// can read, at least a subscriber. 
+
+
+    	if (  current_user_can( 'flight_edit' )) {
+    	    return true;
+     	}
+    	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	    	
+     	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
+	}  	
 	public function register_routes() {
 
   	$version = '1';
@@ -105,19 +117,19 @@ class Rest extends \WP_REST_Controller {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'get_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),        	
+       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),        	
    		 	), array(
        		'methods'  => \WP_REST_Server::CREATABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'post_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_flight_editor_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::EDITABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'put_flight_data' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_flight_editor_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::DELETABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
