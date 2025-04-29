@@ -27,7 +27,7 @@ namespace CB_PdpFlightlog\Inc\Rest;
 // cloud-base, but I get an error when loggin in/out so I have other fish to fry right now
 // will visit this "some other time"  --dsj 18 April 2024 
 
-class Rest extends \WP_REST_Controller {
+class Rest extends \Cloud_Base_Rest {
 	/**
 	 * The ID of this plugin.
 	 *
@@ -68,43 +68,41 @@ class Rest extends \WP_REST_Controller {
 		$this->namespace = $this->plugin_name. '/v' .  $this->rest_version; 			
 	}
  
- 	public function cloud_base_admin_access_check(){
-	// put your access requirements here. You might have different requirements for each
-	// access method. I'm showing only one here. 
-    	if ( !(current_user_can( 'edit_users' ))) {
-     	   return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
-    	}
-    	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
-    	return true;	
-	}
-	public function cloud_base_members_access_check(){
-	// put your access requirements here. You might have different requirements for each access method. 
-	// can read, at least a subscriber. 	
-    	if (  current_user_can( 'read' )) {
-    	    return true;
-     	}
-    	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	
-    	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
-	} 
-	public function cloud_base_dummy_access_check(){
-	// put your access requirements here. You might have different requirements for each
-	// access method. I'm showing only one here. 
-	// do not use this in production!!!!
-	
-     	return true;	
-	} 
-	public function cloud_base_flight_editor_access_check(){
-
-	// put your access requirements here. You might have different requirements for each access method. 
-	// can read, at least a subscriber. 
-
-
-    	if (  current_user_can( 'flight_edit' )) {
-    	    return true;
-     	}
-    	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	    	
-     	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
-	}  	
+//  	public function cloud_base_admin_access_check(){
+// 	// put your access requirements here. You might have different requirements for each
+// 	// access method. I'm showing only one here. 
+//     	if ( !(current_user_can( 'edit_users' ))) {
+//      	   return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
+//     	}
+//     	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
+//     	return true;	
+// 	}
+// 	public function cloud_base_members_access_check(){
+// 	// put your access requirements here. You might have different requirements for each access method. 
+// 	// can read, at least a subscriber. 	
+//     	if (  current_user_can( 'read' )) {
+//     	    return true;
+//      	}
+//     	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	
+//     	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
+// 	} 
+// 	public function cloud_base_dummy_access_check(){
+// 	// put your access requirements here. You might have different requirements for each
+// 	// access method. I'm showing only one here. 
+// 	// do not use this in production!!!!
+// 	
+//      	return true;	
+// 	} 
+// 	public function cloud_base_flight_editor_access_check(){
+// 
+// 	// put your access requirements here. You might have different requirements for each access method. 
+// 	// can read, at least a subscriber. 
+//     	if (  current_user_can( 'flight_edit' )) {
+//     	    return true;
+//      	}
+//     	// This is a white-listing approach. You could alternatively do this via black-listing, by returning false here and changing the permissions check.	    	
+//      	return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not authorized for that.', 'my-text-domain' ), array( 'status' => 401 ) );
+// 	}  	
 	public function register_routes() {
 
   	$version = '1';

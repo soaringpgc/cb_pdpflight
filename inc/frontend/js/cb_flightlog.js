@@ -33,7 +33,6 @@
 	 });	
 	  $("#reload").on('click', function(e){
 	  		window.location = window.location.pathname;
-// 	  		location.reload();
 	 });	
 	 $("#Tow_Altitude").on('blur', function(){ // if it is self launch set TP & Tp to blank
 	 	if($("#Tow_Altitude").val() == 'Self' ){
@@ -53,14 +52,8 @@
 	 		$("#Tow_Altitude").removeClass('hidden');	
 	 	}
 	 });		 
-// 	_.extend($('#addFlight'), Backbone.Events);	
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
-
-//  	if (sessionStorage['working_Date']){
-//  		var dateObj = new Date(sessionStorage.getItem('working_Date')+'T00:00:00');
-//  	}  else {
-		var dateObj = new Date() // Gets the current date and time as an object
-// 	}
+	var dateObj = new Date() // Gets the current date and time as an object
 	const formattingOptions = {  // format string for Intl.DateTimeFormat
  		 day: 'numeric',
  		 month: 'numeric', 
@@ -76,8 +69,7 @@
 	$('#editDate').text('Flight Log for: ' +app.working_date);
 // backbone model
 	 app.Flight = Backbone.Model.extend({
-//  		url: cloud_base_public_vars.root + 'cloud_base/v1/pdp_flightlog',  
-// // 		url: 'https://pgctest.local:8890/wp-json/cloud_base/v1/pdp_flightlog',
+//  		url:  specified in collection. 
  		sync: function( method, model, options ){
     		return Backbone.sync(method, this, jQuery.extend( options, {
       			beforeSend: function (xhr) {
@@ -85,10 +77,6 @@
       			},
     		} ));	
       	},	
-//       	default: {
-//       		Time: "0",
-//       	},
-// 		wait: true
 	});
 // backbone collection
 	 app.FlightList= Backbone.Collection.extend({
@@ -102,7 +90,7 @@
       			},
     			} ));	
     		},	
-    		comparator: function(Flight){  // reverse order. 
+    		comparator: function(Flight){  // reverse order.  and push completed flight to the bottom. 
     			return(  Flight.get("Landing") != "00:00:00", -Number(Flight.get("yearkey")));  // we want newest flight on top. 
     		},
    	 }) ; 		
@@ -112,8 +100,8 @@
 	 	template: flighttemplate_pdp,  
 	 	initialize: function(){		
        		this.listenTo(this.model, 'change',  this.render);       	
-         	this.listenTo(this.model, 'change:Takeoff',  this.renderTime);
-         	this.listenTo(this.model, 'change:Landing',  this.renderTime);      		
+//          	this.listenTo(this.model, 'change:Takeoff',  this.renderTime);
+//          	this.listenTo(this.model, 'change:Landing',  this.renderTime);      		
   		}, 
 		tagName: 'tr',
 		localDivTag: 'div',
@@ -135,8 +123,7 @@
  			} else {
 				this.$el.removeClass('inflight'); 
  				this.$el.removeClass('landed'); 	
-  			} 	
-//   			this.$el.html( this.template(this.model.toJSON() ) );		 
+  			} 			 
  			return this; 	
 		},
 		events:{
@@ -153,15 +140,16 @@
 	 		$('#addFlight').addClass("edit"); 	
 	 		$('#flight_log_table').addClass("edit"); 	
             $(this.localDivTag).children('input').each(function(i, el ){
-      		   if(el.type === "checkbox" ){
-      		   		if (localmodel.get(el.id) === "1" ){
-      		   			$('#'+el.id).prop("checked", true);
-      		   		} else {
-      		   		    $('#'+el.id).prop("checked", false);
-      		   		}
-      		   } else {
+// we do not have checkboxes 
+//       		   if(el.type === "checkbox" ){
+//       		   		if (localmodel.get(el.id) === "1" ){
+//       		   			$('#'+el.id).prop("checked", true);
+//       		   		} else {
+//       		   		    $('#'+el.id).prop("checked", false);
+//       		   		}
+//       		   } else {
       		      $('#'+el.id).val(localmodel.get(el.id));
-      		   }  
+//       		   }  
       		});     		
       		$(this.localDivTag).children('select').each(function(i, el ){
 				$('#'+el.id).val(localmodel.get(el.id));
@@ -177,13 +165,13 @@
 				{
  				patch:true,
 			    success: function(model, resp, options) {
-			    	off_line(options);  		
+// 			    	off_line(options);  		
 //   			       alert('updated takeoff'); 
 			    }, 
-			    error: function(model, error){
-			    	off_line(options);  		
+			    error: function(model, resp, options){
+//  			    	off_line(options);  		
 			    	alert('Error: ' + error);
-// 			    	console.log(error);
+// 			    	console.log(resp);
 			    },
 			    id: this.model.id			
 			});          	  
@@ -208,12 +196,12 @@
 				{
  				patch:true,
 			    success: function(model, resp, options) {
-			    	off_line(options);  		
+// 			    	off_line(options);  		
 //    			       alert('updated landing'); 
 			    }, 
-			    error: function(model, error){
-			    	off_line(options);  		
-// 			    	alert('Error: ' + error);
+			    error: function(model, resp, options){
+// 			    	off_line(options);  		
+// 			    	alert('Error: ' + resp);
 // 			    	console.log(error);
 			    }			
 			});	
@@ -237,15 +225,15 @@
              	error: onErrorHandler,
              	            
              })});  // fetch any existing flights    	    
-var onDataHandler = function(collection, response, options) {
-      console.log('membersview fetch onedatahandler');
-      this.render();
-  };
-
-  var onErrorHandler = function(collection, response, options) {
-      console.log('membersview fetch oneerorhandler');
-      alert(response.responseText);
-  };
+		var onDataHandler = function(collection, response, options) {
+		      console.log('membersview fetch onedatahandler');
+		      this.render();
+		  };
+		
+		  var onErrorHandler = function(collection, response, options) {
+		      console.log('membersview fetch oneerorhandler');
+		      alert(response.responseText);
+		  };
 		  
 
              this.listenTo(this.collection, 'reset', this.render);
@@ -304,13 +292,13 @@ var onDataHandler = function(collection, response, options) {
        			wait: true,
       			success: function(model, resp, options) {
       				$("body").removeClass("loading");  
-      				off_line(options);  			
+//       				off_line(options);  			
       			},
       			error: function(model, resp, options) {
       				alert('Add new record failed.');
       				console.log(resp)
       				$("body").removeClass("loading");
-      				off_line(options);  
+//       				off_line(options);  
       			},   	
       		}); 	
  		this.cancelItem(e);
@@ -329,11 +317,11 @@ var onDataHandler = function(collection, response, options) {
         		wait: true,
         		patch:false,    // < dual storage does not wort with this true 
         		error: function(model, response, error){	
-        				off_line(options);  		
+//         				off_line(options);  		
       					var mresult= JSON.parse(response.responseText);  	
       					alert(mresult["message"])},
       			success: function(model, resp, options){
-						off_line(options);  	
+// 						off_line(options);  	
 //      	 		   			this.$el.removeClass('landed');   
       					},          					 
         	});                    
@@ -420,17 +408,17 @@ var onDataHandler = function(collection, response, options) {
     	 var not_takeoff = collection.where({Takeoff : '00:00:00'}).length ;
     	 return (not_landed-not_takeoff);   			 	 
 	 }
-	 function off_line(options){
-		if(options.dirty){
-			$('#connectstatus').text("OFF LINE");
-			$('#connectstatus').removeClass("connectstatus");
-			$('#connectstatus').addClass("connectstatusoffline");
-		} else {
-			$('#connectstatus').text("On line");
-			$('#connectstatus').removeClass("connectstatusoffline");
-			$('#connectstatus').addClass("connectstatus");
-		}
-	}
+// 	 function off_line(options){  // for use with dual storage. 
+// 		if(options.dirty){
+// 			$('#connectstatus').text("OFF LINE");
+// 			$('#connectstatus').removeClass("connectstatus");
+// 			$('#connectstatus').addClass("connectstatusoffline");
+// 		} else {
+// 			$('#connectstatus').text("On line");
+// 			$('#connectstatus').removeClass("connectstatusoffline");
+// 			$('#connectstatus').addClass("connectstatus");
+// 		}
+// 	}
 // end of collection view functions    
 	// start the application. 		
 	new app.FlightLogView();

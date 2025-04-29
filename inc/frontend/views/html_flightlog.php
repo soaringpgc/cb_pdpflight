@@ -195,11 +195,8 @@ if( current_user_can( 'read' ) ) {
        	 			</div>  
 			</div>       
 		</form>
-');
-//         	<button style="background-color:yellow; color:black;  font-size:14px"><a href="#/cancel">rCancel</a></button> 		
- 	
+'); 	
 // end of hidden form  
-//   <div class="Heading fhcontainer" ><div><button id="flight_button" class="view product"><a href="#/edit">ADD FLight</a></button></div>               
 echo ( ' <div id="flight_log_table" class="flightLog">
 
 			<div class="fl_Heading fhcontainer" >
@@ -209,34 +206,24 @@ echo ( ' <div id="flight_log_table" class="flightLog">
              if( current_user_can( 'cb_edit_flight' ) ) {       
              		echo ( 'Select:<input type="text" id="datepicker" class="fl_Cell0" > ');            
              }      
-
-				
-
-//              if( current_user_can( 'cb_edit_flight' ) ) {       
-//              		echo ( 'Date to Edit:<input type="text" id="datepicker" > 
-//                    <form class="hidden" id="changedate" action="#" ><button  id="select_date"  class="view">Select Date</button></form>');            
-//              }      
-			
-				    
-//            		echo ( '<div id="editDate" class="view product"> Today\'s Flights ' . $active_date . '</div>');
-           		echo ( '<div id="activeCount" class="active"></div><div id="flightCount" class="active">Count</div>
-           		<div id="connectstatus" class="online">OnLine</div>
+			echo ( '<div id="activeCount" class="active"></div><div id="flightCount" class="active">Count</div>
+           		<div id="connectstatus" class="online"> </div>
            		<button  id="reload"  class="view button">Reload Page</button>
             </div>');
          	echo ( ' <table>
 
              <tr class="Row">
-                 <th class="fl_Cell0"> Flight</th>
-                 <th class="fl_Cell0a"> Type</th>
-                 <th class="fl_Cell0"> Glider</th>
+                 <th class="cb_Cellsa"> Flight</th>
+                 <th class="cb_Cells"> Type</th>
+                 <th class="cb_Cellsa"> Glider</th>
                  <th class="fl_Cell">Pilot</th>
                  <th class="fl_Cella">Instructor </th>
-                 <th class="fl_Cell0a">Action </th>
-                 <th class="fl_Cell0">Time  </th>
-               	 <th class="fl_Cell0a">Altitude </th>
-               	 <th class="fl_Cell0">Tow Pilot </th>  
-                 <th class="fl_Cell0">Tug </th>  
-                 <th class="fl_Cell0a">Charge</th>  
+                 <th class="cb_Cellb">Action </th>
+                 <th class="cb_Cellsa">Time  </th>
+               	 <th class="cb_Cells">Altitude </th>
+               	 <th class="cb_Cella">Tow Pilot </th>  
+                 <th class="cb_Cells">Tug </th>  
+                 <th class="cb_Cellsa">Charge</th>  
               </tr> 
 
 			  <tbody  id="eflights"> 
