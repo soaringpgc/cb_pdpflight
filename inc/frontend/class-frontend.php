@@ -102,15 +102,9 @@ class Frontend {
  		if (isset( $flight_atts['new'] )) {
  			$new_log = $flight_atts['new']==='true' ? true : false ;
  		}
-
-// 		if ($new_log  === true  ){ 		
-// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 'wp-api',  'backbone', 'underscore'
-//  				), $this->version, false );		
-// 		} else {
 		
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-traditional.js', array( 'wp-api',  'backbone', 'underscore'
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-traditional.js', array( 'wp-api',  'backbone', 'underscore'
  				), $this->version, false );						
-// 		}
 
   		$dateToBePassed = array(
      		'ajax_url' =>  admin_url('admin-ajax.php'),
@@ -139,7 +133,7 @@ class Frontend {
 	} // flight_log()	
 			
 	public function flight_metrics( $atts = array() ) {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-frontend.js', array( 
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdpflightlog-traditional.js', array( 
  				), $this->version, false );		
 		ob_start();
 //      Experment in passing parameters in shortcodes. parameters are passed in the 
