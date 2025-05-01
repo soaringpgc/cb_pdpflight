@@ -71,15 +71,20 @@ body {
     padding-right: 4px;
     width: 5%;
 }
-.cb_Cells
+.cb_Cells 
 { 
     display: table-cell;
-     text-align: center;
+    text-align: center;
     border: solid;
     border-width: thin;
-    padding-left: 4px;
-    padding-right: 4px;
-    width: 7%;
+    padding-left: 2px;
+    padding-right: 2px;
+    width: 6%;
+}
+.cb_Cells label
+{ 
+ 	text-align: center;
+    width: 100%;
 }
 .cb_Cellsa
 { 
@@ -90,7 +95,12 @@ body {
     border-width: thin;
     padding-left: 4px;
     padding-right: 4px;
-    width: 7%;
+    width: 6%;
+}
+.cb_Cellsa label
+{ 
+ 	text-align: center;
+    width: 100%;
 }
 .cb_Cell0
 {

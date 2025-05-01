@@ -266,8 +266,6 @@ tr:nth-child(odd) {background-color: #ffffff;}
                         <?php 
                          
      		       foreach($towpilots as $pilot){
-//      		       var_dump($pilot);
-//      		       die();
      		       	echo('<tr class="fl_style34"> ');
      		       	echo('<td ><div align="center" ><a href="#" onClick="pdpDetails(`3`, `' .$pilot->Tow_Pilot. '`,`'. $flight_year. '`)">  ' .$pilot->Tow_Pilot. '</a></div></td>');
      		       	echo('<td ><div align="center" >' . $pilot->gcount. '</div></td>');
