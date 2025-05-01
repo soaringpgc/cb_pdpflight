@@ -127,11 +127,10 @@ class Frontend {
 
 		ob_start();
 //  			if ($new_log){
-//  				include ('views/html_cb_pdpflightlog_list_edit.php');	
-//  					
+//   				include ('views/html_cb_pdpflightlog_list_edit.php');	
 //  			} else {								
 				include ('views/html_traditional_flight_log.php');		
-// 			}
+// 		}
 			
 		$output = ob_get_contents();
 		ob_end_clean();
