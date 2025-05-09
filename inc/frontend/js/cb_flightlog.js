@@ -40,18 +40,19 @@
 	 		$("#Tow_Plane").val(' ');	  	 	
 	 	}
 	 });	 
-	 $("#Flight_Type").on('blur', function(){ // is AOF set altitude to 0 
+	 $("#Flight_Type").on('change', function(){ // is AOF set altitude to 0 
 	 	if($("#Flight_Type").val() == 'AOF' ){
 	 		$("#Tow_Altitude").val('0');	
 	 		$("#Tow_Altitude").addClass('hidden');	
 	 		$("#Notes").val('AOF :');	
 	 		$("#Pilot2").val(' ');	
-	 		$("#Pilot2").addClass('hidden');	  	  	 	
+	 		$("#Pilot2").addClass('hidden');	 	  	 	
 	 	} else {
 	 		$("#Pilot2").removeClass('hidden');	
 	 		$("#Tow_Altitude").removeClass('hidden');	
+	 		$("#Notes").val(' ');	 	
 	 	}
-	 });		 
+	 });		 	 
 	app.last = {yearkey: 0, Tow_pilot: "", Tow_Plane: "" };
 	var dateObj = new Date() // Gets the current date and time as an object
 	const formattingOptions = {  // format string for Intl.DateTimeFormat
@@ -110,19 +111,20 @@
       		if( typeof this.model.get("Time") !== 'undefined'){
 			  this.$el.html( this.template(this.model.toJSON() ) );
 			  this.renderTime();
-			}
+			}	       	   
  			return this;
 		},
 		renderTime: function(){					
 			if ((this.model.get('Takeoff') !== '00:00:00' ) && (this.model.get('Landing') === '00:00:00' )){
  				this.$el.addClass('inflight');
- 				this.$el.removeClass('landed');  	
+ 				this.$el.removeClass('landed');  
+ 				this.$el.click();	
  			} else if ((this.model.get('Takeoff') !== '00:00:00' ) && (this.model.get('Landing') !== '00:00:00' )){
  				this.$el.removeClass('inflight'); 
- 				this.$el.addClass('landed'); 	 				 									
+ 				this.$el.addClass('landed');   		 				 									
  			} else {
 				this.$el.removeClass('inflight'); 
- 				this.$el.removeClass('landed'); 	
+ 				this.$el.removeClass('landed');   		
   			} 			 
  			return this; 	
 		},
@@ -174,7 +176,7 @@
 // 			    	console.log(resp);
 			    },
 			    id: this.model.id			
-			});          	  
+			});  			
 			return this; 
 		},
 		landing_time: function(){

@@ -15,7 +15,7 @@
  * Plugin Name:       Cloud Base -PGC PDP Flight Log
  * Plugin URI:        http://pgcsoaring.com/cb-pdpflightlog-uri/
  * Description:       The is an extension to plugin Cloud Base. This adds the PGC PDP flightlog. IF cloudbase is deactivated, this module will be deactivated. 
- * Version:           1.5.1
+ * Version:           1.5.2
  * Author:            Philadelphia Glider Council -- Dave Johnson
  * Author URI:        http://pgcsoaring.com/
  * License:           GPL-2.0+
@@ -48,7 +48,7 @@ define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
 
 define( NS . 'PLUGIN_NAME', 'cb-pdpflightlog' );
 
-define( NS . 'PLUGIN_VERSION', '1.5.1' );
+define( NS . 'PLUGIN_VERSION', '1.5.2' );
 
 define( NS . 'PLUGIN_NAME_DIR', plugin_dir_path( __FILE__ ) );
 

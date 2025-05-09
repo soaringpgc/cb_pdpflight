@@ -213,30 +213,7 @@ optgroup.nofly{
 	background-color: #000000;
 	color: #ffffff;
 }
-.viewstop{
-	display: none;
-}
-.viewstart{
-	display: inline;
-}
-.inflight .viewstart {
-	display: none;
-}
-.inflight .viewstop {
-	display: inline;
-}
-.landed .viewstart  {
-	display: none;
-}
-.landed .viewstop  {
-	display: none;
-}
-.landed .time  {
-	display: inline;
-}
-.time{
-	display: none;
-}
+
 textarea { vertical-align: top; }
 form {
   margin: 0 auto;
