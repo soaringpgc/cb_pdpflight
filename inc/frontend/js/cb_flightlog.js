@@ -24,6 +24,7 @@
 	 *
 	 */
 	 var app = app || {};
+	 app.can_edit = cloud_base_public_vars.can_edit_flights; 
 	 if (Time === undefined){
   		var Time ="0";
   	 }
@@ -118,7 +119,7 @@
 			if ((this.model.get('Takeoff') !== '00:00:00' ) && (this.model.get('Landing') === '00:00:00' )){
  				this.$el.addClass('inflight');
  				this.$el.removeClass('landed');  
- 				this.$el.click();	
+ 				this.$el.click();	// to force change focus so button is not grayed out. 
  			} else if ((this.model.get('Takeoff') !== '00:00:00' ) && (this.model.get('Landing') !== '00:00:00' )){
  				this.$el.removeClass('inflight'); 
  				this.$el.addClass('landed');   		 				 									
@@ -129,9 +130,9 @@
  			return this; 	
 		},
 		events:{
-			'click label' : 'update',
-			'click .buttonlaunch' : 'launch_time',
-			'click .buttonlanding' : 'landing_time',
+			'click label' :  app.can_edit ? 'update': null ,
+			'click .buttonlaunch' :  app.can_edit ? 'launch_time' : null ,
+			'click .buttonlanding' :  app.can_edit ? 'landing_time' : null,
 		},
    		update: function(){   		   			
 			var localmodel = this.model;
@@ -218,16 +219,15 @@
 		localDivTag: 'div',	 		 	 	        
       	initialize: function(){
       	    var self=this;
-            this.collection = new app.FlightList();           // create new collection 
-          
-             this.collection.fetch({ 
+            this.collection = new app.FlightList();           // create new collection           
+            this.collection.fetch({ 
              	wait: true , 
              	data: $.param({start: app.working_date,
              	done: onDataHandler,  
              	error: onErrorHandler,
              	            
              })});  // fetch any existing flights    	    
-		var onDataHandler = function(collection, response, options) {
+		  var onDataHandler = function(collection, response, options) {
 		      console.log('membersview fetch onedatahandler');
 		      this.render();
 		  };
@@ -376,6 +376,7 @@
 	  	formData['Pilot2'] = form.find('#Pilot2').find(":selected").val(); 
 	  	formData['Tow_Altitude'] = form.find('#Tow_Altitude').find(":selected").val(); 
 	  	formData['Tow_Pilot'] = form.find('#Tow_Pilot').find(":selected").val(); 
+	  	formData['Tow_Plane'] = form.find('#Tow_Plane').find(":selected").val(); 
 	  	formData['Takeoff'] = form.find('#Takeoff').val(); 	  	
 	  	formData['Landing'] = form.find('#Landing').val(); 
 	  	formData['Notes'] = form.find('#Notes').val(); 
