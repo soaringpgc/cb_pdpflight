@@ -83,14 +83,15 @@ if( current_user_can( 'read' ) ) {
 // echo ('    <div id="content" class="outercontainer">');
 // echo('<div class="container">'); //id="addFlight"  name="addFlight"
 // build the hidden form. 
-	echo ('<form id="addFlight" action="#" class="editForm"> 
-	<div class="fl_container">
-      		<div class="div-left" id="addorupdate"> 
+	echo ('<form id="addFlight" action="#" class="editForm"> <div class="fl_container">');
+	if( current_user_can( 'flight-edit' ) || current_user_can( 'cb_edit_flight' )) {	
+     echo ('<div class="div-left" id="addorupdate"> 
        	 		<button  id="add"  class="view fl-colum-tp" style="background-color:red; color:black; font-size:22px">ADD</button>
        	 		<button  id="update"  class="edit fl-colum-tp" style="background-color:orange; color:black;  font-size:22px";">Update</button>
        	 		 <div class="fl-colum-ht"> </div>
-       	 	</div>
-	<div class="div-center">
+       	 	</div>');
+    }
+	echo ('<div class="div-center">
   	    <input type = "hidden"
           id = "id"
           size = "8"
@@ -197,12 +198,13 @@ if( current_user_can( 'read' ) ) {
 		</form>
 '); 	
 // end of hidden form  
-echo ( ' <div id="flight_log_table" class="flightLog">
+echo ( ' <div id="flight_log_table" class="flightLog"><div class="fl_Heading fhcontainer" >');
 
-			<div class="fl_Heading fhcontainer" >
-				<div> <button  id="flight_button"  class="view button">ADD FLight</button></div> ');
+		if( current_user_can( 'flight-edit' ) || current_user_can( 'cb_edit_flight' )) {	
+				echo('<div> <button  id="flight_button"  class="view button">ADD FLight</button></div> ');
+		}		
+				
 			echo ( '<div id="editDate" class="view product"> Today\'s Flights ' . $active_date . '</div>');	
-
              if( current_user_can( 'cb_edit_flight' ) ) {       
              		echo ( 'Select:<input type="text" id="datepicker" class="fl_Cell0" > ');            
              }      

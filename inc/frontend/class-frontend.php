@@ -294,7 +294,10 @@ class Frontend {
 //
 // 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
 // 		'dualStorage', 'flight_templates', 'jquery-ui-datepicker'), $this->version, false );
-	    
+		$can_edit_flights = false ; 
+		if( current_user_can( 'flight-edit' ) || current_user_can( 'cb_edit_flight' )) {	
+			$can_edit_flights = true ; 
+		}		    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_flightlog.js', array( 'wp-api',  'backbone', 'underscore', 
 		'flight_templates', 'jquery-ui-datepicker'), $this->version, false );
     		$dateToBePassed = array(
@@ -303,7 +306,8 @@ class Frontend {
  				'success' => __( 'Data Has been updated!', 'your-text-domain' ),
  				'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
  				'current_user_id' => get_current_user_id(),
- 				'last_yearkey' =>  $last_yearkey	    	
+ 				'last_yearkey' =>  $last_yearkey,
+ 				'can_edit_flights' => $can_edit_flights 	    	
      		);   	
      		wp_add_inline_script( $this->plugin_name, 'const cloud_base_public_vars = ' . json_encode ( $dateToBePassed  ), 'before');		
 		include_once 'views/html_flightlog.php';

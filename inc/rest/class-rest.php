@@ -165,6 +165,10 @@ class Rest extends \WP_REST_Controller {
 // 		if (!isset($request['flightyear'])  or  !isset($request['flightyear']) ){
 // 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
 // 		}
+		if (!isset($request['Date']) ){	
+			return new \WP_Error( ' Missing Parameter[Date]', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	 
+		}
+
 		$flight_table =  $wpdb->prefix . 'cloud_base_pdp_flight_sheet';	
 		$fee_table =  $wpdb->prefix . 'cloud_base_tow_fees';	
 		$sql = $wpdb->prepare("SELECT MAX(yearkey) FROM {$flight_table} WHERE `flightyear`=%s",  date("Y"));			
